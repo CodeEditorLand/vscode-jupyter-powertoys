@@ -567,7 +567,7 @@
     "del-cli": "5.1.0",
     "esbuild": "0.19.5",
     "eslint": "8.52.0",
-    "fork-ts-checker-webpack-plugin": "9.0.0",
+    "fork-ts-checker-webpack-plugin": "9.0.1",
     "glob": "10.3.10",
     "html-webpack-plugin": "5.5.3",
     "less-loader": "11.1.3",
