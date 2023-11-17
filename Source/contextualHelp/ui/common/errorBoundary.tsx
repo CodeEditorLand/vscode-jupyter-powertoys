@@ -1,33 +1,36 @@
-'use strict';
-import * as React from 'react';
+"use strict";
+import * as React from "react";
 
 interface IErrorState {
-    hasError: boolean;
-    errorMessage: string;
+	hasError: boolean;
+	errorMessage: string;
 }
 
 export class ErrorBoundary extends React.Component<{}, IErrorState> {
-    constructor(props: {}) {
-        super(props);
-        this.state = { hasError: false, errorMessage: '' };
-    }
+	constructor(props: {}) {
+		super(props);
+		this.state = { hasError: false, errorMessage: "" };
+	}
 
-    public componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-        const stack = errorInfo.componentStack;
+	public componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+		const stack = errorInfo.componentStack;
 
-        // Display fallback UI
-        this.setState({ hasError: true, errorMessage: `${error} at \n  ${stack}` });
-    }
+		// Display fallback UI
+		this.setState({
+			hasError: true,
+			errorMessage: `${error} at \n  ${stack}`,
+		});
+	}
 
-    public render() {
-        if (this.state.hasError) {
-            // Render our error message;
-            const style: React.CSSProperties = {};
-            // eslint-disable-next-line @typescript-eslint/dot-notation
-            style['whiteSpace'] = 'pre';
+	public render() {
+		if (this.state.hasError) {
+			// Render our error message;
+			const style: React.CSSProperties = {};
+			// eslint-disable-next-line @typescript-eslint/dot-notation
+			style["whiteSpace"] = "pre";
 
-            return <h1 style={style}>{this.state.errorMessage}</h1>;
-        }
-        return this.props.children;
-    }
+			return <h1 style={style}>{this.state.errorMessage}</h1>;
+		}
+		return this.props.children;
+	}
 }
