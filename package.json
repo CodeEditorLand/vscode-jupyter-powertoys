@@ -1,9 +1,43 @@
 {
-	"activationEvents": [
-		"onNotebook:jupyter-notebook",
-		"onNotebook:interactive"
-	],
+	"name": "vscode-jupyter-powertoys",
+	"displayName": "Jupyter PowerToys",
+	"version": "0.0.1",
+	"private": false,
+	"description": "Experimental features for Jupyter notebook support in VS Code.",
+	"homepage": "https://github.com/CodeEditorLand/Foundation#readme",
+	"bugs": {
+		"url": "https://github.com/CodeEditorLand/Foundation/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/CodeEditorLand/Foundation.git"
+	},
+	"license": "SEE LICENSE IN LICENSE",
+	"qna": "https://github.com/microsoft/vscode-jupyter-powertoys/discussions",
+	"author": {
+		"name": "Playform",
+		"email": "Hello@Playform.Cloud",
+		"url": "https://playform.cloud"
+	},
+	"type": "module",
+	"main": "./out/main.js",
 	"browser": "./out/web.main.js",
+	"scripts": {
+		"clean": "del-cli out/**",
+		"compile": "webpack --config ./webpack.config.js",
+		"compile-tests": "tsc -p . --outDir out",
+		"compile-web": "webpack --config webpack.web.config.js",
+		"compile-webviews": "webpack --config ./build/webpack/webpack.ui.config.js",
+		"compile-webviews-watch": "webpack --config ./build/webpack/webpack.ui.config.js --watch",
+		"compiled": "deemon npm run watch",
+		"download-api": "npx vscode-dts 1.84.0",
+		"postinstall": "npm run download-api",
+		"kill-compiled": "deemon --kill npm run watch",
+		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
+		"vscode:prepublish": "npm run clean && npm run compile-webviews && npm run compile && npm run compile-web",
+		"watch": "webpack --watch",
+		"watch-tests": "tsc -p . -w --outDir out"
+	},
 	"contributes": {
 		"commands": [
 			{
@@ -471,6 +505,10 @@
 			]
 		}
 	},
+	"activationEvents": [
+		"onNotebook:jupyter-notebook",
+		"onNotebook:interactive"
+	],
 	"dependencies": {
 		"@jupyterlab/coreutils": "^6.0.3",
 		"@jupyterlab/nbformat": "^4.0.3",
@@ -493,7 +531,6 @@
 		"style-loader": "^3.3.1",
 		"untildify": "^4.0.0"
 	},
-	"description": "Experimental features for Jupyter notebook support in VS Code.",
 	"devDependencies": {
 		"@types/fs-extra": "^9.0.13",
 		"@types/glob": "^7.1.4",
@@ -534,18 +571,19 @@
 		"webpack-cli": "^5.0.1",
 		"webpack-fix-default-import-plugin": "^1.0.3"
 	},
-	"displayName": "Jupyter PowerToys",
-	"enabledApiProposals": [],
 	"extensionDependencies": [
 		"ms-toolsai.jupyter"
 	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"icon": "icon.png",
 	"galleryBanner": {
 		"color": "#ffffff",
 		"theme": "light"
 	},
-	"icon": "icon.png",
-	"main": "./out/main.js",
-	"name": "vscode-jupyter-powertoys",
+	"preview": true,
+	"enabledApiProposals": [],
 	"overrides": {
 		"json5": "2.2.2",
 		"loader-utils": "3.2.1",
@@ -553,24 +591,5 @@
 		"semver@<5.7.1": "5.7.2",
 		"terser@<5.14.2": "5.14.2",
 		"trim@<1.0.0": "1.0.1"
-	},
-	"preview": true,
-	"qna": "https://github.com/microsoft/vscode-jupyter-powertoys/discussions",
-	"scripts": {
-		"clean": "del-cli out/**",
-		"compile": "webpack --config ./webpack.config.js",
-		"compile-tests": "tsc -p . --outDir out",
-		"compile-web": "webpack --config webpack.web.config.js",
-		"compile-webviews": "webpack --config ./build/webpack/webpack.ui.config.js",
-		"compile-webviews-watch": "webpack --config ./build/webpack/webpack.ui.config.js --watch",
-		"compiled": "deemon npm run watch",
-		"download-api": "npx vscode-dts 1.84.0",
-		"kill-compiled": "deemon --kill npm run watch",
-		"postinstall": "npm run download-api",
-		"prepublishOnly": "TypeScriptESBuild 'Source/**/*.ts'",
-		"vscode:prepublish": "npm run clean && npm run compile-webviews && npm run compile && npm run compile-web",
-		"watch": "webpack --watch",
-		"watch-tests": "tsc -p . -w --outDir out"
-	},
-	"type": "module"
+	}
 }
