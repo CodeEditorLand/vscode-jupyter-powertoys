@@ -1,16 +1,43 @@
 {
-	"activationEvents": [
-		"onNotebook:jupyter-notebook",
-		"onNotebook:interactive"
+	"name": "vscode-jupyter-powertoys",
+	"displayName": "Jupyter PowerToys",
+	"version": "0.0.1",
+	"private": false,
+	"description": "Experimental features for Jupyter notebook support in VS Code.",
+	"keywords": [
+		"land"
 	],
-	"author": {
-		"email": "Land@PlayForm.Cloud",
-		"name": "🌆 — Land —",
-		"url": "HTTPS://Land.PlayForm.Cloud"
-	},
-	"browser": "./out/web.main.js",
+	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandJupyterPowertoys#readme",
 	"bugs": {
 		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandJupyterPowertoys/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+HTTPS://github.com/CodeEditorLand/LandJupyterPowertoys.git"
+	},
+	"license": "SEE LICENSE IN LICENSE",
+	"qna": "https://github.com/microsoft/vscode-jupyter-powertoys/discussions",
+	"author": {
+		"name": "🌆 — Land —",
+		"email": "Land@PlayForm.Cloud",
+		"url": "HTTPS://Land.PlayForm.Cloud"
+	},
+	"type": "module",
+	"main": "./out/main.js",
+	"browser": "./out/web.main.js",
+	"scripts": {
+		"Document": "Document 'Source/**/*.ts'",
+		"clean": "del-cli out/**",
+		"compile": "webpack --config ./webpack.config.js",
+		"compile-tests": "tsc -p . --outDir out",
+		"compile-web": "webpack --config webpack.web.config.js",
+		"compile-webviews": "webpack --config ./build/webpack/webpack.ui.config.js",
+		"compile-webviews-watch": "webpack --config ./build/webpack/webpack.ui.config.js --watch",
+		"compiled": "deemon npm run watch",
+		"download-api": "npx vscode-dts 1.84.0",
+		"kill-compiled": "deemon --kill npm run watch",
+		"prepublishOnly": "Build 'Source/**/*.ts'",
+		"watch-tests": "tsc -p . -w --outDir out"
 	},
 	"contributes": {
 		"commands": [
@@ -479,6 +506,10 @@
 			]
 		}
 	},
+	"activationEvents": [
+		"onNotebook:jupyter-notebook",
+		"onNotebook:interactive"
+	],
 	"dependencies": {
 		"@jupyterlab/coreutils": "6.1.8",
 		"@jupyterlab/nbformat": "4.1.8",
@@ -496,7 +527,6 @@
 		"style-loader": "4.0.0",
 		"untildify": "5.0.0"
 	},
-	"description": "Experimental features for Jupyter notebook support in VS Code.",
 	"devDependencies": {
 		"@playform/build": "0.0.7",
 		"@playform/document": "0.0.6",
@@ -520,23 +550,19 @@
 		"ts-loader": "9.5.1",
 		"tslib": "2.6.2"
 	},
-	"displayName": "Jupyter PowerToys",
-	"enabledApiProposals": [],
 	"extensionDependencies": [
 		"ms-toolsai.jupyter"
 	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"icon": "icon.png",
 	"galleryBanner": {
 		"color": "#ffffff",
 		"theme": "light"
 	},
-	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandJupyterPowertoys#readme",
-	"icon": "icon.png",
-	"keywords": [
-		"land"
-	],
-	"license": "SEE LICENSE IN LICENSE",
-	"main": "./out/main.js",
-	"name": "vscode-jupyter-powertoys",
+	"preview": true,
+	"enabledApiProposals": [],
 	"overrides": {
 		"json5": "2.2.2",
 		"loader-utils": "3.2.1",
@@ -544,31 +570,5 @@
 		"semver@<5.7.1": "5.7.2",
 		"terser@<5.14.2": "5.14.2",
 		"trim@<1.0.0": "1.0.1"
-	},
-	"preview": true,
-	"private": false,
-	"publishConfig": {
-		"access": "public"
-	},
-	"qna": "https://github.com/microsoft/vscode-jupyter-powertoys/discussions",
-	"repository": {
-		"type": "git",
-		"url": "git+HTTPS://github.com/CodeEditorLand/LandJupyterPowertoys.git"
-	},
-	"scripts": {
-		"Document": "Document 'Source/**/*.ts'",
-		"clean": "del-cli out/**",
-		"compile": "webpack --config ./webpack.config.js",
-		"compile-tests": "tsc -p . --outDir out",
-		"compile-web": "webpack --config webpack.web.config.js",
-		"compile-webviews": "webpack --config ./build/webpack/webpack.ui.config.js",
-		"compile-webviews-watch": "webpack --config ./build/webpack/webpack.ui.config.js --watch",
-		"compiled": "deemon npm run watch",
-		"download-api": "npx vscode-dts 1.84.0",
-		"kill-compiled": "deemon --kill npm run watch",
-		"prepublishOnly": "Build 'Source/**/*.ts'",
-		"watch-tests": "tsc -p . -w --outDir out"
-	},
-	"type": "module",
-	"version": "0.0.1"
+	}
 }
