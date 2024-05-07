@@ -13,9 +13,9 @@ const CleanTerminalPlugin = require('clean-terminal-webpack-plugin');
 const configFileName = path.join(constants.ExtensionRootDir, 'tsconfig.extension.web.json');
 
 //@ts-check
-/** @typedef {import('webpack').Configuration} WebpackConfig **/
 
-/** @type WebpackConfig */
+
+
 const extensionConfig = {
     target: 'webworker', // vscode extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
     mode: 'none', // this leaves the source code as close as possible to the original (when packaging we set this to 'production')
