@@ -1,28 +1,8 @@
 {
 	"name": "vscode-jupyter-powertoys",
 	"displayName": "Jupyter PowerToys",
-	"version": "0.0.1",
-	"private": false,
 	"description": "Experimental features for Jupyter notebook support in VS Code.",
-	"keywords": [
-		"land"
-	],
-	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandJupyterPowertoys#readme",
-	"bugs": {
-		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandJupyterPowertoys/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+HTTPS://github.com/CodeEditorLand/LandJupyterPowertoys.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
 	"qna": "https://github.com/microsoft/vscode-jupyter-powertoys/discussions",
-	"author": {
-		"name": "🛬 Land —",
-		"email": "Land@PlayForm.Cloud",
-		"url": "HTTPS://Land.PlayForm.Cloud"
-	},
-	"type": "module",
 	"main": "./out/main.js",
 	"browser": "./out/web.main.js",
 	"scripts": {
@@ -529,7 +509,6 @@
 	},
 	"devDependencies": {
 		"@playform/build": "0.0.7",
-		"@playform/document": "0.0.6",
 		"@types/fs-extra": "11.0.4",
 		"@types/glob": "8.1.0",
 		"@types/loadable__component": "5.13.9",
@@ -553,9 +532,6 @@
 	"extensionDependencies": [
 		"ms-toolsai.jupyter"
 	],
-	"publishConfig": {
-		"access": "public"
-	},
 	"icon": "icon.png",
 	"galleryBanner": {
 		"color": "#ffffff",
