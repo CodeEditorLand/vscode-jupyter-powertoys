@@ -1,9 +1,22 @@
 {
-	"activationEvents": [
-		"onNotebook:jupyter-notebook",
-		"onNotebook:interactive"
-	],
+	"name": "vscode-jupyter-powertoys",
+	"displayName": "Jupyter PowerToys",
+	"description": "Experimental features for Jupyter notebook support in VS Code.",
+	"qna": "https://github.com/microsoft/vscode-jupyter-powertoys/discussions",
+	"main": "./out/main.js",
 	"browser": "./out/web.main.js",
+	"scripts": {
+		"clean": "del-cli out/**",
+		"compile": "webpack --config ./webpack.config.js",
+		"compile-tests": "tsc -p . --outDir out",
+		"compile-web": "webpack --config webpack.web.config.js",
+		"compile-webviews": "webpack --config ./build/webpack/webpack.ui.config.js",
+		"compile-webviews-watch": "webpack --config ./build/webpack/webpack.ui.config.js --watch",
+		"compiled": "deemon npm run watch",
+		"download-api": "npx vscode-dts 1.84.0",
+		"kill-compiled": "deemon --kill npm run watch",
+		"watch-tests": "tsc -p . -w --outDir out"
+	},
 	"contributes": {
 		"commands": [
 			{
@@ -471,6 +484,10 @@
 			]
 		}
 	},
+	"activationEvents": [
+		"onNotebook:jupyter-notebook",
+		"onNotebook:interactive"
+	],
 	"dependencies": {
 		"@jupyterlab/coreutils": "6.2.3",
 		"@jupyterlab/nbformat": "4.2.3",
@@ -488,7 +505,6 @@
 		"style-loader": "4.0.0",
 		"untildify": "5.0.0"
 	},
-	"description": "Experimental features for Jupyter notebook support in VS Code.",
 	"devDependencies": {
 		"@types/fs-extra": "11.0.4",
 		"@types/glob": "8.1.0",
@@ -510,18 +526,16 @@
 		"ts-loader": "9.5.1",
 		"tslib": "2.6.3"
 	},
-	"displayName": "Jupyter PowerToys",
-	"enabledApiProposals": [],
 	"extensionDependencies": [
 		"ms-toolsai.jupyter"
 	],
+	"icon": "icon.png",
 	"galleryBanner": {
 		"color": "#ffffff",
 		"theme": "light"
 	},
-	"icon": "icon.png",
-	"main": "./out/main.js",
-	"name": "vscode-jupyter-powertoys",
+	"preview": true,
+	"enabledApiProposals": [],
 	"overrides": {
 		"json5": "2.2.2",
 		"loader-utils": "3.2.1",
@@ -529,19 +543,5 @@
 		"semver@<5.7.1": "5.7.2",
 		"terser@<5.14.2": "5.14.2",
 		"trim@<1.0.0": "1.0.1"
-	},
-	"preview": true,
-	"qna": "https://github.com/microsoft/vscode-jupyter-powertoys/discussions",
-	"scripts": {
-		"clean": "del-cli out/**",
-		"compile": "webpack --config ./webpack.config.js",
-		"compile-tests": "tsc -p . --outDir out",
-		"compile-web": "webpack --config webpack.web.config.js",
-		"compile-webviews": "webpack --config ./build/webpack/webpack.ui.config.js",
-		"compile-webviews-watch": "webpack --config ./build/webpack/webpack.ui.config.js --watch",
-		"compiled": "deemon npm run watch",
-		"download-api": "npx vscode-dts 1.84.0",
-		"kill-compiled": "deemon --kill npm run watch",
-		"watch-tests": "tsc -p . -w --outDir out"
 	}
 }
