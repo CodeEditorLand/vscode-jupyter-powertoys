@@ -1,9 +1,22 @@
 {
-	"activationEvents": [
-		"onNotebook:jupyter-notebook",
-		"onNotebook:interactive"
-	],
+	"name": "vscode-jupyter-powertoys",
+	"displayName": "Jupyter PowerToys",
+	"description": "Experimental features for Jupyter notebook support in VS Code.",
+	"qna": "https://github.com/microsoft/vscode-jupyter-powertoys/discussions",
+	"main": "./out/main.js",
 	"browser": "./out/web.main.js",
+	"scripts": {
+		"clean": "del-cli out/**",
+		"compile": "webpack --config ./webpack.config.js",
+		"compile-tests": "tsc -p . --outDir out",
+		"compile-web": "webpack --config webpack.web.config.js",
+		"compile-webviews": "webpack --config ./build/webpack/webpack.ui.config.js",
+		"compile-webviews-watch": "webpack --config ./build/webpack/webpack.ui.config.js --watch",
+		"compiled": "deemon npm run watch",
+		"download-api": "npx vscode-dts 1.84.0",
+		"kill-compiled": "deemon --kill npm run watch",
+		"watch-tests": "tsc -p . -w --outDir out"
+	},
 	"contributes": {
 		"commands": [
 			{
@@ -471,57 +484,58 @@
 			]
 		}
 	},
+	"activationEvents": [
+		"onNotebook:jupyter-notebook",
+		"onNotebook:interactive"
+	],
 	"dependencies": {
-		"@jupyterlab/coreutils": "^6.0.3",
-		"@jupyterlab/nbformat": "^4.0.3",
-		"@jupyterlab/services": "^7.0.3",
-		"@loadable/component": "^5.15.2",
-		"@nteract/transforms": "^5.0.4-alpha.0",
-		"ansi-regex": "^6.0.1",
-		"ansi-to-html": "^0.7.2",
-		"fs-extra": "^10.0.1",
-		"jsonc-parser": "^3.0.0",
-		"less": "^4.1.2",
-		"lodash": "^4.17.21",
-		"log4js": "^6.3.0",
-		"rxjs": "^6.5.4",
-		"style-loader": "^3.3.1",
-		"untildify": "^4.0.0"
+		"@jupyterlab/coreutils": "6.3.0-alpha.2",
+		"@jupyterlab/nbformat": "4.3.0-alpha.2",
+		"@jupyterlab/services": "7.3.0-alpha.2",
+		"@loadable/component": "5.16.4",
+		"@nteract/transforms": "5.0.4-alpha.0",
+		"ansi-regex": "6.0.1",
+		"ansi-to-html": "0.7.2",
+		"fs-extra": "11.2.0",
+		"jsonc-parser": "3.3.1",
+		"less": "4.2.0",
+		"lodash": "4.17.21",
+		"log4js": "6.9.1",
+		"rxjs": "8.0.0-alpha.14",
+		"style-loader": "4.0.0",
+		"untildify": "5.0.0"
 	},
-	"description": "Experimental features for Jupyter notebook support in VS Code.",
 	"devDependencies": {
-		"@types/fs-extra": "^9.0.13",
-		"@types/glob": "^7.1.4",
-		"@types/loadable__component": "^5.13.4",
-		"@types/lodash": "^4.14.178",
+		"@types/fs-extra": "11.0.4",
+		"@types/glob": "8.1.0",
+		"@types/loadable__component": "5.13.9",
+		"@types/lodash": "4.17.7",
 		"@types/node": "16.11.07",
-		"cross-env": "^7.0.3",
-		"css-loader": "^6.5.1",
-		"deemon": "^1.6.0",
-		"del-cli": "^4.0.1",
-		"esbuild": "^0.14.36",
-		"glob": "^7.1.7",
-		"less-loader": "^10.2.0",
-		"os-browserify": "^0.3.0",
-		"path-browserify": "^1.0.1",
-		"process": "^0.11.10",
-		"svg-inline-loader": "^0.8.2",
-		"thread-loader": "^3.0.4",
-		"ts-loader": "^9.2.5",
-		"tslib": "^2.3.1"
+		"cross-env": "7.0.3",
+		"css-loader": "7.1.2",
+		"deemon": "1.8.0",
+		"del-cli": "5.1.0",
+		"esbuild": "0.23.0",
+		"glob": "11.0.0",
+		"less-loader": "12.2.0",
+		"os-browserify": "0.3.0",
+		"path-browserify": "1.0.1",
+		"process": "0.11.10",
+		"svg-inline-loader": "0.8.2",
+		"thread-loader": "4.0.2",
+		"ts-loader": "9.5.1",
+		"tslib": "2.6.3"
 	},
-	"displayName": "Jupyter PowerToys",
-	"enabledApiProposals": [],
 	"extensionDependencies": [
 		"ms-toolsai.jupyter"
 	],
+	"icon": "icon.png",
 	"galleryBanner": {
 		"color": "#ffffff",
 		"theme": "light"
 	},
-	"icon": "icon.png",
-	"main": "./out/main.js",
-	"name": "vscode-jupyter-powertoys",
+	"preview": true,
+	"enabledApiProposals": [],
 	"overrides": {
 		"json5": "2.2.2",
 		"loader-utils": "3.2.1",
@@ -529,19 +543,5 @@
 		"semver@<5.7.1": "5.7.2",
 		"terser@<5.14.2": "5.14.2",
 		"trim@<1.0.0": "1.0.1"
-	},
-	"preview": true,
-	"qna": "https://github.com/microsoft/vscode-jupyter-powertoys/discussions",
-	"scripts": {
-		"clean": "del-cli out/**",
-		"compile": "webpack --config ./webpack.config.js",
-		"compile-tests": "tsc -p . --outDir out",
-		"compile-web": "webpack --config webpack.web.config.js",
-		"compile-webviews": "webpack --config ./build/webpack/webpack.ui.config.js",
-		"compile-webviews-watch": "webpack --config ./build/webpack/webpack.ui.config.js --watch",
-		"compiled": "deemon npm run watch",
-		"download-api": "npx vscode-dts 1.84.0",
-		"kill-compiled": "deemon --kill npm run watch",
-		"watch-tests": "tsc -p . -w --outDir out"
 	}
 }
