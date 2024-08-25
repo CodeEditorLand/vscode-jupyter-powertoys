@@ -508,7 +508,7 @@
 		"svg-inline-loader": "0.8.2",
 		"thread-loader": "4.0.2",
 		"ts-loader": "9.5.1",
-		"tslib": "2.6.3"
+		"tslib": "2.7.0"
 	},
 	"displayName": "Jupyter PowerToys",
 	"enabledApiProposals": [],
