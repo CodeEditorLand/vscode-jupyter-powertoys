@@ -472,9 +472,9 @@
 		}
 	},
 	"dependencies": {
-		"@jupyterlab/coreutils": "6.3.0-beta.0",
-		"@jupyterlab/nbformat": "4.3.0-beta.0",
-		"@jupyterlab/services": "7.3.0-beta.0",
+		"@jupyterlab/coreutils": "6.2.4",
+		"@jupyterlab/nbformat": "4.2.4",
+		"@jupyterlab/services": "7.2.4",
 		"@loadable/component": "5.16.4",
 		"@nteract/transforms": "5.0.4-alpha.0",
 		"ansi-regex": "6.0.1",
@@ -484,7 +484,7 @@
 		"less": "4.2.0",
 		"lodash": "4.17.21",
 		"log4js": "6.9.1",
-		"rxjs": "8.0.0-alpha.14",
+		"rxjs": "7.8.1",
 		"style-loader": "4.0.0",
 		"untildify": "5.0.0"
 	},
