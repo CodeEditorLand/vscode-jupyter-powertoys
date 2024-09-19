@@ -1,0 +1,62 @@
+// See https://go.microsoft.com/fwlink/?LinkId=733558
+// for the documentation about the tasks.json format
+{
+    "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+    },
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compile",
+            "type": "npm",
+            "script": "watch",
+            "isBackground": true,
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$tsc-watch", "$ts-checker-webpack-watch"]
+        },
+        {
+            "label": "Compile Web Views",
+            "type": "npm",
+            "script": "compile-webviews-watch",
+            "isBackground": true,
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$tsc-watch", "$ts-checker-webpack-watch"]
+        },
+        {
+            "type": "npm",
+            "script": "watch-tests",
+            "problemMatcher": "$tsc-watch",
+            "isBackground": true,
+            "presentation": {
+                "reveal": "never",
+                "group": "watchers"
+            },
+            "group": "build"
+        },
+        {
+            "label": "tasks: watch-tests",
+            "dependsOn": ["npm: watch", "npm: watch-tests"],
+            "problemMatcher": []
+        },
+        {
+            "label": "Compile Web Extension",
+            "type": "npm",
+            "script": "compile-web-watch",
+            "isBackground": true,
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$ts-webpack-watch"]
+        }
+    ]
+}
