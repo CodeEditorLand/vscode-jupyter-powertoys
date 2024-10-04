@@ -2,5 +2,5 @@
 // Licensed under the MIT License.
 
 export interface IDisposable {
-    dispose(): void | undefined;
+	dispose(): void | undefined;
 }
