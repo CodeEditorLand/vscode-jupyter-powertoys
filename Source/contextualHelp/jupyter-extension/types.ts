@@ -265,9 +265,7 @@ export interface IExportedKernelService {
 	 * Gets the Kernel connection & the metadata that's associated with a given resource.
 	 * (only successfully started/active connections are returned).
 	 */
-	getKernel(
-		uri: Uri,
-	):
+	getKernel(uri: Uri):
 		| {
 				metadata: KernelConnectionMetadata;
 				connection: Session.ISessionConnection;
