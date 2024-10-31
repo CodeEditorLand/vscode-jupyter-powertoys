@@ -472,9 +472,9 @@
 		}
 	},
 	"dependencies": {
-		"@jupyterlab/coreutils": "6.2.5",
-		"@jupyterlab/nbformat": "4.2.5",
-		"@jupyterlab/services": "7.2.5",
+		"@jupyterlab/coreutils": "6.3.0",
+		"@jupyterlab/nbformat": "4.3.0",
+		"@jupyterlab/services": "7.3.0",
 		"@loadable/component": "5.16.4",
 		"@nteract/transforms": "5.0.4-alpha.0",
 		"ansi-regex": "6.1.0",
