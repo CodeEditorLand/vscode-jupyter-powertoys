@@ -17,6 +17,7 @@ export namespace Effects {
 	): IMainState {
 		// Do nothing if already the focused cell.
 		let selectionInfo = getSelectedAndFocusedInfo(arg.prevState);
+
 		if (selectionInfo.focusedCellId !== arg.payload.data.cellId) {
 			let prevState = arg.prevState;
 
@@ -28,6 +29,7 @@ export namespace Effects {
 				selectionInfo = getSelectedAndFocusedInfo(prevState);
 				// First find the old focused cell and unfocus it
 				let removeFocusIndex = selectionInfo.focusedCellIndex;
+
 				if (typeof removeFocusIndex !== "number") {
 					removeFocusIndex = selectionInfo.selectedCellIndex;
 				}
@@ -64,6 +66,7 @@ export namespace Effects {
 			const addFocusIndex = newVMs.findIndex(
 				(c) => c.cell.id === arg.payload.data.cellId,
 			);
+
 			if (addFocusIndex >= 0) {
 				newVMs[addFocusIndex] = {
 					...newVMs[addFocusIndex],
@@ -89,13 +92,17 @@ export namespace Effects {
 		const index = arg.prevState.cellVMs.findIndex(
 			(c) => c.cell.id === arg.payload.data.cellId,
 		);
+
 		const selectionInfo = getSelectedAndFocusedInfo(arg.prevState);
+
 		if (
 			index >= 0 &&
 			selectionInfo.focusedCellId === arg.payload.data.cellId
 		) {
 			const newVMs = [...arg.prevState.cellVMs];
+
 			const current = arg.prevState.cellVMs[index];
+
 			const newCell = {
 				...current,
 				focused: false,
@@ -111,7 +118,9 @@ export namespace Effects {
 		} else if (index >= 0) {
 			// Dont change focus state if not the focused cell. Just update the code.
 			const newVMs = [...arg.prevState.cellVMs];
+
 			const current = arg.prevState.cellVMs[index];
+
 			const newCell = {
 				...current,
 			};
@@ -134,13 +143,17 @@ export namespace Effects {
 		const index = arg.prevState.cellVMs.findIndex(
 			(c) => c.cell.id === arg.payload.data.cellId,
 		);
+
 		const selectionInfo = getSelectedAndFocusedInfo(arg.prevState);
+
 		if (
 			index >= 0 &&
 			selectionInfo.selectedCellId === arg.payload.data.cellId
 		) {
 			const newVMs = [...arg.prevState.cellVMs];
+
 			const target = arg.prevState.cellVMs[index];
+
 			const newCell = {
 				...target,
 				selected: false,
@@ -169,11 +182,14 @@ export namespace Effects {
 	): IMainState {
 		// Skip doing anything if already selected.
 		const selectionInfo = getSelectedAndFocusedInfo(arg.prevState);
+
 		if (arg.payload.data.cellId !== selectionInfo.selectedCellId) {
 			let prevState = arg.prevState;
+
 			const addIndex = prevState.cellVMs.findIndex(
 				(c) => c.cell.id === arg.payload.data.cellId,
 			);
+
 			const someOtherCellWasFocusedAndSelected =
 				selectionInfo.focusedCellId === selectionInfo.selectedCellId &&
 				!!selectionInfo.focusedCellId;
@@ -181,6 +197,7 @@ export namespace Effects {
 			let removeFocusIndex = arg.prevState.cellVMs.findIndex(
 				(c) => c.cell.id === selectionInfo.focusedCellId,
 			);
+
 			if (removeFocusIndex < 0) {
 				removeFocusIndex = arg.prevState.cellVMs.findIndex(
 					(c) => c.cell.id === selectionInfo.selectedCellId,
@@ -211,6 +228,7 @@ export namespace Effects {
 			}
 
 			const newVMs = [...prevState.cellVMs];
+
 			if (
 				addIndex >= 0 &&
 				arg.payload.data.cellId !== selectionInfo.selectedCellId
@@ -240,12 +258,14 @@ export namespace Effects {
 		const index = arg.prevState.cellVMs.findIndex(
 			(c) => c.cell.id === arg.payload.data.cellId,
 		);
+
 		if (index >= 0) {
 			const newVMs = [...arg.prevState.cellVMs];
 			newVMs[index] = {
 				...newVMs[index],
 				showLineNumbers: !newVMs[index].showLineNumbers,
 			};
+
 			return {
 				...arg.prevState,
 				cellVMs: newVMs,
@@ -260,12 +280,14 @@ export namespace Effects {
 		const index = arg.prevState.cellVMs.findIndex(
 			(c) => c.cell.id === arg.payload.data.cellId,
 		);
+
 		if (index >= 0) {
 			const newVMs = [...arg.prevState.cellVMs];
 			newVMs[index] = {
 				...newVMs[index],
 				hideOutput: !newVMs[index].hideOutput,
 			};
+
 			return {
 				...arg.prevState,
 				cellVMs: newVMs,

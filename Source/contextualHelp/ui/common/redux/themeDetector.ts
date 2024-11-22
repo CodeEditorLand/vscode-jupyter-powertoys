@@ -11,13 +11,16 @@ export function detectBaseTheme():
 	| "vscode-dark"
 	| "vscode-high-contrast" {
 	const body = document.body;
+
 	if (body) {
 		switch (body.className) {
 			default:
 			case "vscode-light":
 				return "vscode-light";
+
 			case "vscode-dark":
 				return "vscode-dark";
+
 			case "vscode-high-contrast":
 				return "vscode-high-contrast";
 		}

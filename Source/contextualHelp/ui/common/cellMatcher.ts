@@ -70,6 +70,7 @@ export class CellMatcher {
 
 	public exec(code: string): string | undefined {
 		let result: RegExpExecArray | null = null;
+
 		if (this.defaultCellMarkerExec.test(code)) {
 			this.defaultCellMarkerExec.lastIndex = -1;
 			result = this.defaultCellMarkerExec.exec(code);

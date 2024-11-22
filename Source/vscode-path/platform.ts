@@ -6,17 +6,29 @@
 const LANGUAGE_DEFAULT = "en";
 
 let _isWindows = false;
+
 let _isMacintosh = false;
+
 let _isLinux = false;
+
 let _isLinuxSnap = false;
+
 let _isNative = false;
+
 let _isWeb = false;
+
 let _isElectron = false;
+
 let _isIOS = false;
+
 let _isCI = false;
+
 let _locale: string | undefined = undefined;
+
 let _language: string = LANGUAGE_DEFAULT;
+
 let _translationsConfigFile: string | undefined = undefined;
+
 let _userAgent: string | undefined = undefined;
 
 interface NLSConfig {
@@ -69,6 +81,7 @@ if (
 }
 
 const isElectronProcess = typeof nodeProcess?.versions?.electron === "string";
+
 const isElectronRenderer =
 	isElectronProcess && nodeProcess?.type === "renderer";
 export const isElectronSandboxed = isElectronRenderer && nodeProcess?.sandboxed;
@@ -112,10 +125,13 @@ else if (typeof nodeProcess === "object") {
 		!!nodeProcess.env["BUILD_ARTIFACTSTAGINGDIRECTORY"];
 	_locale = LANGUAGE_DEFAULT;
 	_language = LANGUAGE_DEFAULT;
+
 	const rawNlsConfig = nodeProcess.env["VSCODE_NLS_CONFIG"];
+
 	if (rawNlsConfig) {
 		try {
 			const nlsConfig: NLSConfig = JSON.parse(rawNlsConfig);
+
 			const resolved = nlsConfig.availableLanguages["*"];
 			_locale = nlsConfig.locale;
 			// VSCode's default language is 'en'
@@ -141,10 +157,13 @@ export function PlatformToString(platform: Platform) {
 	switch (platform) {
 		case Platform.Web:
 			return "Web";
+
 		case Platform.Mac:
 			return "Mac";
+
 		case Platform.Linux:
 			return "Linux";
+
 		case Platform.Windows:
 			return "Windows";
 	}
@@ -237,15 +256,19 @@ export const setTimeout0 = (() => {
 			if (e.data && e.data.vscodeScheduleAsyncWork) {
 				for (let i = 0, len = pending.length; i < len; i++) {
 					const candidate = pending[i];
+
 					if (candidate.id === e.data.vscodeScheduleAsyncWork) {
 						pending.splice(i, 1);
 						candidate.callback();
+
 						return;
 					}
 				}
 			}
 		});
+
 		let lastId = 0;
+
 		return (callback: () => void) => {
 			const myId = ++lastId;
 			pending.push({
@@ -271,13 +294,16 @@ export const OS =
 			: OperatingSystem.Linux;
 
 let _isLittleEndian = true;
+
 let _isLittleEndianComputed = false;
 export function isLittleEndian(): boolean {
 	if (!_isLittleEndianComputed) {
 		_isLittleEndianComputed = true;
+
 		const test = new Uint8Array(2);
 		test[0] = 1;
 		test[1] = 2;
+
 		const view = new Uint16Array(test.buffer);
 		_isLittleEndian = view[0] === (2 << 8) + 1;
 	}

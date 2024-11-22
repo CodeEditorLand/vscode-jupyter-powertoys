@@ -23,6 +23,7 @@ function provideCellStatusBarItems(
 	token: vscode.CancellationToken,
 ): vscode.ProviderResult<vscode.NotebookCellStatusBarItem> {
 	const cellRunGroups = getCellRunGroupMetadata(cell);
+
 	const groupStrings = [];
 
 	if (cellRunGroups.includes(RunGroup.one.toString())) {

@@ -17,6 +17,7 @@ export function isUri(resource?: vscode.Uri | any): resource is vscode.Uri {
 		return false;
 	}
 	const uri = resource as vscode.Uri;
+
 	return typeof uri.path === "string" && typeof uri.scheme === "string";
 }
 
@@ -24,6 +25,7 @@ export function isNotebookCell(
 	documentOrUri: vscode.TextDocument | vscode.Uri,
 ): boolean {
 	const uri = isUri(documentOrUri) ? documentOrUri : documentOrUri.uri;
+
 	return uri.scheme.includes(NotebookCellScheme);
 }
 

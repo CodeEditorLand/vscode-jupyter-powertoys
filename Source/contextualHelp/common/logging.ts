@@ -19,14 +19,17 @@ export function log(logLevel: LogLevel, ...args: Arguments) {
 	switch (logLevel) {
 		case LogLevel.Error:
 			console.error(args);
+
 			break;
 
 		case LogLevel.Warn:
 			console.warn(args);
+
 			break;
 
 		default:
 			console.log(args);
+
 			break;
 	}
 }

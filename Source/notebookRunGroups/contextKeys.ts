@@ -11,12 +11,16 @@ import { getCellRunGroupMetadata } from "./util/cellMetadataHelpers";
 export function updateContextKeys() {
 	// Create our groups for what cells are in each run group
 	const group1Cells: Set<vscode.Uri> = new Set<vscode.Uri>();
+
 	const group2Cells: Set<vscode.Uri> = new Set<vscode.Uri>();
+
 	const group3Cells: Set<vscode.Uri> = new Set<vscode.Uri>();
 
 	// Groups for what documents have any cells in a group active
 	const group1Documents: Set<vscode.Uri> = new Set<vscode.Uri>();
+
 	const group2Documents: Set<vscode.Uri> = new Set<vscode.Uri>();
+
 	const group3Documents: Set<vscode.Uri> = new Set<vscode.Uri>();
 
 	// Scan visible notebooks

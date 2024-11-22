@@ -22,6 +22,7 @@ export function updateCellRunGroupMetadata(
 	newGroupValue: string,
 ) {
 	const newMetadata = { ...(cell.metadata || {}) };
+
 	if (useCustomMetadata()) {
 		newMetadata.custom = newMetadata.custom || {};
 		newMetadata.custom.metadata = newMetadata.custom.metadata || {};
@@ -42,6 +43,7 @@ export function updateCellRunGroupMetadata(
 
 	// Perform our actual replace and edit
 	const wsEdit = new vscode.WorkspaceEdit();
+
 	const notebookEdit = vscode.NotebookEdit.updateCellMetadata(
 		cell.index,
 		newMetadata,

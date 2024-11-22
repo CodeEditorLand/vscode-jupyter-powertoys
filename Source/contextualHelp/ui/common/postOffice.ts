@@ -64,6 +64,7 @@ class VsCodeMessageApi implements IMessageApi {
 				const api = this.vscodeApi as any as
 					| undefined
 					| { handleMessage?: Function };
+
 				if (api && api.handleMessage) {
 					api.handleMessage(this.handleVSCodeApiMessages.bind(this));
 				}
@@ -92,6 +93,7 @@ class VsCodeMessageApi implements IMessageApi {
 
 	private async handleVSCodeApiMessages(ev: MessageEvent) {
 		const msg = ev.data as WebviewMessage;
+
 		if (msg && this.messageCallback) {
 			await this.messageCallback(msg);
 		}
@@ -107,6 +109,7 @@ export class PostOffice {
 	private handlers: IMessageHandler[] = [];
 	private readonly subject = new Subject<PostOfficeMessage>();
 	private readonly observable: Observable<PostOfficeMessage>;
+
 	constructor() {
 		this.observable = this.subject.asObservable();
 	}

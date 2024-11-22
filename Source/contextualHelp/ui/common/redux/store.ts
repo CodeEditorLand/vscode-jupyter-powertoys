@@ -69,6 +69,7 @@ function createTestLogger() {
 		},
 		categories: { default: { appenders: ["reduxLogger"], level: "debug" } },
 	});
+
 	return log4js.getLogger();
 }
 
@@ -81,7 +82,9 @@ function createTestMiddleware(
 	// eslint-disable-next-line complexity
 	return (store) => (next) => (action) => {
 		const prevState = store.getState();
+
 		const res = next(action);
+
 		const afterState = store.getState();
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const sendMessage = (message: any, payload?: any) => {
@@ -117,7 +120,9 @@ function createMiddleWare(
 	const isUITest = (postOffice.acquireApi() as any)?.handleMessage
 		? true
 		: false;
+
 	let forceOnTestMiddleware = false;
+
 	if (typeof forceTestMiddleware !== "undefined") {
 		forceOnTestMiddleware = forceTestMiddleware();
 	}
@@ -129,6 +134,7 @@ function createMiddleWare(
 	// Create the logger if we're not in production mode or we're forcing logging
 	const reduceLogMessage =
 		"<payload too large to displayed in logs (at least on CI)>";
+
 	const logger = createLogger({
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		stateTransformer: (state: any) => {
@@ -137,6 +143,7 @@ function createMiddleWare(
 			}
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const rootState = { ...state } as any;
+
 			if ("main" in rootState && typeof rootState.main === "object") {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const main = (rootState.main = {
@@ -163,6 +170,7 @@ function createMiddleWare(
 
 	const results: Redux.Middleware<{}, IStore>[] = [];
 	results.push(queueableActions);
+
 	if (testMiddleware) {
 		results.push(testMiddleware);
 	}
@@ -184,6 +192,7 @@ const addMessageDirectionMiddleware: Redux.Middleware =
 		if (isAllowedAction(action)) {
 			// Ensure all dispatched messages have been flagged as `incoming`.
 			const payload: BaseReduxActionPayload<{}> = action.payload || {};
+
 			if (!payload.messageDirection) {
 				action.payload = { ...payload, messageDirection: "incoming" };
 			}
@@ -231,6 +240,7 @@ export function createStore<M>(
 			// Double check this is one of our messages. React will actually post messages here too during development
 			if (isAllowedMessage(message)) {
 				const basePayload: BaseReduxActionPayload = { data: payload };
+
 				if (message === WindowMessages.Sync) {
 					// This is a message that has been sent from extension purely for synchronization purposes.
 					// Unwrap the message.

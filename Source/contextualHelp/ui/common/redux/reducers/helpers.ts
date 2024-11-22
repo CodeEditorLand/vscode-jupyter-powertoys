@@ -17,6 +17,7 @@ const StackLimit = 10;
 export namespace Helpers {
 	export function computeKnownDark(): boolean {
 		const baseTheme = detectBaseTheme();
+
 		return baseTheme !== "vscode-light";
 	}
 
@@ -29,6 +30,7 @@ export namespace Helpers {
 
 		// make a copy of the cells so that further changes don't modify them.
 		const copy = cloneDeep(cells);
+
 		return [...slicedUndo, copy];
 	}
 
@@ -39,7 +41,9 @@ export namespace Helpers {
 		const codeCells = state.cellVMs.filter(
 			(c) => c.cell.data.cell_type === "code",
 		);
+
 		const index = codeCells.findIndex((c) => c.cell.id === cellId);
+
 		if (index > 0) {
 			return codeCells[index - 1].cell.id;
 		}
@@ -80,6 +84,7 @@ export namespace Helpers {
 				arePathsSame(c.cell.file, arg.payload.data.file)
 			);
 		});
+
 		if (index >= 0) {
 			// This means the cell existed already so it was actual executed code.
 			// Use its execution count to update our execution count.
@@ -111,7 +116,9 @@ export namespace Helpers {
 		} else {
 			// This is an entirely new cell (it may have started out as finished)
 			const newVM = generateVM(arg.payload.data, arg.prevState);
+
 			const newVMs = [...arg.prevState.cellVMs, newVM];
+
 			return {
 				...arg.prevState,
 				cellVMs: newVMs,

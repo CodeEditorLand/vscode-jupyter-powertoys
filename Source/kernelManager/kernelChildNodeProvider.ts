@@ -14,12 +14,14 @@ export interface IActiveKernelChildNodesProvider {
 	onDidChangeTreeData?: Event<
 		void | ICustomNodeFromAnotherProvider | null | undefined
 	>;
+
 	getChildren(
 		node:
 			| IActiveRemoteKernelTreeNode
 			| IActiveLocalKernelTreeNode
 			| ICustomNodeFromAnotherProvider,
 	): ICustomNodeFromAnotherProvider[];
+
 	getTreeItem(node: ICustomNodeFromAnotherProvider): TreeItem;
 }
 

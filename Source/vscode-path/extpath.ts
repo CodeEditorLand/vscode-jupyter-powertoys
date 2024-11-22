@@ -51,14 +51,18 @@ export function getRoot(path: string, sep: string = posix.sep): string {
 	}
 
 	const len = path.length;
+
 	const firstLetter = path.charCodeAt(0);
+
 	if (isPathSeparator(firstLetter)) {
 		if (isPathSeparator(path.charCodeAt(1))) {
 			// UNC candidate \\localhost\shares\ddd
 			//               ^^^^^^^^^^^^^^^^^^^
 			if (!isPathSeparator(path.charCodeAt(2))) {
 				let pos = 3;
+
 				const start = pos;
+
 				for (; pos < len; pos++) {
 					if (isPathSeparator(path.charCodeAt(pos))) {
 						break;
@@ -69,6 +73,7 @@ export function getRoot(path: string, sep: string = posix.sep): string {
 					!isPathSeparator(path.charCodeAt(pos + 1))
 				) {
 					pos += 1;
+
 					for (; pos < len; pos++) {
 						if (isPathSeparator(path.charCodeAt(pos))) {
 							return path
@@ -103,6 +108,7 @@ export function getRoot(path: string, sep: string = posix.sep): string {
 	// scheme://authority/path
 	// ^^^^^^^^^^^^^^^^^^^
 	let pos = path.indexOf("://");
+
 	if (pos !== -1) {
 		pos += 3; // 3 -> "://".length
 		for (; pos < len; pos++) {
@@ -134,6 +140,7 @@ export function isUNC(path: string): boolean {
 	}
 
 	let code = path.charCodeAt(0);
+
 	if (code !== CharCode.Backslash) {
 		return false;
 	}
@@ -145,9 +152,12 @@ export function isUNC(path: string): boolean {
 	}
 
 	let pos = 2;
+
 	const start = pos;
+
 	for (; pos < path.length; pos++) {
 		code = path.charCodeAt(pos);
+
 		if (code === CharCode.Backslash) {
 			break;
 		}
@@ -168,7 +178,9 @@ export function isUNC(path: string): boolean {
 
 // Reference: https://en.wikipedia.org/wiki/Filename
 const WINDOWS_INVALID_FILE_CHARS = /[\\/:\*\?"<>\|]/g;
+
 const UNIX_INVALID_FILE_CHARS = /[\\/]/g;
+
 const WINDOWS_FORBIDDEN_NAMES =
 	/^(con|prn|aux|clock\$|nul|lpt[0-9]|com[0-9])(\.(.*?))?$/i;
 export function isValidBasename(
@@ -222,6 +234,7 @@ export function isEqual(
 	ignoreCase?: boolean,
 ): boolean {
 	const identityEquals = pathA === pathB;
+
 	if (!ignoreCase || identityEquals) {
 		return identityEquals;
 	}
@@ -258,6 +271,7 @@ export function isEqualOrParent(
 
 	if (ignoreCase) {
 		const beginsWith = startsWithIgnoreCase(base, parentCandidate);
+
 		if (!beginsWith) {
 			return false;
 		}
@@ -267,6 +281,7 @@ export function isEqualOrParent(
 		}
 
 		let sepOffset = parentCandidate.length;
+
 		if (parentCandidate.charAt(parentCandidate.length - 1) === separator) {
 			sepOffset--; // adjust the expected sep offset in case our candidate already ends in separator character
 		}
@@ -346,6 +361,7 @@ export function hasDriveLetter(
 ): boolean {
 	const isWindowsPath: boolean =
 		continueAsWindows !== undefined ? continueAsWindows : isWindows;
+
 	if (isWindowsPath) {
 		return (
 			isWindowsDriveLetter(path.charCodeAt(0)) &&
@@ -393,11 +409,14 @@ export function parseLineAndColumnAware(
 	const segments = rawPath.split(":"); // C:\file.txt:<line>:<column>
 
 	let path: string | undefined = undefined;
+
 	let line: number | undefined = undefined;
+
 	let column: number | undefined = undefined;
 
 	for (const segment of segments) {
 		const segmentAsNumber = Number(segment);
+
 		if (!isNumber(segmentAsNumber)) {
 			path = !!path ? [path, segment].join(":") : segment; // a colon can well be part of a path (e.g. C:\...)
 		} else if (line === undefined) {
@@ -428,6 +447,7 @@ export function randomPath(
 	randomLength = 8,
 ): string {
 	let suffix = "";
+
 	for (let i = 0; i < randomLength; i++) {
 		suffix += pathChars.charAt(
 			Math.floor(Math.random() * pathChars.length),
@@ -435,6 +455,7 @@ export function randomPath(
 	}
 
 	let randomFileName: string;
+
 	if (prefix) {
 		randomFileName = `${prefix}-${suffix}`;
 	} else {

@@ -36,6 +36,7 @@ export abstract class Webview implements IWebview {
 				...additionalRootPaths,
 			],
 		};
+
 		if (options.webviewHost) {
 			this.webviewHost = options.webviewHost;
 			this.webviewHost.webview.options = webViewOptions;
@@ -79,9 +80,11 @@ export abstract class Webview implements IWebview {
 		const uriBase = this.webviewHost?.webview
 			.asWebviewUri(Uri.file(this.options.cwd))
 			.toString();
+
 		const uris = this.options.scripts.map((script) =>
 			this.webviewHost!.webview!.asWebviewUri(Uri.file(script)),
 		);
+
 		const testFiles = await getFiles(Uri.file(this.options.rootPath));
 
 		// This method must be called so VSC is aware of files that can be pulled.
@@ -101,6 +104,7 @@ export abstract class Webview implements IWebview {
 		// Check to see if we should force on Test middleware for our react code
 		const forceTestMiddleware =
 			process.env.VSC_JUPYTER_WEBVIEW_TEST_MIDDLEWARE || "false";
+
 		return `<!doctype html>
         <html lang="en">
             <head>
@@ -120,6 +124,7 @@ export abstract class Webview implements IWebview {
                 <script type="text/javascript">
                     // Public path that will be used by webpack.
                     window.__PVSC_Public_Path = "${rootPath}/";
+
                     function resolvePath(relativePath) {
                         if (relativePath && relativePath[0] == '.' && relativePath[1] != '.') {
                             return "${uriBase}" + relativePath.substring(1);
@@ -142,6 +147,7 @@ export abstract class Webview implements IWebview {
 				const localFilesExist = await Promise.all(
 					this.options.scripts.map((s) => localFileExists(s)),
 				);
+
 				if (localFilesExist.every((exists) => exists === true)) {
 					// Call our special function that sticks this script inside of an html page
 					// and translates all of the paths to vscode-resource URIs

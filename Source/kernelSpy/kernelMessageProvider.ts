@@ -62,6 +62,7 @@ const requestIconsByMessageType = new Map<MessageType, string>([
 	["comm_msg", "gear"],
 	["shutdown_request", "close"],
 ]);
+
 const responseIconsByMessageType = new Map<MessageType, string>([
 	["clear_output", "clear-all"],
 	["error", "error"],
@@ -89,8 +90,10 @@ class MessageTreeItem extends TreeItem {
 		super(data.label, TreeItemCollapsibleState.Collapsed);
 		this.description = data.description;
 		this.contextValue = `kernelMessageItem:${data.__type}:${data.clipboardText ? "canCopyToClipboard" : ""}`;
+
 		if (data.__type === "parentMessageNode" || data.direction === "send") {
 			this.iconPath = new ThemeIcon("call-outgoing");
+
 			if (data.__type !== "parentMessageNode") {
 				const icon =
 					requestIconsByMessageType.get(data.msg.header.msg_type) ||
@@ -98,6 +101,7 @@ class MessageTreeItem extends TreeItem {
 				this.iconPath = new ThemeIcon(icon);
 			}
 			const exec = data.msg as KernelMessage.IExecuteRequestMsg;
+
 			if (
 				data.msg.header.msg_type === "execute_request" &&
 				data.msg.channel === "shell" &&
@@ -107,6 +111,7 @@ class MessageTreeItem extends TreeItem {
 				this.tooltip = exec.content.code;
 			}
 			const complete = data.msg as KernelMessage.IIsCompleteRequestMsg;
+
 			if (
 				data.msg.header.msg_type === "complete_request" &&
 				data.msg.channel === "shell" &&
@@ -116,6 +121,7 @@ class MessageTreeItem extends TreeItem {
 				this.tooltip = complete.content.code;
 			}
 			const inspect = data.msg as KernelMessage.IInspectRequestMsg;
+
 			if (
 				data.msg.header.msg_type === "inspect_request" &&
 				data.msg.channel === "shell" &&
@@ -125,6 +131,7 @@ class MessageTreeItem extends TreeItem {
 				this.tooltip = inspect.content.code;
 			}
 			const debugRequest = data.msg as KernelMessage.IDebugRequestMsg;
+
 			if (
 				data.msg.header.msg_type === "debug_request" &&
 				data.msg.channel === "control" &&
@@ -134,6 +141,7 @@ class MessageTreeItem extends TreeItem {
 					`${debugRequest.content.command} (seq: ${debugRequest.content.seq}`,
 				];
 				this.description = `${debugRequest.content.command} (seq: ${debugRequest.content.seq})`;
+
 				if (
 					(debugRequest.content.command === "evaluate" ||
 						debugRequest.content.command === "variables" ||
@@ -178,6 +186,7 @@ class MessageTreeItem extends TreeItem {
 					descriptionParts = [
 						`${debugRequest.content.command}, source: ${debugRequest.content.arguments.source.path}`,
 					];
+
 					const lines: string[] = [];
 					debugRequest.content.arguments["breakpoints"].forEach(
 						(line) => {
@@ -196,6 +205,7 @@ class MessageTreeItem extends TreeItem {
 			this.iconPath = new ThemeIcon(icon);
 
 			const statusMsg = data.msg as KernelMessage.IStatusMsg;
+
 			if (
 				data.msg.header.msg_type === "status" &&
 				data.msg.channel === "iopub" &&
@@ -204,6 +214,7 @@ class MessageTreeItem extends TreeItem {
 				this.description = statusMsg.content.execution_state;
 			}
 			const execInput = data.msg as KernelMessage.IExecuteInputMsg;
+
 			if (
 				data.msg.header.msg_type === "execute_input" &&
 				data.msg.channel === "iopub" &&
@@ -212,6 +223,7 @@ class MessageTreeItem extends TreeItem {
 				this.description = `execution_count = ${execInput.content.execution_count}`;
 			}
 			const stream = data.msg as KernelMessage.IStreamMsg;
+
 			if (
 				data.msg.header.msg_type === "stream" &&
 				data.msg.channel === "iopub" &&
@@ -227,6 +239,7 @@ class MessageTreeItem extends TreeItem {
 			}
 
 			const execReply = data.msg as KernelMessage.IExecuteReplyMsg;
+
 			if (
 				data.msg.header.msg_type === "execute_reply" &&
 				data.msg.channel === "shell"
@@ -235,6 +248,7 @@ class MessageTreeItem extends TreeItem {
 			}
 
 			const inspect = data.msg as KernelMessage.IInspectReplyMsg;
+
 			if (
 				data.msg.header.msg_type === "inspect_reply" &&
 				data.msg.channel === "shell"
@@ -243,12 +257,14 @@ class MessageTreeItem extends TreeItem {
 			}
 
 			const debugReply = data.msg as KernelMessage.IDebugReplyMsg;
+
 			if (
 				data.msg.header.msg_type === "debug_reply" &&
 				data.msg.channel === "control" &&
 				debugReply.content.command
 			) {
 				this.description = `${debugReply.content.command} (success: ${debugReply.content.success}, seq: ${debugReply.content.seq})`;
+
 				if (
 					debugReply.content.command === "dumpCell" &&
 					debugReply.content.body &&
@@ -259,6 +275,7 @@ class MessageTreeItem extends TreeItem {
 			}
 
 			const debugEvent = data.msg as KernelMessage.IDebugEventMsg;
+
 			if (
 				data.msg.header.msg_type === "debug_event" &&
 				data.msg.channel === "iopub" &&
@@ -267,6 +284,7 @@ class MessageTreeItem extends TreeItem {
 				this.description = `${debugEvent.content.event} (seq: ${debugEvent.content.seq})`;
 			}
 			const errorMsg = data.msg as KernelMessage.IErrorMsg;
+
 			if (
 				data.msg.header.msg_type === "error" &&
 				data.msg.channel === "iopub" &&
@@ -441,6 +459,7 @@ export class ActiveKernelMessageProvider
 						return;
 					}
 					const kernel = this.kernelService.getKernel(item.uri);
+
 					if (!kernel) {
 						return;
 					}
@@ -478,16 +497,19 @@ export class ActiveKernelMessageProvider
 				connection: node.connection.kernel,
 			};
 			this.addHandler(node.connection, rootNode);
+
 			return [rootNode];
 		}
 		if (node.type !== "customNodeFromAnotherProvider") {
 			return [];
 		}
 		const ourNode = node as Node;
+
 		if (ourNode.__type === "rootNode") {
 			const messages = this.getConnectionInfo(
 				ourNode.connection,
 			).messages;
+
 			if (this.messageViewType === "tree") {
 				return messages.filter((msg) => msg.isTopLevelMessage);
 			} else {
@@ -495,7 +517,9 @@ export class ActiveKernelMessageProvider
 			}
 		} else if (ourNode.__type === "parentMessageNode") {
 			const info = this.getConnectionInfo(ourNode.connection);
+
 			const children = info.requestsById.get(ourNode.msg_id);
+
 			if (children) {
 				return children.children;
 			} else {
@@ -503,38 +527,47 @@ export class ActiveKernelMessageProvider
 			}
 		} else if (ourNode.__type === "messageNode") {
 			const header = ourNode.msg.header as KernelMessage.IHeader<any>;
+
 			return Object.keys(ourNode.msg).map((prop) => {
 				const value = (ourNode.msg as any)[prop];
+
 				const hasChildren =
 					typeof value !== "undefined" &&
 					value !== null &&
 					(typeof value === "object" || Array.isArray(value));
+
 				const isEmptyObject =
 					hasChildren &&
 					!Array.isArray(value) &&
 					Object.keys(value).length === 0;
+
 				const isEmptyArray =
 					hasChildren && Array.isArray(value) && value.length === 0;
+
 				const stringValue =
 					typeof value === "string"
 						? getSingleLineValue(value)
 						: getStringRepresentation(value);
+
 				let description = isEmptyObject
 					? "{ }"
 					: isEmptyArray
 						? "[ ]"
 						: stringValue;
+
 				let tooltip = isEmptyObject
 					? "{ }"
 					: isEmptyArray
 						? "[ ]"
 						: getStringRepresentation(value);
+
 				if (!value) {
 				} else if (prop === "header") {
 					description = `msg_id: ${header.msg_id}`;
 				} else if (prop === "parent_header") {
 					const parentHeader = ourNode.msg
 						.parent_header as KernelMessage.IHeader<any>;
+
 					if (parentHeader && "msg_id" in parentHeader) {
 						description = `msg_id: ${parentHeader.msg_id}`;
 					}
@@ -557,6 +590,7 @@ export class ActiveKernelMessageProvider
 				) {
 					const commMsg =
 						ourNode.msg as KernelMessage.IDisplayDataMsg;
+
 					const mimes = Object.keys(commMsg.content.data);
 					tooltip = mimes.join(", ");
 					description = mimes
@@ -568,6 +602,7 @@ export class ActiveKernelMessageProvider
 								const mimeData = (commMsg.content.data[
 									mime
 								] as any) || { model_id: "" };
+
 								return `${mime}:${mimeData["model_id"]}`;
 							} else {
 								return mime;
@@ -592,42 +627,51 @@ export class ActiveKernelMessageProvider
 			});
 		} else {
 			let data = ourNode.msg;
+
 			const currentPath = ourNode.paths.join(".");
 			ourNode.paths.forEach((path) => {
 				data = (data as any)[path];
 			});
+
 			if (typeof data === "undefined" || data === null) {
 				return [];
 			}
 			const header = ourNode.msg.header as KernelMessage.IHeader<any>;
+
 			if (Array.isArray(data)) {
 				return data.map((value, index) => {
 					const hasChildren =
 						typeof value !== "undefined" &&
 						value !== null &&
 						(typeof value === "object" || Array.isArray(value));
+
 					const isEmptyObject =
 						hasChildren &&
 						!Array.isArray(value) &&
 						Object.keys(value).length === 0;
+
 					const isEmptyArray =
 						hasChildren &&
 						Array.isArray(value) &&
 						value.length === 0;
+
 					const stringValue =
 						typeof value === "string"
 							? getSingleLineValue(value)
 							: getStringRepresentation(value);
+
 					const description = isEmptyObject
 						? "{ }"
 						: isEmptyArray
 							? "[ ]"
 							: stringValue;
+
 					const tooltip = isEmptyObject
 						? "{ }"
 						: isEmptyArray
 							? "[ ]"
 							: getStringRepresentation(value);
+
 					return <DataNode>{
 						__type: "dataNode",
 						description,
@@ -646,32 +690,39 @@ export class ActiveKernelMessageProvider
 			} else if (typeof data === "object") {
 				return Object.keys(data).map((prop) => {
 					const value = (data as any)[prop];
+
 					const hasChildren =
 						typeof value !== "undefined" &&
 						value !== null &&
 						(typeof value === "object" || Array.isArray(value));
+
 					const isEmptyObject =
 						hasChildren &&
 						!Array.isArray(value) &&
 						Object.keys(value).length === 0;
+
 					const isEmptyArray =
 						hasChildren &&
 						Array.isArray(value) &&
 						value.length === 0;
+
 					const stringValue =
 						typeof value === "string"
 							? getSingleLineValue(value)
 							: getStringRepresentation(value);
+
 					let description = isEmptyObject
 						? "{ }"
 						: isEmptyArray
 							? "[ ]"
 							: stringValue;
+
 					let tooltip = isEmptyObject
 						? "{ }"
 						: isEmptyArray
 							? "[ ]"
 							: getStringRepresentation(value);
+
 					if (
 						header.msg_type === "comm_msg" &&
 						value &&
@@ -721,6 +772,7 @@ export class ActiveKernelMessageProvider
 	}
 	getTreeItem(node: ICustomNodeFromAnotherProvider): TreeItem {
 		const ourNode = node as Node;
+
 		if (
 			ourNode.__type &&
 			(ourNode.__type === "messageNode" ||
@@ -759,6 +811,7 @@ export class ActiveKernelMessageProvider
 			return;
 		}
 		this.connections.set(connection.kernel, parent);
+
 		const anyHandler = this.onAnyMessageHandler.bind(this, parent);
 		connection.kernel.anyMessage.connect(anyHandler, this);
 		this.disposables.push(
@@ -796,17 +849,22 @@ export class ActiveKernelMessageProvider
 		args: IAnyMessageArgs,
 	) {
 		root = root || this.connections.get(connection);
+
 		if (args.direction === "recv" && args.msg.channel === "iopub") {
 			// These messages are handled by the iopub handler.
 			return;
 		}
 		const { messages, requestsById } = this.getConnectionInfo(connection);
+
 		const label = `${args.msg.channel}.${args.msg.header.msg_type}`;
+
 		const description = args.msg.header.msg_id;
+
 		const parentId =
 			"msg_id" in args.msg.parent_header
 				? args.msg.parent_header.msg_id
 				: "";
+
 		const message: MessageNode = {
 			__type: "messageNode",
 			direction: args.direction,
@@ -819,16 +877,19 @@ export class ActiveKernelMessageProvider
 			msg: args.msg,
 			type: "customNodeFromAnotherProvider",
 		};
+
 		const info =
 			requestsById.get(args.msg.header.msg_id) ||
 			requestsById.get(parentId);
 		messages.push(message);
+
 		if (info) {
 			message.parent = info.parent;
 			info.children.push(message);
 			this._onDidChangeTreeData.fire(info.parent);
 		} else {
 			message.isTopLevelMessage = true;
+
 			if (
 				args.direction === "send" &&
 				!requestsById.has(args.msg.header.msg_id)
@@ -850,11 +911,16 @@ export class ActiveKernelMessageProvider
 		args: IIOPubMessage<IOPubMessageType>,
 	) {
 		root = root || this.connections.get(connection);
+
 		const { messages, requestsById } = this.getConnectionInfo(connection);
+
 		const label = `${args.channel}.${args.header.msg_type}`;
+
 		const description = args.header.msg_id;
+
 		const parentId =
 			"msg_id" in args.parent_header ? args.parent_header.msg_id : "";
+
 		const message: MessageNode = {
 			__type: "messageNode",
 			direction: "recv",
@@ -867,15 +933,18 @@ export class ActiveKernelMessageProvider
 			msg: args,
 			type: "customNodeFromAnotherProvider",
 		};
+
 		const info =
 			requestsById.get(args.header.msg_id) || requestsById.get(parentId);
 		messages.push(message);
+
 		if (info) {
 			message.parent = info.parent;
 			info.children.push(message);
 			this._onDidChangeTreeData.fire(info.parent);
 		} else {
 			message.isTopLevelMessage = true;
+
 			if (root) {
 				this._onDidChangeTreeData.fire(root);
 			}
@@ -887,11 +956,16 @@ export class ActiveKernelMessageProvider
 		args: IMessage<MessageType>,
 	) {
 		root = root || this.connections.get(connection);
+
 		const { messages, requestsById } = this.getConnectionInfo(connection);
+
 		const label = `${args.channel}.${args.header.msg_type}`;
+
 		const description = args.header.msg_id;
+
 		const parentId =
 			"msg_id" in args.parent_header ? args.parent_header.msg_id : "";
+
 		const message: MessageNode = {
 			__type: "messageNode",
 			direction: "recv",
@@ -904,15 +978,18 @@ export class ActiveKernelMessageProvider
 			msg: args,
 			type: "customNodeFromAnotherProvider",
 		};
+
 		const info =
 			requestsById.get(args.header.msg_id) || requestsById.get(parentId);
 		messages.push(message);
+
 		if (info) {
 			message.parent = info.parent;
 			info.children.push(message);
 			this._onDidChangeTreeData.fire(info.parent);
 		} else {
 			message.isTopLevelMessage = true;
+
 			if (root) {
 				this._onDidChangeTreeData.fire(root);
 			}

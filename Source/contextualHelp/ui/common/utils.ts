@@ -18,7 +18,9 @@ export function arePathsSame(path1: string, path2: string): boolean {
 
 export function extractInputText(inputCellVM: ICellViewModel): string {
 	const inputCell = inputCellVM.cell;
+
 	let source: string[] = [];
+
 	if (inputCell.data.source) {
 		source = splitMultilineString(cloneDeep(inputCell.data.source));
 	}
@@ -27,6 +29,7 @@ export function extractInputText(inputCellVM: ICellViewModel): string {
 	// Eliminate the #%% on the front if it has nothing else on the line
 	if (source.length > 0) {
 		const title = matcher.exec(source[0].trim());
+
 		if (title !== undefined && title.length <= 0) {
 			source.splice(0, 1);
 		}
@@ -64,6 +67,7 @@ export function createCellVM(inputCell: ICell): ICellViewModel {
 			: inputCell.data.cell_type === "markdown"
 				? concatMultilineString(vm.cell.data.source)
 				: "";
+
 	if (inputText) {
 		inputLinesCount = inputText.split("\n").length;
 	}
@@ -80,6 +84,7 @@ export function createEmptyCell(
 ): ICell {
 	const emptyCodeCell = createCodeCell();
 	emptyCodeCell.execution_count = executionCount ?? null;
+
 	return {
 		data: emptyCodeCell,
 		id: id,
@@ -98,8 +103,10 @@ export function getSelectedAndFocusedInfo(state: {
 		focusedCellId?: string;
 		focusedCellIndex?: number;
 	} = {};
+
 	for (let index = 0; index < state.cellVMs.length; index += 1) {
 		const cell = state.cellVMs[index];
+
 		if (cell.selected) {
 			info.selectedCellId = cell.cell.id;
 			info.selectedCellIndex = index;

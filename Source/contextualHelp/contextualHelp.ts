@@ -80,6 +80,7 @@ export class ContextualHelp
 		lineNumber: number;
 		word: string;
 		wordAtPos: string;
+
 		document: vscode.TextDocument;
 		timer?: NodeJS.Timeout;
 	};
@@ -92,21 +93,30 @@ export class ContextualHelp
 
 		// Word under cursor can be computed from the line
 		const lineNumber = editor.selection.active.line;
+
 		const line = editor.document.lineAt(editor.selection.active.line).text;
 		// Find first quote, parenthesis or space to the left
 		let start = editor.selection.active.character;
+
 		let end = editor.selection.active.character + 1;
+
 		const wordPos = editor.document.getWordRangeAtPosition(
 			editor.selection.active,
 		);
+
 		const wordAtPos = wordPos ? editor.document.getText(wordPos) : "";
+
 		let startFound = false;
+
 		let endFound = false;
+
 		while (!startFound || !endFound) {
 			const startChar = start > 0 ? line[start - 1] : " ";
+
 			const endChar = end < line.length ? line[end] : " ";
 			startFound = /[\s\(\)\[\]'"]+/.test(startChar);
 			endFound = /[\s\(\)\[\]'"]+/.test(endChar);
+
 			if (!startFound) {
 				start--;
 			}
@@ -115,6 +125,7 @@ export class ContextualHelp
 			}
 		}
 		const word = line.slice(start, end);
+
 		if (
 			this.lastHelpRequest?.code === code &&
 			(this.lastHelpRequest?.cursor_pos === cursor_pos ||
@@ -188,6 +199,7 @@ export class ContextualHelp
 		switch (message) {
 			case WindowMessages.Started:
 				break;
+
 			default:
 				break;
 		}
@@ -225,6 +237,7 @@ export class ContextualHelp
 
 					// Keep track of this unfinished cell so if we restart we can finish right away.
 					this.unfinishedCells.push(cell);
+
 					break;
 
 				case CellState.executing:
@@ -233,6 +246,7 @@ export class ContextualHelp
 						WindowMessages.UpdateCellWithExecutionResults,
 						cell,
 					);
+
 					break;
 
 				case CellState.error:
@@ -247,6 +261,7 @@ export class ContextualHelp
 					this.unfinishedCells = this.unfinishedCells.filter(
 						(c) => c.id !== cell.id,
 					);
+
 					break;
 
 				default:
@@ -272,6 +287,7 @@ export class ContextualHelp
 			this,
 		);
 		this.potentiallyUnfinishedStatus.push(result);
+
 		return result;
 	};
 
@@ -299,6 +315,7 @@ export class ContextualHelp
 				document,
 				token,
 			);
+
 			if (
 				content &&
 				content.status === "ok" &&
@@ -369,11 +386,13 @@ export class ContextualHelp
 						c.document.uri.toString() === document.uri.toString(),
 				),
 		);
+
 		if (!notebook) {
 			return;
 		}
 		const jupyterExt =
 			vscode.extensions.getExtension<Jupyter>("ms-toolsai.jupyter");
+
 		if (!jupyterExt?.isActive) {
 			return;
 		}
@@ -382,12 +401,14 @@ export class ContextualHelp
 		}
 		// Determine help level
 		const config = vscode.workspace.getConfiguration("jupyter");
+
 		const detail_level =
 			config.get("contextualHelp.detailLevel", "normal") === "normal"
 				? 0
 				: 1;
 
 		const kernel = await jupyterExt.exports.kernels.getKernel(notebook.uri);
+
 		if (!kernel || token.isCancellationRequested) {
 			return;
 		}
@@ -397,6 +418,7 @@ export class ContextualHelp
 		}
 
 		let promise: Promise<IInspectReplyMsg["content"] | undefined>;
+
 		if (kernel?.language === "python") {
 			// This is more efficient as we can run the code in a background thread.
 			const codeToExecute = `return get_ipython().kernel.do_inspect("${escapeStringToEmbedInPythonCode(
@@ -409,6 +431,7 @@ export class ContextualHelp
 			);
 		} else {
 			const oldKernel = await this.getKernel(notebook);
+
 			if (!oldKernel?.connection.kernel) {
 				return;
 			}
@@ -418,12 +441,14 @@ export class ContextualHelp
 		}
 
 		this.pendingRequests.set(kernel, promise);
+
 		const content = await promise
 			.catch((ex) => {
 				console.error(
 					`Failed to inspect for ${code} @ ${cursor_pos} in ${notebook.uri}`,
 					ex,
 				);
+
 				return;
 			})
 			.finally(() => {
@@ -461,10 +486,12 @@ export class ContextualHelp
 	) {
 		// Find the matching text editor for the cell we just switched to
 		const cell = e.notebookEditor.notebook.cellAt(e.selections[0].start);
+
 		if (cell) {
 			const editor = vscode.window.visibleTextEditors.find(
 				(e) => e.document === cell.document,
 			);
+
 			if (editor) {
 				this.showHelp(editor);
 			}
@@ -488,6 +515,7 @@ export class ContextualHelp
 				vscode.extensions.getExtension<JupyterAPI>(
 					"ms-toolsai.jupyter",
 				);
+
 			if (extension) {
 				await extension.activate();
 				this.kernelService = await extension.exports.getKernelService();

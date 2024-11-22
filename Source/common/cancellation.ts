@@ -44,6 +44,7 @@ export async function raceCancellation<T>(
 	...promises: Promise<T>[]
 ): Promise<T | undefined> {
 	let value: T | undefined;
+
 	if (isPromiseLike(defaultValue)) {
 		promises.push(defaultValue as unknown as Promise<T>);
 		value = undefined;
@@ -100,7 +101,9 @@ export async function raceCancellationError<T>(
  */
 export function wrapCancellationTokens(...tokens: CancellationToken[]) {
 	const wrappedCancellationToken = new CancellationTokenSource();
+
 	const disposables: IDisposable[] = [];
+
 	for (const token of tokens) {
 		if (!token) {
 			continue;
@@ -121,6 +124,7 @@ export function wrapCancellationTokens(...tokens: CancellationToken[]) {
 		oldDispose();
 		disposables.forEach((d) => d.dispose());
 	};
+
 	return wrappedCancellationToken;
 }
 

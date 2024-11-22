@@ -43,6 +43,7 @@ export function createCodeCell(
 ): nbformat.ICodeCell {
 	const magicCommandsAsComments =
 		typeof options === "boolean" ? options : false;
+
 	const outputs = typeof options === "boolean" ? [] : options || [];
 	code = code || "";
 	// If we get a string, then no need to append line feeds. Leave as is (to preserve existing functionality).
@@ -53,6 +54,7 @@ export function createCodeCell(
 				magicCommandsAsComments ? uncommentMagicCommands : undefined,
 			)
 		: code;
+
 	return {
 		cell_type: "code",
 		execution_count: null,
@@ -74,11 +76,13 @@ export function cloneCell<T extends nbformat.IBaseCell>(cell: T): T {
 	// Construct the cell by hand so we drop unwanted/unrecognized properties from cells.
 	// This way, the cell contains only the attributes that are valid (supported type).
 	const clonedCell = cloneDeep(cell);
+
 	const source =
 		Array.isArray(clonedCell.source) ||
 		typeof clonedCell.source === "string"
 			? clonedCell.source
 			: "";
+
 	switch (cell.cell_type) {
 		case "code": {
 			const codeCell: nbformat.ICodeCell = {
@@ -150,6 +154,7 @@ export function createCellFrom(
 			const codeCell = baseCell as any as nbformat.ICodeCell;
 			codeCell.execution_count = null;
 			codeCell.outputs = [];
+
 			return codeCell;
 		}
 		case "markdown": {

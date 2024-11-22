@@ -6,6 +6,7 @@ export function splitLines(
 	},
 ): string[] {
 	let lines = str.split(/\r?\n/g);
+
 	if (splitOptions && splitOptions.trim) {
 		lines = lines.map((line) => line.trim());
 	}

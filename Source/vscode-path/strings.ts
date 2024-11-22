@@ -31,6 +31,7 @@ export function format(value: string, ...args: any[]): string {
 	}
 	return value.replace(_formatRegexp, function (match, group) {
 		const idx = parseInt(group, 10);
+
 		return isNaN(idx) || idx < 0 || idx >= args.length ? match : args[idx];
 	});
 }
@@ -60,10 +61,13 @@ export function escape(html: string): string {
 		switch (match) {
 			case "<":
 				return "&lt;";
+
 			case ">":
 				return "&gt;";
+
 			case "&":
 				return "&amp;";
+
 			default:
 				return match;
 		}
@@ -82,7 +86,9 @@ export function escapeRegExpCharacters(value: string): string {
  */
 export function count(value: string, character: string): number {
 	let result = 0;
+
 	const ch = character.charCodeAt(0);
+
 	for (let i = value.length - 1; i >= 0; i--) {
 		if (value.charCodeAt(i) === ch) {
 			result++;
@@ -110,6 +116,7 @@ export function truncate(
  */
 export function trim(haystack: string, needle: string = " "): string {
 	const trimmed = ltrim(haystack, needle);
+
 	return rtrim(trimmed, needle);
 }
 
@@ -124,6 +131,7 @@ export function ltrim(haystack: string, needle: string): string {
 	}
 
 	const needleLen = needle.length;
+
 	if (needleLen === 0 || haystack.length === 0) {
 		return haystack;
 	}
@@ -158,6 +166,7 @@ export function rtrim(haystack: string, needle: string): string {
 
 	while (true) {
 		idx = haystack.lastIndexOf(needle, offset - 1);
+
 		if (idx === -1 || idx + needleLen !== offset) {
 			break;
 		}
@@ -208,6 +217,7 @@ export function createRegExp(
 		}
 	}
 	let modifiers = "";
+
 	if (options.global) {
 		modifiers += "g";
 	}
@@ -239,6 +249,7 @@ export function regExpLeadsToEndlessLoop(regexp: RegExp): boolean {
 	// We check against an empty string. If the regular expression doesn't advance
 	// (e.g. ends in an endless loop) it will match an empty string.
 	const match = regexp.exec("");
+
 	return !!(match && regexp.lastIndex === 0);
 }
 
@@ -266,6 +277,7 @@ export function splitLines(str: string): string[] {
 export function firstNonWhitespaceIndex(str: string): number {
 	for (let i = 0, len = str.length; i < len; i++) {
 		const chCode = str.charCodeAt(i);
+
 		if (chCode !== CharCode.Space && chCode !== CharCode.Tab) {
 			return i;
 		}
@@ -284,6 +296,7 @@ export function getLeadingWhitespace(
 ): string {
 	for (let i = start; i < end; i++) {
 		const chCode = str.charCodeAt(i);
+
 		if (chCode !== CharCode.Space && chCode !== CharCode.Tab) {
 			return str.substring(start, i);
 		}
@@ -301,6 +314,7 @@ export function lastNonWhitespaceIndex(
 ): number {
 	for (let i = startIndex; i >= 0; i--) {
 		const chCode = str.charCodeAt(i);
+
 		if (chCode !== CharCode.Space && chCode !== CharCode.Tab) {
 			return i;
 		}
@@ -328,7 +342,9 @@ export function compareSubstring(
 ): number {
 	for (; aStart < aEnd && bStart < bEnd; aStart++, bStart++) {
 		let codeA = a.charCodeAt(aStart);
+
 		let codeB = b.charCodeAt(bStart);
+
 		if (codeA < codeB) {
 			return -1;
 		} else if (codeA > codeB) {
@@ -336,7 +352,9 @@ export function compareSubstring(
 		}
 	}
 	const aLen = aEnd - aStart;
+
 	const bLen = bEnd - bStart;
+
 	if (aLen < bLen) {
 		return -1;
 	} else if (aLen > bLen) {
@@ -359,6 +377,7 @@ export function compareSubstringIgnoreCase(
 ): number {
 	for (; aStart < aEnd && bStart < bEnd; aStart++, bStart++) {
 		let codeA = a.charCodeAt(aStart);
+
 		let codeB = b.charCodeAt(bStart);
 
 		if (codeA === codeB) {
@@ -389,6 +408,7 @@ export function compareSubstringIgnoreCase(
 
 		// compare both code points
 		const diff = codeA - codeB;
+
 		if (diff === 0) {
 			continue;
 		}
@@ -397,6 +417,7 @@ export function compareSubstringIgnoreCase(
 	}
 
 	const aLen = aEnd - aStart;
+
 	const bLen = bEnd - bStart;
 
 	if (aLen < bLen) {
@@ -422,6 +443,7 @@ export function equalsIgnoreCase(a: string, b: string): boolean {
 
 export function startsWithIgnoreCase(str: string, candidate: string): boolean {
 	const candidateLength = candidate.length;
+
 	if (candidate.length > str.length) {
 		return false;
 	}
@@ -453,6 +475,7 @@ export function commonSuffixLength(a: string, b: string): number {
 		len = Math.min(a.length, b.length);
 
 	const aLastIndex = a.length - 1;
+
 	const bLastIndex = b.length - 1;
 
 	for (i = 0; i < len; i++) {
@@ -497,8 +520,10 @@ export function getNextCodePoint(
 	offset: number,
 ): number {
 	const charCode = str.charCodeAt(offset);
+
 	if (isHighSurrogate(charCode) && offset + 1 < len) {
 		const nextCharCode = str.charCodeAt(offset + 1);
+
 		if (isLowSurrogate(nextCharCode)) {
 			return computeCodePoint(charCode, nextCharCode);
 		}
@@ -511,8 +536,10 @@ export function getNextCodePoint(
  */
 function getPrevCodePoint(str: string, offset: number): number {
 	const charCode = str.charCodeAt(offset - 1);
+
 	if (isLowSurrogate(charCode) && offset > 1) {
 		const prevCharCode = str.charCodeAt(offset - 2);
+
 		if (isHighSurrogate(prevCharCode)) {
 			return computeCodePoint(prevCharCode, charCode);
 		}
@@ -543,6 +570,7 @@ export class CodePointIterator {
 		const codePoint = getPrevCodePoint(this._str, this._offset);
 		this._offset -=
 			codePoint >= Constants.UNICODE_SUPPLEMENTARY_PLANE_BEGIN ? 2 : 1;
+
 		return codePoint;
 	}
 
@@ -550,6 +578,7 @@ export class CodePointIterator {
 		const codePoint = getNextCodePoint(this._str, this._len, this._offset);
 		this._offset +=
 			codePoint >= Constants.UNICODE_SUPPLEMENTARY_PLANE_BEGIN ? 2 : 1;
+
 		return codePoint;
 	}
 
@@ -571,18 +600,23 @@ export class GraphemeIterator {
 
 	public nextGraphemeLength(): number {
 		const graphemeBreakTree = GraphemeBreakTree.getInstance();
+
 		const iterator = this._iterator;
+
 		const initialOffset = iterator.offset;
 
 		let graphemeBreakType = graphemeBreakTree.getGraphemeBreakType(
 			iterator.nextCodePoint(),
 		);
+
 		while (!iterator.eol()) {
 			const offset = iterator.offset;
+
 			const nextGraphemeBreakType =
 				graphemeBreakTree.getGraphemeBreakType(
 					iterator.nextCodePoint(),
 				);
+
 			if (
 				breakBetweenGraphemeBreakType(
 					graphemeBreakType,
@@ -591,6 +625,7 @@ export class GraphemeIterator {
 			) {
 				// move iterator back
 				iterator.setOffset(offset);
+
 				break;
 			}
 			graphemeBreakType = nextGraphemeBreakType;
@@ -600,18 +635,23 @@ export class GraphemeIterator {
 
 	public prevGraphemeLength(): number {
 		const graphemeBreakTree = GraphemeBreakTree.getInstance();
+
 		const iterator = this._iterator;
+
 		const initialOffset = iterator.offset;
 
 		let graphemeBreakType = graphemeBreakTree.getGraphemeBreakType(
 			iterator.prevCodePoint(),
 		);
+
 		while (iterator.offset > 0) {
 			const offset = iterator.offset;
+
 			const prevGraphemeBreakType =
 				graphemeBreakTree.getGraphemeBreakType(
 					iterator.prevCodePoint(),
 				);
+
 			if (
 				breakBetweenGraphemeBreakType(
 					prevGraphemeBreakType,
@@ -620,6 +660,7 @@ export class GraphemeIterator {
 			) {
 				// move iterator back
 				iterator.setOffset(offset);
+
 				break;
 			}
 			graphemeBreakType = prevGraphemeBreakType;
@@ -634,11 +675,13 @@ export class GraphemeIterator {
 
 export function nextCharLength(str: string, initialOffset: number): number {
 	const iterator = new GraphemeIterator(str, initialOffset);
+
 	return iterator.nextGraphemeLength();
 }
 
 export function prevCharLength(str: string, initialOffset: number): number {
 	const iterator = new GraphemeIterator(str, initialOffset);
+
 	return iterator.prevGraphemeLength();
 }
 
@@ -650,7 +693,9 @@ export function getCharContainingOffset(
 		offset--;
 	}
 	const endOffset = offset + nextCharLength(str, offset);
+
 	const startOffset = endOffset - prevCharLength(str, endOffset);
+
 	return [startOffset, endOffset];
 }
 
@@ -761,7 +806,9 @@ export function lcut(text: string, n: number) {
 	}
 
 	const re = /\b/g;
+
 	let i = 0;
+
 	while (re.test(text)) {
 		if (text.length - re.lastIndex < n) {
 			break;
@@ -816,12 +863,16 @@ export function fuzzyContains(target: string, query: string): boolean {
 	}
 
 	const queryLen = query.length;
+
 	const targetLower = target.toLowerCase();
 
 	let index = 0;
+
 	let lastIndexOf = -1;
+
 	while (index < queryLen) {
 		const indexOf = targetLower.indexOf(query[index], lastIndexOf + 1);
+
 		if (indexOf < 0) {
 			return false;
 		}
@@ -859,6 +910,7 @@ export function getNLines(str: string, n = 1): string {
 	}
 
 	let idx = -1;
+
 	do {
 		idx = str.indexOf("\n", idx + 1);
 		n--;
@@ -894,6 +946,7 @@ export function singleLetterHash(n: number): string {
 
 export function getGraphemeBreakType(codePoint: number): GraphemeBreakType {
 	const graphemeBreakTree = GraphemeBreakTree.getInstance();
+
 	return graphemeBreakTree.getGraphemeBreakType(codePoint);
 }
 
@@ -1064,8 +1117,11 @@ class GraphemeBreakTree {
 		}
 
 		const data = this._data;
+
 		const nodeCount = data.length / 3;
+
 		let nodeIndex = 1;
+
 		while (nodeIndex <= nodeCount) {
 			if (codePoint < data[3 * nodeIndex]) {
 				// go left
@@ -1103,6 +1159,7 @@ export function getLeftDeleteOffset(offset: number, str: string): number {
 
 	// Try to delete emoji part.
 	const emojiOffset = getOffsetBeforeLastEmojiComponent(offset, str);
+
 	if (emojiOffset !== undefined) {
 		return emojiOffset;
 	}
@@ -1110,6 +1167,7 @@ export function getLeftDeleteOffset(offset: number, str: string): number {
 	// Otherwise, just skip a single code point.
 	const iterator = new CodePointIterator(str, offset);
 	iterator.prevCodePoint();
+
 	return iterator.offset;
 }
 
@@ -1120,6 +1178,7 @@ function getOffsetBeforeLastEmojiComponent(
 	// See https://www.unicode.org/reports/tr51/tr51-14.html#EBNF_and_Regex for the
 	// structure of emojis.
 	const iterator = new CodePointIterator(str, initialOffset);
+
 	let codePoint = iterator.prevCodePoint();
 
 	// Skip modifiers
@@ -1148,6 +1207,7 @@ function getOffsetBeforeLastEmojiComponent(
 		// In theory, we should check if that ZWJ actually combines multiple emojis
 		// to prevent deleting ZWJs in situations we didn't account for.
 		const optionalZwjCodePoint = iterator.prevCodePoint();
+
 		if (optionalZwjCodePoint === CodePoint.zwj) {
 			resultOffset = iterator.offset;
 		}
@@ -1196,6 +1256,7 @@ export class AmbiguousCharacters {
 	>((locales) => {
 		function arrayToMap(arr: number[]): Map<number, number> {
 			const result = new Map<number, number>();
+
 			for (let i = 0; i < arr.length; i += 2) {
 				result.set(arr[i], arr[i + 1]);
 			}
@@ -1207,6 +1268,7 @@ export class AmbiguousCharacters {
 			map2: Map<number, number>,
 		): Map<number, number> {
 			const result = new Map<number, number>(map1);
+
 			for (const [key, value] of map2) {
 				result.set(key, value);
 			}
@@ -1221,6 +1283,7 @@ export class AmbiguousCharacters {
 				return map2;
 			}
 			const result = new Map<number, number>();
+
 			for (const [key, value] of map1) {
 				if (map2.has(key)) {
 					result.set(key, value);
@@ -1234,17 +1297,20 @@ export class AmbiguousCharacters {
 		let filteredLocales = locales.filter(
 			(l) => !l.startsWith("_") && l in data,
 		);
+
 		if (filteredLocales.length === 0) {
 			filteredLocales = ["_default"];
 		}
 
 		let languageSpecificMap: Map<number, number> | undefined = undefined;
+
 		for (const locale of filteredLocales) {
 			const map = arrayToMap(data[locale]);
 			languageSpecificMap = intersectMaps(languageSpecificMap, map);
 		}
 
 		const commonMap = arrayToMap(data["_common"]);
+
 		const map = mergeMaps(commonMap, languageSpecificMap!);
 
 		return new AmbiguousCharacters(map);

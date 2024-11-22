@@ -56,6 +56,7 @@ export namespace Creation {
 			cellId: arg.payload.data.newCellId,
 			cursorPos: CursorPos.Current,
 		});
+
 		return arg.prevState;
 	}
 
@@ -70,6 +71,7 @@ export namespace Creation {
 			cellId: arg.payload.data.newCellId,
 			cursorPos: CursorPos.Current,
 		});
+
 		return arg.prevState;
 	}
 
@@ -84,6 +86,7 @@ export namespace Creation {
 			cellId: arg.payload.data.newCellId,
 			cursorPos: CursorPos.Current,
 		});
+
 		return arg.prevState;
 	}
 
@@ -101,6 +104,7 @@ export namespace Creation {
 			cellId: arg.payload.data.newCellId,
 			cursorPos: CursorPos.Current,
 		});
+
 		return arg.prevState;
 	}
 
@@ -108,12 +112,14 @@ export namespace Creation {
 		arg: NativeEditorReducerArg<ICellAction & { vm: ICellViewModel }>,
 	): IMainState {
 		const newList = [...arg.prevState.cellVMs];
+
 		const newVM = arg.payload.data.vm;
 
 		// Find the position where we want to insert
 		let position = arg.prevState.cellVMs.findIndex(
 			(c) => c.cell.id === arg.payload.data.cellId,
 		);
+
 		if (position >= 0) {
 			newList.splice(position, 0, newVM);
 		} else {
@@ -137,6 +143,7 @@ export namespace Creation {
 		arg: NativeEditorReducerArg<ICellAction & { cell: ICell }>,
 	): IMainState {
 		const newVM = prepareCellVM(arg.payload.data.cell);
+
 		return insertAbove({
 			...arg,
 			payload: {
@@ -155,6 +162,7 @@ export namespace Creation {
 		const newVM = prepareCellVM(
 			createEmptyCell(arg.payload.data.newCellId, null),
 		);
+
 		return insertAbove({
 			...arg,
 			payload: {
@@ -188,12 +196,14 @@ export namespace Creation {
 		>,
 	): IMainState {
 		const newVM = prepareCellVM(arg.payload.data.cell);
+
 		const newList = [...arg.prevState.cellVMs];
 
 		// Find the position where we want to insert
 		let position = arg.prevState.cellVMs.findIndex(
 			(c) => c.cell.id === arg.payload.data.cellId,
 		);
+
 		if (position >= 0) {
 			position += 1;
 			newList.splice(position, 0, newVM);
@@ -313,10 +323,12 @@ export namespace Creation {
 		const index = arg.prevState.cellVMs.findIndex(
 			(c) => c.cell.id === arg.payload.data.id,
 		);
+
 		if (index >= 0) {
 			const newVM = { ...arg.prevState.cellVMs[index] };
 			arg.payload.data.changes.forEach((c) => {
 				const source = newVM.inputBlockText;
+
 				const before = source.slice(0, c.rangeOffset);
 				// eslint-disable-next-line @typescript-eslint/restrict-plus-operands
 				const after = source.slice(c.rangeOffset + c.rangeLength);
@@ -324,6 +336,7 @@ export namespace Creation {
 			});
 			newVM.cell.data.source = splitMultilineString(newVM.inputBlockText);
 			newVM.cursorPos = arg.payload.data.changes[0].position;
+
 			const newVMs = [...arg.prevState.cellVMs];
 			newVMs[index] = Helpers.asCellViewModel(newVM);
 			// When editing, make sure we focus the edited cell (otherwise undo looks weird because it undoes a non focused cell)
@@ -346,6 +359,7 @@ export namespace Creation {
 		arg: NativeEditorReducerArg<ICellAction>,
 	): IMainState {
 		const cells = arg.prevState.cellVMs;
+
 		if (
 			cells.length === 1 &&
 			cells[0].cell.id === arg.payload.data.cellId
@@ -377,20 +391,24 @@ export namespace Creation {
 			const index = arg.prevState.cellVMs.findIndex(
 				(c) => c.cell.id === arg.payload.data.cellId,
 			);
+
 			if (index >= 0) {
 				// Recompute select/focus if this item has either
 				const previousSelection = getSelectedAndFocusedInfo(
 					arg.prevState,
 				);
+
 				const newVMs = [
 					...arg.prevState.cellVMs.filter(
 						(c) => c.cell.id !== arg.payload.data.cellId,
 					),
 				];
+
 				const nextOrPrev =
 					index === arg.prevState.cellVMs.length - 1
 						? index - 1
 						: index;
+
 				if (
 					previousSelection.selectedCellId ===
 						arg.payload.data.cellId ||
@@ -426,6 +444,7 @@ export namespace Creation {
 		arg: NativeEditorReducerArg<ILoadAllCells>,
 	): IMainState {
 		const vms = arg.payload.data.cells.map((c) => prepareCellVM(c));
+
 		return {
 			...arg.prevState,
 			busy: false,

@@ -249,10 +249,12 @@ export class ExtUri implements IExtUri {
 			return resource;
 		}
 		let dirname;
+
 		if (resource.scheme === Schemas.file) {
 			dirname = URI.file(paths.dirname(originalFSPath(resource))).path;
 		} else {
 			dirname = paths.posix.dirname(resource.path);
+
 			if (
 				resource.authority &&
 				dirname.length &&
@@ -274,6 +276,7 @@ export class ExtUri implements IExtUri {
 			return resource;
 		}
 		let normalizedPath: string;
+
 		if (resource.scheme === Schemas.file) {
 			normalizedPath = URI.file(
 				paths.normalize(originalFSPath(resource)),
@@ -298,13 +301,16 @@ export class ExtUri implements IExtUri {
 				originalFSPath(from),
 				originalFSPath(to),
 			);
+
 			return isWindows ? extpath.toSlashes(relativePath) : relativePath;
 		}
 		let fromPath = from.path || "/",
 			toPath = to.path || "/";
+
 		if (this._ignorePathCasing(from)) {
 			// make casing of fromPath match toPath
 			let i = 0;
+
 			for (
 				const len = Math.min(fromPath.length, toPath.length);
 				i < len;
@@ -327,6 +333,7 @@ export class ExtUri implements IExtUri {
 	resolvePath(base: URI, path: string): URI {
 		if (base.scheme === Schemas.file) {
 			const newURI = URI.file(paths.resolve(originalFSPath(base), path));
+
 			return base.with({
 				authority: newURI.authority,
 				path: newURI.path,
@@ -354,12 +361,14 @@ export class ExtUri implements IExtUri {
 	hasTrailingPathSeparator(resource: URI, sep: string = paths.sep): boolean {
 		if (resource.scheme === Schemas.file) {
 			const fsp = originalFSPath(resource);
+
 			return (
 				fsp.length > extpath.getRoot(fsp).length &&
 				fsp[fsp.length - 1] === sep
 			);
 		} else {
 			const p = resource.path;
+
 			return (
 				p.length > 1 &&
 				p.charCodeAt(p.length - 1) === CharCode.Slash &&
@@ -380,6 +389,7 @@ export class ExtUri implements IExtUri {
 
 	addTrailingPathSeparator(resource: URI, sep: string = paths.sep): URI {
 		let isRootSep: boolean = false;
+
 		if (resource.scheme === Schemas.file) {
 			const fsp = originalFSPath(resource);
 			isRootSep =
@@ -388,6 +398,7 @@ export class ExtUri implements IExtUri {
 				fsp[fsp.length - 1] === sep;
 		} else {
 			sep = "/";
+
 			const p = resource.path;
 			isRootSep =
 				p.length === 1 && p.charCodeAt(p.length - 1) === CharCode.Slash;
@@ -465,8 +476,10 @@ export function distinctParents<T>(
 	resourceAccessor: (item: T) => URI,
 ): T[] {
 	const distinctParents: T[] = [];
+
 	for (let i = 0; i < items.length; i++) {
 		const candidateResource = resourceAccessor(items[i]);
+
 		if (
 			items.some((otherItem, index) => {
 				if (index === i) {
@@ -493,8 +506,11 @@ export function distinctParents<T>(
  */
 export namespace DataUri {
 	export const META_DATA_LABEL = "label";
+
 	export const META_DATA_DESCRIPTION = "description";
+
 	export const META_DATA_SIZE = "size";
+
 	export const META_DATA_MIME = "mime";
 
 	export function parseMetaData(dataUri: URI): Map<string, string> {
@@ -508,6 +524,7 @@ export namespace DataUri {
 		);
 		meta.split(";").forEach((property) => {
 			const [key, value] = property.split(":");
+
 			if (key && value) {
 				metadata.set(key, value);
 			}
@@ -516,6 +533,7 @@ export namespace DataUri {
 		// Given a URI of:  data:image/png;size:2313;label:SomeLabel;description:SomeDescription;base64,77+9UE5...
 		// the mime is: image/png
 		const mime = dataUri.path.substring(0, dataUri.path.indexOf(";"));
+
 		if (mime) {
 			metadata.set(META_DATA_MIME, mime);
 		}
@@ -531,6 +549,7 @@ export function toLocalResource(
 ): URI {
 	if (authority) {
 		let path = resource.path;
+
 		if (path && path[0] !== paths.posix.sep) {
 			path = paths.posix.sep + path;
 		}

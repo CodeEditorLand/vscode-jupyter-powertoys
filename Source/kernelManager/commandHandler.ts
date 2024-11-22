@@ -23,6 +23,7 @@ import { IExportedKernelService, JupyterAPI } from "./vscodeJupyter";
 
 export class CommandHandler {
 	private readonly disposables: Disposable[] = [];
+
 	constructor(
 		private readonly kernelService: IExportedKernelService,
 		private readonly context: ExtensionContext,
@@ -112,8 +113,10 @@ export class CommandHandler {
 			const kernel = node.uri
 				? this.kernelService.getKernel(node.uri)
 				: undefined;
+
 			const activeKernels =
 				await this.kernelService.getKernelSpecifications(true);
+
 			const activeKernelSpecConnection =
 				kernel &&
 				activeKernels.find(
@@ -121,11 +124,13 @@ export class CommandHandler {
 						item.kind === "connectToLiveRemoteKernel" &&
 						item.kernelModel.id === kernel?.connection?.kernel?.id,
 				);
+
 			if (activeKernelSpecConnection) {
 				void commands.executeCommand(
 					"jupyter.createnewinteractive",
 					activeKernelSpecConnection,
 				);
+
 				return;
 			}
 		}
@@ -148,8 +153,10 @@ export class CommandHandler {
 			const kernel = node.uri
 				? this.kernelService.getKernel(node.uri)
 				: undefined;
+
 			const activeKernels =
 				await this.kernelService.getKernelSpecifications(true);
+
 			const activeKernelSpecConnection =
 				kernel &&
 				activeKernels.find(
@@ -157,16 +164,20 @@ export class CommandHandler {
 						item.kind === "connectToLiveRemoteKernel" &&
 						item.kernelModel.id === kernel?.connection?.kernel?.id,
 				);
+
 			if (activeKernelSpecConnection) {
 				const notebook = await commands.executeCommand(
 					"ipynb.newUntitledIpynb",
 				);
 				console.log(notebook);
+
 				return;
 			}
 		}
 		await commands.executeCommand("ipynb.newUntitledIpynb");
+
 		const nb = window.activeNotebookEditor?.notebook;
+
 		if (!nb) {
 			return;
 		}
@@ -182,6 +193,7 @@ export class CommandHandler {
 			this.kernelService.getKernelSpecifications(true),
 			this.kernelService.getActiveKernels(),
 		]);
+
 		if (
 			!activeKernels.some(
 				(item) => item.metadata.id === a.kernelConnectionMetadata.id,
@@ -189,6 +201,7 @@ export class CommandHandler {
 			!kernels.some((item) => item.id === a.kernelConnectionMetadata.id)
 		) {
 			KernelTreeView.refresh(a.parent);
+
 			return false;
 		}
 		return true;
@@ -200,6 +213,7 @@ export class CommandHandler {
 			return;
 		}
 		const kernelConnection = await this.getKernelConnection(a);
+
 		if (!kernelConnection) {
 			return;
 		}
@@ -212,6 +226,7 @@ export class CommandHandler {
 		) {
 			await kernelConnection.shutdown();
 			KernelTreeView.refresh(a.parent);
+
 			return;
 		}
 
@@ -221,16 +236,20 @@ export class CommandHandler {
 			"Yes",
 			"Yes, do not ask again",
 		);
+
 		switch (result) {
 			case "Yes, do not ask again":
 				void this.context.globalState.update(
 					"dontAskShutdownKernel",
 					true,
 				);
+
 			case "Yes":
 				await kernelConnection.shutdown();
 				KernelTreeView.refresh(a.parent);
+
 				break;
+
 			default:
 				break;
 		}
@@ -242,17 +261,20 @@ export class CommandHandler {
 			return;
 		}
 		const kernelConnection = await this.getKernelConnection(a);
+
 		if (!kernelConnection) {
 			return;
 		}
 		if (a.uri) {
 			void commands.executeCommand("jupyter.restartkernel", a.uri);
+
 			return;
 		}
 		if (
 			this.context.globalState.get<boolean>("dontAskRestartKernel", false)
 		) {
 			void kernelConnection.restart();
+
 			return;
 		}
 
@@ -262,15 +284,19 @@ export class CommandHandler {
 			"Restart",
 			"Yes, Don't Ask Again",
 		);
+
 		switch (result) {
 			case "Yes, Don't Ask Again":
 				void this.context.globalState.update(
 					"dontAskRestartKernel",
 					true,
 				);
+
 			case "Restart":
 				void kernelConnection.restart();
+
 				break;
+
 			default:
 				break;
 		}
@@ -282,6 +308,7 @@ export class CommandHandler {
 			return;
 		}
 		const kernelConnection = await this.getKernelConnection(a);
+
 		try {
 			if (kernelConnection) {
 				await kernelConnection.interrupt();
@@ -319,10 +346,12 @@ export class CommandHandler {
 				a.uri
 			) {
 				const kernel = this.kernelService.getKernel(a.uri);
+
 				if (kernel) {
 					return kernel.connection.kernel;
 				}
 				KernelTreeView.refresh(a.parent);
+
 				return;
 			}
 			try {
@@ -330,15 +359,18 @@ export class CommandHandler {
 				const workspaceFolder = workspace.workspaceFolders?.length
 					? workspace.workspaceFolders[0].uri
 					: this.context.extensionUri;
+
 				const filePath = path.join(
 					workspaceFolder.fsPath,
 					a.kernelConnectionMetadata.id,
 					iPyNbNameToTemporarilyStartKernel,
 				);
+
 				const kernel = await this.kernelService.startKernel(
 					a.kernelConnectionMetadata,
 					Uri.file(filePath),
 				);
+
 				return kernel.kernel;
 			} catch (ex) {
 				console.error("Failed to shutdown kernel", ex);

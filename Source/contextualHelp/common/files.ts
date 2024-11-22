@@ -9,6 +9,7 @@ const globPromise: (
 	pat: string,
 	options?: { cwd: string; dot?: boolean },
 ) => Promise<string[]> = promisify(glob);
+
 const ENCODING = "utf8";
 
 async function localPathExists(
@@ -19,6 +20,7 @@ async function localPathExists(
 	fileType?: vscode.FileType,
 ): Promise<boolean> {
 	let stat: vscode.FileStat;
+
 	try {
 		// Note that we are using stat() rather than lstat().  This
 		// means that any symlinks are getting resolved.
@@ -29,6 +31,7 @@ async function localPathExists(
 			return false;
 		}
 		logError(`stat() failed for "${filename}"`, err);
+
 		return false;
 	}
 
@@ -49,6 +52,7 @@ export async function searchLocal(
 ): Promise<string[]> {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let options: any;
+
 	if (cwd) {
 		options = { ...options, cwd };
 	}
@@ -57,6 +61,7 @@ export async function searchLocal(
 	}
 
 	const found = await globPromise(globPattern, options);
+
 	return Array.isArray(found) ? found : [];
 }
 
@@ -70,17 +75,21 @@ export async function localFileExists(filename: string): Promise<boolean> {
 
 export async function readFile(uri: vscode.Uri): Promise<string> {
 	const result = await vscode.workspace.fs.readFile(uri);
+
 	const data = Buffer.from(result);
+
 	return data.toString(ENCODING);
 }
 
 export async function readLocalFile(filename: string): Promise<string> {
 	const uri = vscode.Uri.file(filename);
+
 	return readFile(uri);
 }
 
 export async function getFiles(dir: vscode.Uri): Promise<vscode.Uri[]> {
 	const files = await vscode.workspace.fs.readDirectory(dir);
+
 	return files
 		.filter((f) => f[1] === vscode.FileType.File)
 		.map((f) => vscode.Uri.file(f[0]));

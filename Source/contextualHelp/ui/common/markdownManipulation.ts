@@ -35,15 +35,22 @@ export function fixLatex(input: string, wrapSingles: boolean = false): string {
 	while (start < input.length) {
 		// Check $$, $ and begin
 		const dollars = /\$\$/.exec(input.substr(start));
+
 		const dollar = /\$/.exec(input.substr(start));
+
 		const begin = /\\begin\{([a-z,\*]+)\}/.exec(input.substr(start));
+
 		let endRegex = /\$\$/;
+
 		let endRegexLength = 2;
 
 		// Pick the first that matches
 		let match = dollars;
+
 		let isBeginMatch = false;
+
 		const isDollarsMatch = dollars?.index === dollar?.index;
+
 		if (!match || (dollar && dollar.index < match.index)) {
 			match = dollar;
 			endRegex = /\$/;
@@ -63,9 +70,12 @@ export function fixLatex(input: string, wrapSingles: boolean = false): string {
 			if (isBeginMatch) {
 				// Begin match is a little more complicated.
 				const offset = match.index + start;
+
 				const end = endRegex.exec(input.substr(start));
+
 				if (end) {
 					const prefix = input.substr(start, match.index);
+
 					const wrapped = input.substr(
 						offset,
 						endRegexLength + end.index - match.index,
@@ -79,10 +89,14 @@ export function fixLatex(input: string, wrapSingles: boolean = false): string {
 			} else if (isDollarsMatch) {
 				// Output till the next $$
 				const offset = match.index + 2 + start;
+
 				const endDollar = endRegex.exec(input.substr(offset));
+
 				if (endDollar) {
 					const length = endDollar.index + 2;
+
 					const before = input.substr(start, offset - start);
+
 					const after = input.substr(offset, length);
 					output.push(`${before}${after}`);
 					start = offset + length;
@@ -93,10 +107,14 @@ export function fixLatex(input: string, wrapSingles: boolean = false): string {
 			} else {
 				// Output till the next $ (wrapping in an extra $ so it works with latex cells too)
 				const offset = match.index + 1 + start;
+
 				const endDollar = endRegex.exec(input.substr(offset));
+
 				if (endDollar) {
 					const length = endDollar.index + 1;
+
 					const before = input.substr(start, offset - start);
+
 					const after = input.substr(offset, length);
 					output.push(
 						wrapSingles
@@ -122,20 +140,24 @@ export function fixLatex(input: string, wrapSingles: boolean = false): string {
 // Look for HTML 'A' tags to replace them with the Markdown format
 export function fixLinks(input: string): string {
 	let linkStartIndex = input.indexOf("<a");
+
 	while (linkStartIndex !== -1) {
 		const linkEnd = "</a>";
+
 		const linkEndIndex = input.indexOf(linkEnd, linkStartIndex);
 
 		if (linkEndIndex !== -1) {
 			const hferIndex = input.indexOf("href", linkStartIndex);
 
 			const quoteSearch1 = input.indexOf("'", hferIndex);
+
 			const urlStartIndex =
 				quoteSearch1 === -1
 					? input.indexOf('"', hferIndex)
 					: quoteSearch1;
 
 			const quoteSearch2 = input.indexOf("'", urlStartIndex + 1);
+
 			const urlEndIndex =
 				quoteSearch2 === -1
 					? input.indexOf('"', urlStartIndex + 1)

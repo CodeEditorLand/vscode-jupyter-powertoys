@@ -21,6 +21,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	}
 	await activateKernelManagement(context);
 	await activateKernelSpy(context);
+
 	if (
 		vscode.workspace
 			.getConfiguration("jupyter")

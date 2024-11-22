@@ -105,6 +105,7 @@ function argNotebookCell(args: any): vscode.NotebookCell | undefined {
 	}
 
 	log("Non-NotebookCell passed to cell based notebook group function");
+
 	return undefined;
 }
 
@@ -118,6 +119,7 @@ function executeGroup(
 	// If we didn't get a cell passed in, just take the active documents
 	if (!doc) {
 		doc = vscode.window.activeNotebookEditor?.notebook;
+
 		doc || log("Execute group called without a valid document to execute");
 	}
 
@@ -154,6 +156,7 @@ function addToGroup(
 	// If we were not passed in a cell, look for one
 	if (!notebookCell) {
 		notebookCell = getCurrentActiveCell();
+
 		if (!notebookCell) {
 			return;
 		}
@@ -173,6 +176,7 @@ function removeFromGroup(
 	// If we were not passed in a cell, look for one
 	if (!notebookCell) {
 		notebookCell = getCurrentActiveCell();
+
 		if (!notebookCell) {
 			return;
 		}
@@ -207,6 +211,7 @@ function removeGroupFromCustomMetadata(
 	if (!currentValue.includes(targetRunGroup.toString())) {
 		// Not there, can't remove
 		log("Given run group is not present, so cannot be removed from.");
+
 		return;
 	}
 
@@ -228,6 +233,7 @@ function addGroupToCustomMetadata(
 	if (currentValue.includes(targetRunGroup.toString())) {
 		// Already there, return
 		log("Attempted to add cell to a group it is already in");
+
 		return;
 	}
 

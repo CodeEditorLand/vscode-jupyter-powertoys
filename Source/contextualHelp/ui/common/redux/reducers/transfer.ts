@@ -12,6 +12,7 @@ export namespace Transfer {
 	export function started(arg: CommonReducerArg): IMainState {
 		// Send all of our initial requests
 		postActionToExtension(arg, WindowMessages.Started);
+
 		return arg.prevState;
 	}
 
@@ -19,6 +20,7 @@ export namespace Transfer {
 		postActionToExtension(arg, WindowMessages.LoadAllCellsComplete, {
 			cells: arg.prevState.cellVMs.map((c) => c.cell),
 		});
+
 		return arg.prevState;
 	}
 }

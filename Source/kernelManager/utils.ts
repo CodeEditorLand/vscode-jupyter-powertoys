@@ -14,6 +14,7 @@ export function getDisplayPath(
 	workspaceFolders: readonly WorkspaceFolder[] | WorkspaceFolder[] = [],
 ) {
 	const relativeToHome = getDisplayPathImpl(filename);
+
 	const relativeToWorkspaceFolders = workspaceFolders.map((folder) =>
 		getDisplayPathImpl(filename, folder.uri.fsPath),
 	);
@@ -31,6 +32,7 @@ export function getDisplayPath(
 
 function getDisplayPathImpl(filename?: string | Uri, cwd?: string): string {
 	let file = "";
+
 	if (typeof filename === "string") {
 		file = filename;
 	} else if (!filename) {

@@ -26,6 +26,7 @@ export class WebviewView extends Webview implements IWebviewView {
 		return this._onDidChangeVisibility.event;
 	}
 	private readonly _onDidChangeVisibility = new EventEmitter<void>();
+
 	constructor(
 		private panelOptions: IWebviewViewOptions,
 		additionalRootPaths: Uri[] = [],

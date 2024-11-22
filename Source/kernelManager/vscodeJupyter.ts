@@ -341,10 +341,12 @@ export async function getEnvironmentTypeFromUri(
 			e.executable.uri?.fsPath?.toLowerCase() ===
 			uri.fsPath.toLowerCase(),
 	);
+
 	if (env) {
 		return getEnvironmentType(env);
 	}
 	const resolved = await api.environments.resolveEnvironment(uri.fsPath);
+
 	if (!resolved) {
 		return;
 	}
@@ -362,6 +364,7 @@ export function getCachedEnvironmentTypeFromUri(
 			e.executable.uri?.fsPath?.toLowerCase() ===
 			uri.fsPath.toLowerCase(),
 	);
+
 	if (env) {
 		return getEnvironmentType(env);
 	}
@@ -378,16 +381,19 @@ export async function getEnvironmentVersionFromUri(
 			e.executable.uri?.fsPath?.toLowerCase() ===
 			uri.fsPath.toLowerCase(),
 	);
+
 	if (env) {
 		return env.version;
 	}
 	const resolved = await api.environments.resolveEnvironment(uri.fsPath);
+
 	return resolved?.version;
 }
 export function getEnvironmentType({
 	tools,
 }: Environment | ResolvedEnvironment) {
 	tools = tools.map((tool) => tool.toLowerCase());
+
 	for (const tool of tools) {
 		if (tool === EnvironmentType.Conda.toLowerCase()) {
 			return EnvironmentType.Conda;
@@ -435,6 +441,7 @@ export async function getPythonEnvironmentName(
 			e.executable.uri?.fsPath?.toLowerCase() ===
 			uri.fsPath.toLowerCase(),
 	);
+
 	if (env) {
 		if (env.environment?.name) {
 			return env.environment.name;
@@ -446,6 +453,7 @@ export async function getPythonEnvironmentName(
 		}
 	}
 	const resolved = await api.environments.resolveEnvironment(uri.fsPath);
+
 	if (resolved) {
 		if (resolved.environment?.name) {
 			return resolved.environment.name;

@@ -15,13 +15,17 @@ export async function activate(context: ExtensionContext) {
 			return;
 		}
 		activated = true;
+
 		const jupyterExt =
 			extensions.getExtension<JupyterAPI>("ms-toolsai.jupyter");
+
 		if (!jupyterExt) {
 			return;
 		}
 		await jupyterExt.activate();
+
 		const kernelService = await jupyterExt.exports.getKernelService();
+
 		if (!kernelService) {
 			return;
 		}
@@ -45,6 +49,7 @@ export async function activate(context: ExtensionContext) {
 		workspace.getConfiguration("jupyter").get("kernelManagement.enabled")
 	) {
 		await activateFeature();
+
 		return;
 	}
 	workspace.onDidChangeConfiguration(

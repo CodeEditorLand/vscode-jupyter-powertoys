@@ -20,8 +20,11 @@ export async function execCodeInBackgroundThread<T>(
 ) {
 	const counter = executionCounters.get(kernel) || 0;
 	executionCounters.set(kernel, counter + 1);
+
 	const mime = `application/vnd.vscode.bg.execution.${counter}`;
+
 	const mimeFinalResult = `application/vnd.vscode.bg.execution.${counter}.result`;
+
 	let displayId = "";
 
 	const codeToSend = `
@@ -51,12 +54,14 @@ def __jupyter_exec_powerToys_background__():
 __jupyter_exec_powerToys_background__()
 del __jupyter_exec_powerToys_background__
 `.trim();
+
 	const disposables: Disposable[] = [];
 	disposables.push(
 		token.onCancellationRequested(() =>
 			disposables.forEach((d) => d.dispose()),
 		),
 	);
+
 	const promise = raceCancellation(
 		token,
 		new Promise<T | undefined>((resolve, reject) => {
@@ -67,6 +72,7 @@ del __jupyter_exec_powerToys_background__
 							return resolve(undefined);
 						}
 						const metadata = getNotebookCellOutputMetadata(output);
+
 						if (
 							!displayId ||
 							metadata?.transient?.display_id !== displayId
@@ -76,6 +82,7 @@ del __jupyter_exec_powerToys_background__
 						const result = output.items.find(
 							(item) => item.mime === mimeFinalResult,
 						);
+
 						if (!result) {
 							return;
 						}
@@ -88,6 +95,7 @@ del __jupyter_exec_powerToys_background__
 							);
 						} catch (ex) {
 							console.error("Failed to parse the result", ex);
+
 							return reject(
 								new Error(`Failed to parse the result ${ex}`),
 							);
@@ -99,22 +107,26 @@ del __jupyter_exec_powerToys_background__
 	);
 
 	const outputs = kernel.executeCode(codeToSend, token);
+
 	for await (const output of outputs) {
 		if (token.isCancellationRequested) {
 			return;
 		}
 		const metadata = getNotebookCellOutputMetadata(output);
+
 		if (!metadata?.transient?.display_id) {
 			continue;
 		}
 		const result = output.items.find(
 			(item) => item.mime === mime || item.mime === mimeFinalResult,
 		);
+
 		if (!result) {
 			continue;
 		}
 		if (result.mime === mime) {
 			displayId = metadata.transient.display_id;
+
 			continue;
 		}
 		if (
@@ -129,6 +141,7 @@ del __jupyter_exec_powerToys_background__
 	}
 	if (!displayId) {
 		console.log("Failed to get display id for completions");
+
 		return;
 	}
 

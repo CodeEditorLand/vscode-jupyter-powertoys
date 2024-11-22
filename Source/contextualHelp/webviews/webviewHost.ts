@@ -71,6 +71,7 @@ export abstract class WebviewHost<IMapping> implements vscode.Disposable {
 		switch (message) {
 			case SharedMessages.Started:
 				this.webViewRendered();
+
 				break;
 
 			default:

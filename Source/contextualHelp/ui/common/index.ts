@@ -3,6 +3,7 @@
 import type * as nbformat from "@jupyterlab/nbformat";
 
 const SingleQuoteMultiline = "'''";
+
 const DoubleQuoteMultiline = '"""';
 
 export function concatMultilineString(
@@ -12,8 +13,10 @@ export function concatMultilineString(
 	const nonLineFeedWhiteSpaceTrim = /(^[\t\f\v\r ]+|[\t\f\v\r ]+$)/g; // Local var so don't have to reset the lastIndex.
 	if (Array.isArray(str)) {
 		let result = "";
+
 		for (let i = 0; i < str.length; i += 1) {
 			const s = str[i];
+
 			if (i < str.length - 1 && !s.endsWith("\n")) {
 				result = result.concat(`${s}\n`);
 			} else {
@@ -37,9 +40,11 @@ export function splitMultilineString(
 		return source as string[];
 	}
 	const str = source.toString();
+
 	if (str.length > 0) {
 		// Each line should be a separate entry, but end with a \n if not last entry
 		const arr = str.split("\n");
+
 		return arr
 			.map((s, i) => {
 				if (i < arr.length - 1) {
@@ -57,11 +62,13 @@ export function splitMultilineString(
 // Remove characters that are overridden by backspace characters
 function fixBackspace(txt: string) {
 	let tmp = txt;
+
 	do {
 		txt = tmp;
 		// Cancel out anything-but-newline followed by backspace
 		tmp = txt.replace(/[^\n]\x08/gm, "");
 	} while (tmp.length < txt.length);
+
 	return txt;
 }
 
@@ -75,7 +82,9 @@ function fixCarriageReturn(str: string): string {
 	// https://jsperf.com/javascript-concat-vs-join/2.
 	// Concat is way faster than array join for building up a string.
 	let result = "";
+
 	let previousLinePos = 0;
+
 	for (let i = 0; i < str.length; i += 1) {
 		if (str[i] === "\r") {
 			// See if this is a line feed. If so, leave alone. This is goofy windows \r\n
@@ -96,6 +105,7 @@ function fixCarriageReturn(str: string): string {
 		}
 	}
 	result += str.substr(previousLinePos, str.length - previousLinePos);
+
 	return result;
 }
 
@@ -105,6 +115,7 @@ export function appendLineFeed(
 ) {
 	return arr.map((s: string, i: number) => {
 		const out = modifier ? modifier(s) : s;
+
 		return i === arr.length - 1 ? `${out}` : `${out}\n`;
 	});
 }
@@ -124,8 +135,11 @@ export function parseForComments(
 ) {
 	// Check for either multiline or single line comments
 	let insideMultilineComment: string | undefined;
+
 	let insideMultilineQuote: string | undefined;
+
 	let pos = 0;
+
 	for (const l of lines) {
 		const trim = l.trim();
 		// Multiline is triple quotes of either kind
@@ -134,6 +148,7 @@ export function parseForComments(
 			: trim.startsWith(DoubleQuoteMultiline)
 				? DoubleQuoteMultiline
 				: undefined;
+
 		const isMultilineQuote = trim.includes(SingleQuoteMultiline)
 			? SingleQuoteMultiline
 			: trim.includes(DoubleQuoteMultiline)
@@ -158,6 +173,7 @@ export function parseForComments(
 		} else if (isMultilineQuote && !isMultilineComment) {
 			// Make sure doesn't begin and end on the same line.
 			const beginQuote = trim.indexOf(isMultilineQuote);
+
 			const endQuote = trim.lastIndexOf(isMultilineQuote);
 			insideMultilineQuote =
 				endQuote !== beginQuote ? undefined : isMultilineQuote;
@@ -195,5 +211,6 @@ function extractComments(lines: string[]): string[] {
 		(s) => result.push(s),
 		(_s) => {},
 	);
+
 	return result;
 }

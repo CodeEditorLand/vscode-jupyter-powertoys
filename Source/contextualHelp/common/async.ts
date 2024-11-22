@@ -116,6 +116,7 @@ export function createDeferredFromPromise<T>(promise: Promise<T>): Deferred<T> {
 	promise
 		.then(deferred.resolve.bind(deferred))
 		.catch(deferred.reject.bind(deferred));
+
 	return deferred;
 }
 
@@ -139,8 +140,10 @@ async function getNext<T>(
 	indexMaybe?: number,
 ): Promise<NextResult<T>> {
 	const index = indexMaybe === undefined ? -1 : indexMaybe;
+
 	try {
 		const result = await it.next();
+
 		return { index, result, err: null };
 	} catch (err) {
 		return { index, err: err as any, result: null };
@@ -166,12 +169,16 @@ export async function* chain<T>(
 	// Ultimately we may also want to support cancellation.
 ): AsyncIterator<T, void> {
 	const promises = iterators.map(getNext);
+
 	let numRunning = iterators.length;
+
 	while (numRunning > 0) {
 		const { index, result, err } = await Promise.race(promises);
+
 		if (err !== null) {
 			promises[index] = NEVER as Promise<NextResult<T>>;
 			numRunning -= 1;
+
 			if (onError !== undefined) {
 				await onError(err, index);
 			}
@@ -212,6 +219,7 @@ export async function* mapToIterator<T, R = T>(
 			}
 			return generator();
 		});
+
 		yield* iterable(chain(iterators));
 	} else {
 		yield* items.map(func);
@@ -225,6 +233,7 @@ export function iterable<T>(
 	iterator: AsyncIterator<T, void>,
 ): AsyncIterableIterator<T> {
 	const it = iterator as AsyncIterableIterator<T>;
+
 	if (it[Symbol.asyncIterator] === undefined) {
 		it[Symbol.asyncIterator] = () => it;
 	}
@@ -241,6 +250,7 @@ export async function flattenIterator<T>(
 	// We are dealing with an iterator, not an iterable, so we have
 	// to iterate manually rather than with a for-await loop.
 	let result = await iterator.next();
+
 	while (!result.done) {
 		results.push(result.value);
 		result = await iterator.next();
@@ -260,6 +270,7 @@ export class PromiseChain {
 	 */
 	public async chain<T>(promise: () => Promise<T>): Promise<T> {
 		const deferred = createDeferred<T>();
+
 		const previousPromise = this.currentPromise;
 		this.currentPromise = this.currentPromise.then(async () => {
 			try {
@@ -267,11 +278,13 @@ export class PromiseChain {
 				deferred.resolve(result);
 			} catch (ex) {
 				deferred.reject(ex);
+
 				throw ex;
 			}
 		});
 		// Wait for previous promises to complete.
 		await previousPromise;
+
 		return deferred.promise;
 	}
 	/**
@@ -284,6 +297,7 @@ export class PromiseChain {
 				.then((result) => deferred.resolve(result))
 				.catch((ex) => deferred.reject(ex)),
 		);
+
 		return deferred.promise;
 	}
 }

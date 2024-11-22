@@ -43,9 +43,11 @@ const CHAR_QUESTION_MARK = 63; /* ? */
 
 class ErrorInvalidArgType extends Error {
 	code: "ERR_INVALID_ARG_TYPE";
+
 	constructor(name: string, expected: string, actual: unknown) {
 		// determiner: 'must be' or 'must not be'
 		let determiner;
+
 		if (typeof expected === "string" && expected.indexOf("not ") === 0) {
 			determiner = "must not be";
 			expected = expected.replace(/^not /, "");
@@ -54,9 +56,11 @@ class ErrorInvalidArgType extends Error {
 		}
 
 		const type = name.indexOf(".") !== -1 ? "property" : "argument";
+
 		let msg = `The "${name}" ${type} ${determiner} of type ${expected}`;
 
 		msg += `. Received type ${typeof actual}`;
+
 		super(msg);
 
 		this.code = "ERR_INVALID_ARG_TYPE";
@@ -92,10 +96,15 @@ function normalizeString(
 	isPathSeparator: (code?: number) => boolean,
 ) {
 	let res = "";
+
 	let lastSegmentLength = 0;
+
 	let lastSlash = -1;
+
 	let dots = 0;
+
 	let code = 0;
+
 	for (let i = 0; i <= path.length; ++i) {
 		if (i < path.length) {
 			code = path.charCodeAt(i);
@@ -117,6 +126,7 @@ function normalizeString(
 				) {
 					if (res.length > 2) {
 						const lastSlashIndex = res.lastIndexOf(separator);
+
 						if (lastSlashIndex === -1) {
 							res = "";
 							lastSegmentLength = 0;
@@ -126,13 +136,17 @@ function normalizeString(
 								res.length - 1 - res.lastIndexOf(separator);
 						}
 						lastSlash = i;
+
 						dots = 0;
+
 						continue;
 					} else if (res.length !== 0) {
 						res = "";
 						lastSegmentLength = 0;
 						lastSlash = i;
+
 						dots = 0;
+
 						continue;
 					}
 				}
@@ -149,6 +163,7 @@ function normalizeString(
 				lastSegmentLength = i - lastSlash - 1;
 			}
 			lastSlash = i;
+
 			dots = 0;
 		} else if (code === CHAR_DOT && dots !== -1) {
 			++dots;
@@ -164,8 +179,10 @@ function _format(sep: string, pathObject: ParsedPath) {
 		throw new ErrorInvalidArgType("pathObject", "Object", pathObject);
 	}
 	const dir = pathObject.dir || pathObject.root;
+
 	const base =
 		pathObject.base || `${pathObject.name || ""}${pathObject.ext || ""}`;
+
 	if (!dir) {
 		return base;
 	}
@@ -189,6 +206,7 @@ export interface IPath {
 	dirname(path: string): string;
 	basename(path: string, ext?: string): string;
 	extname(path: string): string;
+
 	format(pathObject: ParsedPath): string;
 	parse(path: string): ParsedPath;
 	toNamespacedPath(path: string): string;
@@ -202,11 +220,14 @@ export const win32: IPath = {
 	// path.resolve([from ...], to)
 	resolve(...pathSegments: string[]): string {
 		let resolvedDevice = "";
+
 		let resolvedTail = "";
+
 		let resolvedAbsolute = false;
 
 		for (let i = pathSegments.length - 1; i >= -1; i--) {
 			let path;
+
 			if (i >= 0) {
 				path = pathSegments[i];
 				validateString(path, "path");
@@ -238,9 +259,13 @@ export const win32: IPath = {
 			}
 
 			const len = path.length;
+
 			let rootEnd = 0;
+
 			let device = "";
+
 			let isAbsolute = false;
+
 			const code = path.charCodeAt(0);
 
 			// Try to match a root
@@ -260,6 +285,7 @@ export const win32: IPath = {
 				if (isPathSeparator(path.charCodeAt(1))) {
 					// Matched double path separator at beginning
 					let j = 2;
+
 					let last = j;
 					// Match 1 or more non-path separators
 					while (j < len && !isPathSeparator(path.charCodeAt(j))) {
@@ -300,6 +326,7 @@ export const win32: IPath = {
 				// Possible device root
 				device = path.slice(0, 2);
 				rootEnd = 2;
+
 				if (len > 2 && isPathSeparator(path.charCodeAt(2))) {
 					// Treat separator following drive name as an absolute path
 					// indicator
@@ -326,6 +353,7 @@ export const win32: IPath = {
 			} else {
 				resolvedTail = `${path.slice(rootEnd)}\\${resolvedTail}`;
 				resolvedAbsolute = isAbsolute;
+
 				if (isAbsolute && resolvedDevice.length > 0) {
 					break;
 				}
@@ -351,13 +379,18 @@ export const win32: IPath = {
 
 	normalize(path: string): string {
 		validateString(path, "path");
+
 		const len = path.length;
+
 		if (len === 0) {
 			return ".";
 		}
 		let rootEnd = 0;
+
 		let device;
+
 		let isAbsolute = false;
+
 		const code = path.charCodeAt(0);
 
 		// Try to match a root
@@ -376,6 +409,7 @@ export const win32: IPath = {
 			if (isPathSeparator(path.charCodeAt(1))) {
 				// Matched double path separator at beginning
 				let j = 2;
+
 				let last = j;
 				// Match 1 or more non-path separators
 				while (j < len && !isPathSeparator(path.charCodeAt(j))) {
@@ -422,6 +456,7 @@ export const win32: IPath = {
 			// Possible device root
 			device = path.slice(0, 2);
 			rootEnd = 2;
+
 			if (len > 2 && isPathSeparator(path.charCodeAt(2))) {
 				// Treat separator following drive name as an absolute path
 				// indicator
@@ -439,6 +474,7 @@ export const win32: IPath = {
 						isPathSeparator,
 					)
 				: "";
+
 		if (tail.length === 0 && !isAbsolute) {
 			tail = ".";
 		}
@@ -453,12 +489,15 @@ export const win32: IPath = {
 
 	isAbsolute(path: string): boolean {
 		validateString(path, "path");
+
 		const len = path.length;
+
 		if (len === 0) {
 			return false;
 		}
 
 		const code = path.charCodeAt(0);
+
 		return (
 			isPathSeparator(code) ||
 			// Possible device root
@@ -475,10 +514,13 @@ export const win32: IPath = {
 		}
 
 		let joined;
+
 		let firstPart: string | undefined;
+
 		for (let i = 0; i < paths.length; ++i) {
 			const arg = paths[i];
 			validateString(arg, "path");
+
 			if (arg.length > 0) {
 				if (joined === undefined) {
 					joined = firstPart = arg;
@@ -506,15 +548,20 @@ export const win32: IPath = {
 		// a server name and a share name; for example:
 		//   path.join('//server', 'share') -> '\\\\server\\share\\')
 		let needsReplace = true;
+
 		let slashCount = 0;
+
 		if (
 			typeof firstPart === "string" &&
 			isPathSeparator(firstPart.charCodeAt(0))
 		) {
 			++slashCount;
+
 			const firstLen = firstPart.length;
+
 			if (firstLen > 1 && isPathSeparator(firstPart.charCodeAt(1))) {
 				++slashCount;
+
 				if (firstLen > 2) {
 					if (isPathSeparator(firstPart.charCodeAt(2))) {
 						++slashCount;
@@ -556,6 +603,7 @@ export const win32: IPath = {
 		}
 
 		const fromOrig = win32.resolve(from);
+
 		const toOrig = win32.resolve(to);
 
 		if (fromOrig === toOrig) {
@@ -571,6 +619,7 @@ export const win32: IPath = {
 
 		// Trim any leading backslashes
 		let fromStart = 0;
+
 		while (
 			fromStart < from.length &&
 			from.charCodeAt(fromStart) === CHAR_BACKWARD_SLASH
@@ -579,6 +628,7 @@ export const win32: IPath = {
 		}
 		// Trim trailing backslashes (applicable to UNC paths only)
 		let fromEnd = from.length;
+
 		while (
 			fromEnd - 1 > fromStart &&
 			from.charCodeAt(fromEnd - 1) === CHAR_BACKWARD_SLASH
@@ -589,6 +639,7 @@ export const win32: IPath = {
 
 		// Trim any leading backslashes
 		let toStart = 0;
+
 		while (
 			toStart < to.length &&
 			to.charCodeAt(toStart) === CHAR_BACKWARD_SLASH
@@ -597,6 +648,7 @@ export const win32: IPath = {
 		}
 		// Trim trailing backslashes (applicable to UNC paths only)
 		let toEnd = to.length;
+
 		while (
 			toEnd - 1 > toStart &&
 			to.charCodeAt(toEnd - 1) === CHAR_BACKWARD_SLASH
@@ -607,10 +659,14 @@ export const win32: IPath = {
 
 		// Compare paths to find the longest common path from root
 		const length = fromLen < toLen ? fromLen : toLen;
+
 		let lastCommonSep = -1;
+
 		let i = 0;
+
 		for (; i < length; i++) {
 			const fromCode = from.charCodeAt(fromStart + i);
+
 			if (fromCode !== to.charCodeAt(toStart + i)) {
 				break;
 			} else if (fromCode === CHAR_BACKWARD_SLASH) {
@@ -697,6 +753,7 @@ export const win32: IPath = {
 			// Possible UNC root
 			if (resolvedPath.charCodeAt(1) === CHAR_BACKWARD_SLASH) {
 				const code = resolvedPath.charCodeAt(2);
+
 				if (code !== CHAR_QUESTION_MARK && code !== CHAR_DOT) {
 					// Matched non-long UNC root, convert the path to a long UNC path
 					return `\\\\?\\UNC\\${resolvedPath.slice(2)}`;
@@ -716,12 +773,16 @@ export const win32: IPath = {
 
 	dirname(path: string): string {
 		validateString(path, "path");
+
 		const len = path.length;
+
 		if (len === 0) {
 			return ".";
 		}
 		let rootEnd = -1;
+
 		let offset = 0;
+
 		const code = path.charCodeAt(0);
 
 		if (len === 1) {
@@ -739,6 +800,7 @@ export const win32: IPath = {
 			if (isPathSeparator(path.charCodeAt(1))) {
 				// Matched double path separator at beginning
 				let j = 2;
+
 				let last = j;
 				// Match 1 or more non-path separators
 				while (j < len && !isPathSeparator(path.charCodeAt(j))) {
@@ -785,11 +847,14 @@ export const win32: IPath = {
 		}
 
 		let end = -1;
+
 		let matchedSlash = true;
+
 		for (let i = len - 1; i >= offset; --i) {
 			if (isPathSeparator(path.charCodeAt(i))) {
 				if (!matchedSlash) {
 					end = i;
+
 					break;
 				}
 			} else {
@@ -813,9 +878,13 @@ export const win32: IPath = {
 			validateString(ext, "ext");
 		}
 		validateString(path, "path");
+
 		let start = 0;
+
 		let end = -1;
+
 		let matchedSlash = true;
+
 		let i;
 
 		// Check for a drive letter prefix so as not to mistake the following
@@ -834,14 +903,18 @@ export const win32: IPath = {
 				return "";
 			}
 			let extIdx = ext.length - 1;
+
 			let firstNonSlashEnd = -1;
+
 			for (i = path.length - 1; i >= start; --i) {
 				const code = path.charCodeAt(i);
+
 				if (isPathSeparator(code)) {
 					// If we reached a path separator that was not part of a set of path
 					// separators at the end of the string, stop now
 					if (!matchedSlash) {
 						start = i + 1;
+
 						break;
 					}
 				} else {
@@ -882,6 +955,7 @@ export const win32: IPath = {
 				// separators at the end of the string, stop now
 				if (!matchedSlash) {
 					start = i + 1;
+
 					break;
 				}
 			} else if (end === -1) {
@@ -900,10 +974,15 @@ export const win32: IPath = {
 
 	extname(path: string): string {
 		validateString(path, "path");
+
 		let start = 0;
+
 		let startDot = -1;
+
 		let startPart = 0;
+
 		let end = -1;
+
 		let matchedSlash = true;
 		// Track the state of characters (if any) we see before our first dot and
 		// after any path separator we find
@@ -923,11 +1002,13 @@ export const win32: IPath = {
 
 		for (let i = path.length - 1; i >= start; --i) {
 			const code = path.charCodeAt(i);
+
 			if (isPathSeparator(code)) {
 				// If we reached a path separator that was not part of a set of path
 				// separators at the end of the string, stop now
 				if (!matchedSlash) {
 					startPart = i + 1;
+
 					break;
 				}
 				continue;
@@ -973,12 +1054,15 @@ export const win32: IPath = {
 		validateString(path, "path");
 
 		const ret = { root: "", dir: "", base: "", ext: "", name: "" };
+
 		if (path.length === 0) {
 			return ret;
 		}
 
 		const len = path.length;
+
 		let rootEnd = 0;
+
 		let code = path.charCodeAt(0);
 
 		if (len === 1) {
@@ -986,9 +1070,11 @@ export const win32: IPath = {
 				// `path` contains just a path separator, exit early to avoid
 				// unnecessary work
 				ret.root = ret.dir = path;
+
 				return ret;
 			}
 			ret.base = ret.name = path;
+
 			return ret;
 		}
 		// Try to match a root
@@ -996,9 +1082,11 @@ export const win32: IPath = {
 			// Possible UNC root
 
 			rootEnd = 1;
+
 			if (isPathSeparator(path.charCodeAt(1))) {
 				// Matched double path separator at beginning
 				let j = 2;
+
 				let last = j;
 				// Match 1 or more non-path separators
 				while (j < len && !isPathSeparator(path.charCodeAt(j))) {
@@ -1040,14 +1128,17 @@ export const win32: IPath = {
 				// `path` contains just a drive root, exit early to avoid
 				// unnecessary work
 				ret.root = ret.dir = path;
+
 				return ret;
 			}
 			rootEnd = 2;
+
 			if (isPathSeparator(path.charCodeAt(2))) {
 				if (len === 3) {
 					// `path` contains just a drive root, exit early to avoid
 					// unnecessary work
 					ret.root = ret.dir = path;
+
 					return ret;
 				}
 				rootEnd = 3;
@@ -1058,9 +1149,13 @@ export const win32: IPath = {
 		}
 
 		let startDot = -1;
+
 		let startPart = rootEnd;
+
 		let end = -1;
+
 		let matchedSlash = true;
+
 		let i = path.length - 1;
 
 		// Track the state of characters (if any) we see before our first dot and
@@ -1070,11 +1165,13 @@ export const win32: IPath = {
 		// Get non-dir info
 		for (; i >= rootEnd; --i) {
 			code = path.charCodeAt(i);
+
 			if (isPathSeparator(code)) {
 				// If we reached a path separator that was not part of a set of path
 				// separators at the end of the string, stop now
 				if (!matchedSlash) {
 					startPart = i + 1;
+
 					break;
 				}
 				continue;
@@ -1139,6 +1236,7 @@ export const posix: IPath = {
 	// path.resolve([from ...], to)
 	resolve(...pathSegments: string[]): string {
 		let resolvedPath = "";
+
 		let resolvedAbsolute = false;
 
 		for (
@@ -1184,6 +1282,7 @@ export const posix: IPath = {
 		}
 
 		const isAbsolute = path.charCodeAt(0) === CHAR_FORWARD_SLASH;
+
 		const trailingSeparator =
 			path.charCodeAt(path.length - 1) === CHAR_FORWARD_SLASH;
 
@@ -1205,6 +1304,7 @@ export const posix: IPath = {
 
 	isAbsolute(path: string): boolean {
 		validateString(path, "path");
+
 		return path.length > 0 && path.charCodeAt(0) === CHAR_FORWARD_SLASH;
 	},
 
@@ -1213,9 +1313,11 @@ export const posix: IPath = {
 			return ".";
 		}
 		let joined;
+
 		for (let i = 0; i < paths.length; ++i) {
 			const arg = paths[i];
 			validateString(arg, "path");
+
 			if (arg.length > 0) {
 				if (joined === undefined) {
 					joined = arg;
@@ -1247,17 +1349,25 @@ export const posix: IPath = {
 		}
 
 		const fromStart = 1;
+
 		const fromEnd = from.length;
+
 		const fromLen = fromEnd - fromStart;
+
 		const toStart = 1;
+
 		const toLen = to.length - toStart;
 
 		// Compare paths to find the longest common path from root
 		const length = fromLen < toLen ? fromLen : toLen;
+
 		let lastCommonSep = -1;
+
 		let i = 0;
+
 		for (; i < length; i++) {
 			const fromCode = from.charCodeAt(fromStart + i);
+
 			if (fromCode !== to.charCodeAt(toStart + i)) {
 				break;
 			} else if (fromCode === CHAR_FORWARD_SLASH) {
@@ -1310,16 +1420,21 @@ export const posix: IPath = {
 
 	dirname(path: string): string {
 		validateString(path, "path");
+
 		if (path.length === 0) {
 			return ".";
 		}
 		const hasRoot = path.charCodeAt(0) === CHAR_FORWARD_SLASH;
+
 		let end = -1;
+
 		let matchedSlash = true;
+
 		for (let i = path.length - 1; i >= 1; --i) {
 			if (path.charCodeAt(i) === CHAR_FORWARD_SLASH) {
 				if (!matchedSlash) {
 					end = i;
+
 					break;
 				}
 			} else {
@@ -1344,8 +1459,11 @@ export const posix: IPath = {
 		validateString(path, "path");
 
 		let start = 0;
+
 		let end = -1;
+
 		let matchedSlash = true;
+
 		let i;
 
 		if (ext !== undefined && ext.length > 0 && ext.length <= path.length) {
@@ -1353,14 +1471,18 @@ export const posix: IPath = {
 				return "";
 			}
 			let extIdx = ext.length - 1;
+
 			let firstNonSlashEnd = -1;
+
 			for (i = path.length - 1; i >= 0; --i) {
 				const code = path.charCodeAt(i);
+
 				if (code === CHAR_FORWARD_SLASH) {
 					// If we reached a path separator that was not part of a set of path
 					// separators at the end of the string, stop now
 					if (!matchedSlash) {
 						start = i + 1;
+
 						break;
 					}
 				} else {
@@ -1401,6 +1523,7 @@ export const posix: IPath = {
 				// separators at the end of the string, stop now
 				if (!matchedSlash) {
 					start = i + 1;
+
 					break;
 				}
 			} else if (end === -1) {
@@ -1419,20 +1542,27 @@ export const posix: IPath = {
 
 	extname(path: string): string {
 		validateString(path, "path");
+
 		let startDot = -1;
+
 		let startPart = 0;
+
 		let end = -1;
+
 		let matchedSlash = true;
 		// Track the state of characters (if any) we see before our first dot and
 		// after any path separator we find
 		let preDotState = 0;
+
 		for (let i = path.length - 1; i >= 0; --i) {
 			const code = path.charCodeAt(i);
+
 			if (code === CHAR_FORWARD_SLASH) {
 				// If we reached a path separator that was not part of a set of path
 				// separators at the end of the string, stop now
 				if (!matchedSlash) {
 					startPart = i + 1;
+
 					break;
 				}
 				continue;
@@ -1478,11 +1608,14 @@ export const posix: IPath = {
 		validateString(path, "path");
 
 		const ret = { root: "", dir: "", base: "", ext: "", name: "" };
+
 		if (path.length === 0) {
 			return ret;
 		}
 		const isAbsolute = path.charCodeAt(0) === CHAR_FORWARD_SLASH;
+
 		let start;
+
 		if (isAbsolute) {
 			ret.root = "/";
 			start = 1;
@@ -1490,9 +1623,13 @@ export const posix: IPath = {
 			start = 0;
 		}
 		let startDot = -1;
+
 		let startPart = 0;
+
 		let end = -1;
+
 		let matchedSlash = true;
+
 		let i = path.length - 1;
 
 		// Track the state of characters (if any) we see before our first dot and
@@ -1502,11 +1639,13 @@ export const posix: IPath = {
 		// Get non-dir info
 		for (; i >= start; --i) {
 			const code = path.charCodeAt(i);
+
 			if (code === CHAR_FORWARD_SLASH) {
 				// If we reached a path separator that was not part of a set of path
 				// separators at the end of the string, stop now
 				if (!matchedSlash) {
 					startPart = i + 1;
+
 					break;
 				}
 				continue;
@@ -1533,6 +1672,7 @@ export const posix: IPath = {
 
 		if (end !== -1) {
 			const start = startPart === 0 && isAbsolute ? 1 : startPart;
+
 			if (
 				startDot === -1 ||
 				// We saw a non-dot character immediately before the dot
