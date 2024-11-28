@@ -71,6 +71,7 @@ export type PythonVersion = {
 	 */
 	prerelease: string[];
 };
+
 export interface PythonEnvironment {
 	uri: Uri;
 }
@@ -213,6 +214,7 @@ export type KernelConnectionMetadata =
 	| RemoteKernelSpecConnectionMetadata
 	| PythonKernelConnectionMetadata
 	| LiveRemoteKernelConnectionMetadata;
+
 export type ActiveKernel = LiveRemoteKernelConnectionMetadata;
 
 export interface IKernelSocket {
@@ -329,6 +331,7 @@ const KnownEnvironmentToolsToEnvironmentTypeMapping = new Map<
 	["VirtualEnv", EnvironmentType.VirtualEnv],
 	["VirtualEnvWrapper", EnvironmentType.VirtualEnvWrapper],
 ]);
+
 export async function getEnvironmentTypeFromUri(
 	uri: Uri | undefined,
 	api: PythonExtension,

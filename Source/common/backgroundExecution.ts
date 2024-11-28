@@ -13,6 +13,7 @@ import {
 import { raceCancellation } from "./cancellation";
 
 export const executionCounters = new WeakMap<Kernel, number>();
+
 export async function execCodeInBackgroundThread<T>(
 	kernel: Kernel,
 	codeWithReturnStatement: string[],

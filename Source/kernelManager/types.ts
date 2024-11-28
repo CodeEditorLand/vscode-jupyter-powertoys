@@ -21,6 +21,7 @@ export type Node =
 	| IActiveRemoteKernelTreeNode
 	| IPythonEnvironmentCategoryTreeNode
 	| ICustomNodeFromAnotherProvider;
+
 export interface IServerTreeNode {
 	type: "host";
 	baseUrl?: string;

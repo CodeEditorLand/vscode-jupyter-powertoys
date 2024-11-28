@@ -28,6 +28,7 @@ function uncommentMagicCommands(line: string): string {
 export function createCodeCell(): nbformat.ICodeCell;
 // eslint-disable-next-line @typescript-eslint/unified-signatures
 export function createCodeCell(code: string): nbformat.ICodeCell;
+
 export function createCodeCell(
 	code: string[],
 	outputs: nbformat.IOutput[],
@@ -37,6 +38,7 @@ export function createCodeCell(
 	code: string[],
 	magicCommandsAsComments: boolean,
 ): nbformat.ICodeCell;
+
 export function createCodeCell(
 	code?: string | string[],
 	options?: boolean | nbformat.IOutput[],

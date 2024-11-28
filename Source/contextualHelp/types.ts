@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 
 // Wraps a VS Code webview
 export const IWebview = Symbol("IWebview");
+
 export interface IWebview {
 	/**
 	 * Event is fired when the load for a web panel fails
@@ -27,6 +28,7 @@ export interface IWebview {
 
 // Wraps the VS Code webview view
 export const IWebviewView = Symbol("IWebviewView");
+
 export interface IWebviewView extends IWebview {
 	readonly onDidChangeVisiblity: vscode.Event<void>;
 	readonly visible: boolean;
@@ -44,6 +46,7 @@ export interface IWebviewMessageListener extends vscode.Disposable {
 export const IWebviewPanelMessageListener = Symbol(
 	"IWebviewPanelMessageListener",
 );
+
 export interface IWebviewPanelMessageListener extends IWebviewMessageListener {
 	/**
 	 * Listens to web panel state changes
@@ -54,6 +57,7 @@ export interface IWebviewPanelMessageListener extends IWebviewMessageListener {
 export const IWebviewViewMessageListener = Symbol(
 	"IWebviewViewMessageListener",
 );
+
 export interface IWebviewViewMessageListener extends IWebviewMessageListener {}
 
 export type WebviewMessage = {
@@ -69,6 +73,7 @@ export type WebviewMessage = {
 };
 
 export type Resource = vscode.Uri | undefined;
+
 export interface IWebviewOptions {
 	rootPath: string;
 	cwd: string;
@@ -87,6 +92,7 @@ export interface IWebviewViewOptions extends IWebviewOptions {
 }
 
 export const IWebviewViewProvider = Symbol("IWebviewViewProvider");
+
 export interface IWebviewViewProvider {
 	create(options: IWebviewViewOptions): Promise<IWebviewView>;
 }

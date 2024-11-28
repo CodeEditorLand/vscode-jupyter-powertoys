@@ -84,6 +84,7 @@ const isElectronProcess = typeof nodeProcess?.versions?.electron === "string";
 
 const isElectronRenderer =
 	isElectronProcess && nodeProcess?.type === "renderer";
+
 export const isElectronSandboxed = isElectronRenderer && nodeProcess?.sandboxed;
 
 interface INavigator {
@@ -179,21 +180,31 @@ if (_isMacintosh) {
 }
 
 export const isWindows = _isWindows;
+
 export const isMacintosh = _isMacintosh;
+
 export const isLinux = _isLinux;
+
 export const isLinuxSnap = _isLinuxSnap;
+
 export const isNative = _isNative;
+
 export const isElectron = _isElectron;
+
 export const isWeb = _isWeb;
+
 export const isWebWorker =
 	_isWeb && typeof globals.importScripts === "function";
+
 export const isIOS = _isIOS;
 /**
  * Whether we run inside a CI environment, such as
  * GH actions or Azure Pipelines.
  */
 export const isCI = _isCI;
+
 export const platform = _platform;
+
 export const userAgent = _userAgent;
 
 /**
@@ -296,6 +307,7 @@ export const OS =
 let _isLittleEndian = true;
 
 let _isLittleEndianComputed = false;
+
 export function isLittleEndian(): boolean {
 	if (!_isLittleEndianComputed) {
 		_isLittleEndianComputed = true;
@@ -311,11 +323,15 @@ export function isLittleEndian(): boolean {
 }
 
 export const isChrome = !!(userAgent && userAgent.indexOf("Chrome") >= 0);
+
 export const isFirefox = !!(userAgent && userAgent.indexOf("Firefox") >= 0);
+
 export const isSafari = !!(
 	!isChrome &&
 	userAgent &&
 	userAgent.indexOf("Safari") >= 0
 );
+
 export const isEdge = !!(userAgent && userAgent.indexOf("Edg/") >= 0);
+
 export const isAndroid = !!(userAgent && userAgent.indexOf("Android") >= 0);

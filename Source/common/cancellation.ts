@@ -33,11 +33,13 @@ export async function raceCancellation<T>(
 	token: CancellationToken | undefined,
 	...promises: Promise<T>[]
 ): Promise<T | undefined>;
+
 export async function raceCancellation<T>(
 	token: CancellationToken | undefined,
 	defaultValue: T,
 	...promises: Promise<T>[]
 ): Promise<T>;
+
 export async function raceCancellation<T>(
 	token: CancellationToken | undefined,
 	defaultValue: T,

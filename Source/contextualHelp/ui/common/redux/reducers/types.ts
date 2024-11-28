@@ -237,6 +237,7 @@ export type LoadIPyWidgetClassLoadAction = {
 	moduleName: string;
 	moduleVersion: string;
 };
+
 export type NotifyIPyWidgeWidgetVersionNotSupportedAction = {
 	moduleName: "qgrid";
 	moduleVersion: string;

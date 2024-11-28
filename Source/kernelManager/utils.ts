@@ -9,6 +9,7 @@ import { languages as knownLanguages, languageAliases } from "./languages";
 const untildify = require("untildify");
 
 const homePath = untildify("~");
+
 export function getDisplayPath(
 	filename?: string | Uri,
 	workspaceFolders: readonly WorkspaceFolder[] | WorkspaceFolder[] = [],

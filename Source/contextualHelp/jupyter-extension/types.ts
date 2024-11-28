@@ -55,6 +55,7 @@ export type PythonVersion = {
 	 */
 	prerelease: string[];
 };
+
 export type PythonEnvironment = {
 	displayName?: string;
 	uri: Uri;
@@ -198,6 +199,7 @@ export type KernelConnectionMetadata =
 	| RemoteKernelSpecConnectionMetadata
 	| PythonKernelConnectionMetadata
 	| LiveRemoteKernelConnectionMetadata;
+
 export type ActiveKernel = LiveRemoteKernelConnectionMetadata;
 
 export interface IKernelSocket {

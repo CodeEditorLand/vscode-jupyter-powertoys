@@ -29,6 +29,7 @@ const _languageAliases = {
 	wenyan: new Set(["文言"]),
 	codeql: new Set(["ql"]),
 };
+
 export const languageAliases = new Map<string, string[]>();
 Object.getOwnPropertyNames(_languageAliases).forEach((key) => {
 	const currentLanguages = languageAliases.get(key) || [];

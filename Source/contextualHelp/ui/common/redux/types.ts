@@ -35,6 +35,7 @@ export type BaseReduxActionPayload<T = never | undefined> = T extends never
 		? BaseData
 		: BaseDataWithPayload<T>
 	: BaseDataWithPayload<T>;
+
 export type SyncPayload = {
 	type: WindowMessages | SharedMessages | CommonActionType | CssMessages;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any

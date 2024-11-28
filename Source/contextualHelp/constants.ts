@@ -1,7 +1,9 @@
 import * as path from "path";
 
 const folderName = path.basename(__dirname);
+
 export const EXTENSION_ROOT_DIR = folderName;
+
 export const NotebookCellScheme = "vscode-notebook-cell";
 
 export namespace Constants {

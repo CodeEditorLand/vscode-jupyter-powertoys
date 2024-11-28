@@ -6,6 +6,7 @@ import { Constants } from "./constants";
 import { ContextualHelpProvider } from "./contextualHelpProvider";
 
 const helpProvider = new ContextualHelpProvider();
+
 export let disposables: vscode.Disposable[] = [];
 
 // this method is called when your extension is activated
