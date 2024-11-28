@@ -44,6 +44,7 @@ class MessagesTreeItem extends TreeItem {
 		this.contextValue = "kernelMessagesRoot";
 	}
 }
+
 const requestIconsByMessageType = new Map<MessageType, string>([
 	["clear_output", "clear-all"],
 	["error", "error"],

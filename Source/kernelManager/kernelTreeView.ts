@@ -239,6 +239,7 @@ export async function getDisplayNameOrNameOfKernelConnection(
 	}
 	return oldDisplayName;
 }
+
 const jvscIdentifier = "-jvsc-";
 
 /**
