@@ -43,6 +43,7 @@ function getDisplayPathImpl(filename?: string | Uri, cwd?: string): string {
 	} else {
 		file = filename.toString();
 	}
+
 	if (!file) {
 		return "";
 	} else if (cwd && file.startsWith(cwd)) {
@@ -65,6 +66,7 @@ export function getLanguageExtension(language?: string) {
 	if (!language) {
 		return ".ipynb";
 	}
+
 	const aliases = languageAliases.get(language.toLowerCase()) || [language];
 	// If VS Code doesn't know any of these languages (nor the aliases),
 	// Then we're unlikely to get icons in the tree view, hence default to `.ipynb` icon for these.
@@ -77,11 +79,13 @@ export function getLanguageExtension(language?: string) {
 			return knownLanguages.get(alias)![0];
 		}
 	}
+
 	return ".ipynb";
 }
 
 export async function initializeKnownLanguages() {
 	const langs = await languages.getLanguages();
+
 	langs.forEach((language) =>
 		knownVSCodeLanguages.add(language.toLowerCase()),
 	);

@@ -25,7 +25,9 @@ export function updateCellRunGroupMetadata(
 
 	if (useCustomMetadata()) {
 		newMetadata.custom = newMetadata.custom || {};
+
 		newMetadata.custom.metadata = newMetadata.custom.metadata || {};
+
 		newMetadata.custom.metadata.notebookRunGroups =
 			newMetadata.custom.metadata.notebookRunGroups || {};
 
@@ -34,6 +36,7 @@ export function updateCellRunGroupMetadata(
 			newGroupValue;
 	} else {
 		newMetadata.metadata = newMetadata.metadata || {};
+
 		newMetadata.metadata.notebookRunGroups =
 			newMetadata.metadata.notebookRunGroups || {};
 
@@ -48,7 +51,9 @@ export function updateCellRunGroupMetadata(
 		cell.index,
 		newMetadata,
 	);
+
 	wsEdit.set(cell.notebook.uri, [notebookEdit]);
+
 	vscode.workspace.applyEdit(wsEdit);
 }
 
@@ -59,5 +64,6 @@ function useCustomMetadata() {
 	) {
 		return false;
 	}
+
 	return true;
 }

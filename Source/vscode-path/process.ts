@@ -14,6 +14,7 @@ if (
 	typeof globals.vscode.process !== "undefined"
 ) {
 	const sandboxProcess: INodeProcess = globals.vscode.process;
+
 	safeProcess = {
 		get platform() {
 			return sandboxProcess.platform;

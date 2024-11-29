@@ -7,12 +7,16 @@ import { IStatusParticipant } from "./types";
 
 class StatusItem implements vscode.Disposable {
 	private deferred: Deferred<void>;
+
 	private disposed: boolean = false;
+
 	private timeout: NodeJS.Timer | number | undefined;
+
 	private disposeCallback: () => void;
 
 	constructor(_title: string, disposeCallback: () => void, timeout?: number) {
 		this.deferred = createDeferred<void>();
+
 		this.disposeCallback = disposeCallback;
 
 		// A timeout is possible too. Auto dispose if that's the case
@@ -28,8 +32,10 @@ class StatusItem implements vscode.Disposable {
 			if (this.timeout) {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				clearTimeout(this.timeout as any);
+
 				this.timeout = undefined;
 			}
+
 			this.disposeCallback();
 
 			if (!this.deferred.completed) {
@@ -44,6 +50,7 @@ class StatusItem implements vscode.Disposable {
 
 	public reject = () => {
 		this.deferred.reject();
+
 		this.dispose();
 	};
 }
@@ -83,9 +90,11 @@ export class StatusProvider {
 			if (c && cancel) {
 				c.onCancellationRequested(() => {
 					cancel();
+
 					statusItem.reject();
 				});
 			}
+
 			return statusItem.promise();
 		});
 
@@ -110,6 +119,7 @@ export class StatusProvider {
 		} finally {
 			status.dispose();
 		}
+
 		return result;
 	}
 
@@ -122,6 +132,7 @@ export class StatusProvider {
 				panel.startProgress();
 			}
 		}
+
 		this.statusCount += 1;
 	};
 
@@ -133,6 +144,7 @@ export class StatusProvider {
 				panel.stopProgress();
 			}
 		}
+
 		this.statusCount = Math.max(updatedCount, 0);
 	};
 }

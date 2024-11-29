@@ -13,9 +13,11 @@ import { WebviewViewProvider } from "./webviews/webviewViews/webviewViewProvider
 // This class creates our UI for our variable view and links it to the vs code webview view
 export class ContextualHelpProvider {
 	public readonly viewType = "jupyterContextualHelp";
+
 	private _contextualHelp?: ContextualHelp;
 
 	private webviewProvider = new WebviewViewProvider();
+
 	private statusProvider = new StatusProvider();
 
 	constructor() {}

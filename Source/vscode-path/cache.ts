@@ -27,7 +27,9 @@ export class Cache<T> {
 			promise,
 			dispose: () => {
 				this.result = null;
+
 				cts.cancel();
+
 				cts.dispose();
 			},
 		};
@@ -43,6 +45,7 @@ export class Cache<T> {
  */
 export class LRUCachedComputed<TArg, TComputed> {
 	private lastCache: TComputed | undefined = undefined;
+
 	private lastArgKey: string | undefined = undefined;
 
 	constructor(private readonly computeFn: (arg: TArg) => TComputed) {}
@@ -52,8 +55,10 @@ export class LRUCachedComputed<TArg, TComputed> {
 
 		if (this.lastArgKey !== key) {
 			this.lastArgKey = key;
+
 			this.lastCache = this.computeFn(arg);
 		}
+
 		return this.lastCache!;
 	}
 }

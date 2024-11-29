@@ -16,6 +16,7 @@ export function isUri(resource?: vscode.Uri | any): resource is vscode.Uri {
 	if (!resource) {
 		return false;
 	}
+
 	const uri = resource as vscode.Uri;
 
 	return typeof uri.path === "string" && typeof uri.scheme === "string";

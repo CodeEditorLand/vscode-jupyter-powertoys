@@ -47,6 +47,7 @@ export function createCodeCell(
 		typeof options === "boolean" ? options : false;
 
 	const outputs = typeof options === "boolean" ? [] : options || [];
+
 	code = code || "";
 	// If we get a string, then no need to append line feeds. Leave as is (to preserve existing functionality).
 	// If we get an array, the append a linefeed.
@@ -103,6 +104,7 @@ export function cloneCell<T extends nbformat.IBaseCell>(cell: T): T {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			return codeCell as any as T;
 		}
+
 		case "markdown": {
 			const markdownCell: nbformat.IMarkdownCell = {
 				cell_type: "markdown",
@@ -115,6 +117,7 @@ export function cloneCell<T extends nbformat.IBaseCell>(cell: T): T {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			return markdownCell as any as T;
 		}
+
 		case "raw": {
 			const rawCell: nbformat.IRawCell = {
 				cell_type: "raw",
@@ -127,6 +130,7 @@ export function cloneCell<T extends nbformat.IBaseCell>(cell: T): T {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			return rawCell as any as T;
 		}
+
 		default: {
 			// Possibly one of our cell types (`message`).
 			return clonedCell;
@@ -154,17 +158,22 @@ export function createCellFrom(
 		case "code": {
 			// eslint-disable-next-line , @typescript-eslint/no-explicit-any
 			const codeCell = baseCell as any as nbformat.ICodeCell;
+
 			codeCell.execution_count = null;
+
 			codeCell.outputs = [];
 
 			return codeCell;
 		}
+
 		case "markdown": {
 			return baseCell as nbformat.IMarkdownCell;
 		}
+
 		case "raw": {
 			return baseCell as nbformat.IRawCell;
 		}
+
 		default: {
 			throw new Error(`Unsupported target type, ${target}`);
 		}

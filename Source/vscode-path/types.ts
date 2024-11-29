@@ -238,18 +238,21 @@ export function validateConstraint(
 		} catch {
 			// ignore
 		}
+
 		if (
 			!isUndefinedOrNull(arg) &&
 			(arg as any).constructor === constraint
 		) {
 			return;
 		}
+
 		if (
 			constraint.length === 1 &&
 			constraint.call(undefined, arg) === true
 		) {
 			return;
 		}
+
 		throw new Error(
 			`argument does not match one of these constraints: arg instanceof constraint, arg.constructor === constraint, nor constraint(arg) === true`,
 		);
@@ -263,8 +266,10 @@ export function getAllPropertyNames(obj: object): string[] {
 
 	while (Object.prototype !== proto) {
 		res = res.concat(Object.getOwnPropertyNames(proto));
+
 		proto = Object.getPrototypeOf(proto);
 	}
+
 	return res;
 }
 
@@ -276,6 +281,7 @@ export function getAllMethodNames(obj: object): string[] {
 			methods.push(prop);
 		}
 	}
+
 	return methods;
 }
 
@@ -296,6 +302,7 @@ export function createProxyObject<T extends object>(
 	for (const methodName of methodNames) {
 		(<any>result)[methodName] = createProxyMethod(methodName);
 	}
+
 	return result;
 }
 

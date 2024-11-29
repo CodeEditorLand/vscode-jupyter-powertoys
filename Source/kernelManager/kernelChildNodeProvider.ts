@@ -11,6 +11,7 @@ import {
 
 export interface IActiveKernelChildNodesProvider {
 	id: string;
+
 	onDidChangeTreeData?: Event<
 		void | ICustomNodeFromAnotherProvider | null | undefined
 	>;
@@ -27,10 +28,12 @@ export interface IActiveKernelChildNodesProvider {
 
 export class ActiveKernelChildNodesProviderRegistry {
 	static instance = new ActiveKernelChildNodesProviderRegistry();
+
 	public readonly registeredProviders = new Map<
 		string,
 		IActiveKernelChildNodesProvider
 	>();
+
 	public registerProvider(provider: IActiveKernelChildNodesProvider): void {
 		ActiveKernelChildNodesProviderRegistry.instance.registeredProviders.set(
 			provider.id,

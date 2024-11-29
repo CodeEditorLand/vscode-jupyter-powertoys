@@ -10,8 +10,10 @@ export function splitLines(
 	if (splitOptions && splitOptions.trim) {
 		lines = lines.map((line) => line.trim());
 	}
+
 	if (splitOptions && splitOptions.removeEmptyEntries) {
 		lines = lines.filter((line) => line.length > 0);
 	}
+
 	return lines;
 }

@@ -33,7 +33,9 @@ let _userAgent: string | undefined = undefined;
 
 interface NLSConfig {
 	locale: string;
+
 	availableLanguages: { [key: string]: string };
+
 	_translationsConfigFile: string;
 }
 
@@ -50,13 +52,19 @@ export interface IProcessEnvironment {
  */
 export interface INodeProcess {
 	platform: string;
+
 	arch: string;
+
 	env: IProcessEnvironment;
+
 	versions?: {
 		electron?: string;
 	};
+
 	sandboxed?: boolean;
+
 	type?: string;
+
 	cwd: () => string;
 }
 
@@ -89,7 +97,9 @@ export const isElectronSandboxed = isElectronRenderer && nodeProcess?.sandboxed;
 
 interface INavigator {
 	userAgent: string;
+
 	language: string;
+
 	maxTouchPoints?: number;
 }
 declare const navigator: INavigator;
@@ -97,34 +107,48 @@ declare const navigator: INavigator;
 // Web environment
 if (typeof navigator === "object" && !isElectronRenderer) {
 	_userAgent = navigator.userAgent;
+
 	_isWindows = _userAgent.indexOf("Windows") >= 0;
+
 	_isMacintosh = _userAgent.indexOf("Macintosh") >= 0;
+
 	_isIOS =
 		(_userAgent.indexOf("Macintosh") >= 0 ||
 			_userAgent.indexOf("iPad") >= 0 ||
 			_userAgent.indexOf("iPhone") >= 0) &&
 		!!navigator.maxTouchPoints &&
 		navigator.maxTouchPoints > 0;
+
 	_isLinux = _userAgent.indexOf("Linux") >= 0;
+
 	_isWeb = true;
+
 	_locale = navigator.language;
+
 	_language = _locale;
 }
 
 // Native environment
 else if (typeof nodeProcess === "object") {
 	_isWindows = nodeProcess.platform === "win32";
+
 	_isMacintosh = nodeProcess.platform === "darwin";
+
 	_isLinux = nodeProcess.platform === "linux";
+
 	_isLinuxSnap =
 		_isLinux &&
 		!!nodeProcess.env["SNAP"] &&
 		!!nodeProcess.env["SNAP_REVISION"];
+
 	_isElectron = isElectronProcess;
+
 	_isCI =
 		!!nodeProcess.env["CI"] ||
 		!!nodeProcess.env["BUILD_ARTIFACTSTAGINGDIRECTORY"];
+
 	_locale = LANGUAGE_DEFAULT;
+
 	_language = LANGUAGE_DEFAULT;
 
 	const rawNlsConfig = nodeProcess.env["VSCODE_NLS_CONFIG"];
@@ -134,12 +158,15 @@ else if (typeof nodeProcess === "object") {
 			const nlsConfig: NLSConfig = JSON.parse(rawNlsConfig);
 
 			const resolved = nlsConfig.availableLanguages["*"];
+
 			_locale = nlsConfig.locale;
 			// VSCode's default language is 'en'
 			_language = resolved ? resolved : LANGUAGE_DEFAULT;
+
 			_translationsConfigFile = nlsConfig._translationsConfigFile;
 		} catch (e) {}
 	}
+
 	_isNative = true;
 }
 
@@ -260,9 +287,12 @@ export const setTimeout0 = (() => {
 	if (typeof globals.postMessage === "function" && !globals.importScripts) {
 		interface IQueueElement {
 			id: number;
+
 			callback: () => void;
 		}
+
 		let pending: IQueueElement[] = [];
+
 		globals.addEventListener("message", (e: MessageEvent) => {
 			if (e.data && e.data.vscodeScheduleAsyncWork) {
 				for (let i = 0, len = pending.length; i < len; i++) {
@@ -270,6 +300,7 @@ export const setTimeout0 = (() => {
 
 					if (candidate.id === e.data.vscodeScheduleAsyncWork) {
 						pending.splice(i, 1);
+
 						candidate.callback();
 
 						return;
@@ -282,13 +313,16 @@ export const setTimeout0 = (() => {
 
 		return (callback: () => void) => {
 			const myId = ++lastId;
+
 			pending.push({
 				id: myId,
 				callback: callback,
 			});
+
 			globals.postMessage({ vscodeScheduleAsyncWork: myId }, "*");
 		};
 	}
+
 	return (callback: () => void) => setTimeout(callback);
 })();
 
@@ -313,12 +347,16 @@ export function isLittleEndian(): boolean {
 		_isLittleEndianComputed = true;
 
 		const test = new Uint8Array(2);
+
 		test[0] = 1;
+
 		test[1] = 2;
 
 		const view = new Uint16Array(test.buffer);
+
 		_isLittleEndian = view[0] === (2 << 8) + 1;
 	}
+
 	return _isLittleEndian;
 }
 

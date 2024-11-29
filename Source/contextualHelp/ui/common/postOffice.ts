@@ -16,6 +16,7 @@ export interface IVsCodeApi {
 export interface IMessageHandler {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	handleMessage(type: string, payload?: any): boolean;
+
 	dispose?(): void;
 }
 
@@ -23,6 +24,7 @@ interface IMessageApi {
 	register(msgCallback: (msg: WebviewMessage) => Promise<void>): void;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	sendMessage(type: string, payload?: any): void;
+
 	dispose(): void;
 }
 
@@ -33,8 +35,11 @@ class VsCodeMessageApi implements IMessageApi {
 	private messageCallback:
 		| ((msg: WebviewMessage) => Promise<void>)
 		| undefined;
+
 	private vscodeApi: IVsCodeApi | undefined;
+
 	private registered: boolean = false;
+
 	private baseHandler = this.handleVSCodeApiMessages.bind(this);
 
 	public register(msgCallback: (msg: WebviewMessage) => Promise<void>) {
@@ -52,8 +57,10 @@ class VsCodeMessageApi implements IMessageApi {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			this.vscodeApi = (window as any).acquireVsCodeApi();
 		}
+
 		if (!this.registered) {
 			this.registered = true;
+
 			window.addEventListener("message", this.baseHandler);
 
 			try {
@@ -78,6 +85,7 @@ class VsCodeMessageApi implements IMessageApi {
 	public sendMessage(type: string, payload?: any) {
 		if (this.vscodeApi) {
 			console.log(`UI PostOffice Sent ${type}`);
+
 			this.vscodeApi.postMessage({ type: type, payload });
 		} else {
 			console.log(`No vscode API to post message ${type}`);
@@ -87,6 +95,7 @@ class VsCodeMessageApi implements IMessageApi {
 	public dispose() {
 		if (this.registered) {
 			this.registered = false;
+
 			window.removeEventListener("message", this.baseHandler);
 		}
 	}
@@ -106,16 +115,21 @@ export type PostOfficeMessage = { type: string; payload?: any };
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class PostOffice {
 	private messageApi: IMessageApi | undefined;
+
 	private handlers: IMessageHandler[] = [];
+
 	private readonly subject = new Subject<PostOfficeMessage>();
+
 	private readonly observable: Observable<PostOfficeMessage>;
 
 	constructor() {
 		this.observable = this.subject.asObservable();
 	}
+
 	public asObservable(): Observable<PostOfficeMessage> {
 		return this.observable;
 	}
+
 	public dispose() {
 		if (this.messageApi) {
 			this.messageApi.dispose();
@@ -141,6 +155,7 @@ export class PostOffice {
 	public addHandler(handler: IMessageHandler) {
 		// Acquire here too so that the message handlers are setup during tests.
 		this.acquireApi();
+
 		this.handlers.push(handler);
 	}
 
@@ -155,6 +170,7 @@ export class PostOffice {
 		}
 
 		this.messageApi = new VsCodeMessageApi();
+
 		this.messageApi.register(this.handleMessage.bind(this));
 	}
 
@@ -162,6 +178,7 @@ export class PostOffice {
 		if (this.handlers) {
 			if (msg) {
 				this.subject.next({ type: msg.type, payload: msg.payload });
+
 				this.handlers.forEach((h: IMessageHandler | null) => {
 					if (h) {
 						h.handleMessage(msg.type, msg.payload);

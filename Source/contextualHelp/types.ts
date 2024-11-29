@@ -31,6 +31,7 @@ export const IWebviewView = Symbol("IWebviewView");
 
 export interface IWebviewView extends IWebview {
 	readonly onDidChangeVisiblity: vscode.Event<void>;
+
 	readonly visible: boolean;
 }
 
@@ -76,7 +77,9 @@ export type Resource = vscode.Uri | undefined;
 
 export interface IWebviewOptions {
 	rootPath: string;
+
 	cwd: string;
+
 	scripts: string[];
 	/**
 	 * Additional paths apart from cwd and rootPath, that webview would allow loading resources/files from.
@@ -99,5 +102,6 @@ export interface IWebviewViewProvider {
 
 export interface IStatusParticipant {
 	startProgress(): void;
+
 	stopProgress(): void;
 }

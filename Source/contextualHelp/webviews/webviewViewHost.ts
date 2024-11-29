@@ -48,6 +48,7 @@ export abstract class WebviewViewHost<IMapping>
 				"WebviewViews must be passed an initial VS Code Webview",
 			);
 		}
+
 		return this.provider.create({
 			additionalPaths: workspaceFolder ? [workspaceFolder.fsPath] : [],
 			rootPath: this.rootPath,

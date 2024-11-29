@@ -71,6 +71,7 @@ export namespace CommonEffects {
 				element.innerHTML,
 			);
 		}
+
 		return arg.prevState;
 	}
 }

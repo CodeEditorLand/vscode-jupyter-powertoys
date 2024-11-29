@@ -53,15 +53,21 @@ export function fixLatex(input: string, wrapSingles: boolean = false): string {
 
 		if (!match || (dollar && dollar.index < match.index)) {
 			match = dollar;
+
 			endRegex = /\$/;
+
 			endRegexLength = 1;
 		}
+
 		if (!match || (begin && begin.index < match.index)) {
 			match = begin;
+
 			endRegex = begin
 				? new RegExp(`\\\\end\\{${_escapeRegExp(begin[1])}\\}`)
 				: /\$/;
+
 			endRegexLength = begin ? `\\end{${begin[1]}}`.length : 1;
+
 			isBeginMatch = true;
 		}
 
@@ -80,7 +86,9 @@ export function fixLatex(input: string, wrapSingles: boolean = false): string {
 						offset,
 						endRegexLength + end.index - match.index,
 					);
+
 					output.push(`${prefix}\n$$\n${wrapped}\n$$\n`);
+
 					start = start + prefix.length + wrapped.length;
 				} else {
 					// Invalid, just return
@@ -98,7 +106,9 @@ export function fixLatex(input: string, wrapSingles: boolean = false): string {
 					const before = input.substr(start, offset - start);
 
 					const after = input.substr(offset, length);
+
 					output.push(`${before}${after}`);
+
 					start = offset + length;
 				} else {
 					// Invalid, just return
@@ -116,11 +126,13 @@ export function fixLatex(input: string, wrapSingles: boolean = false): string {
 					const before = input.substr(start, offset - start);
 
 					const after = input.substr(offset, length);
+
 					output.push(
 						wrapSingles
 							? `${before}$${after}$`
 							: `${before}${after}`,
 					);
+
 					start = offset + length;
 				} else {
 					// Invalid, just return
@@ -130,6 +142,7 @@ export function fixLatex(input: string, wrapSingles: boolean = false): string {
 		} else {
 			// No more matches
 			output.push(input.substr(start));
+
 			start = input.length;
 		}
 	}
@@ -169,6 +182,7 @@ export function fixLinks(input: string): string {
 
 			if (textStartIndex < linkEndIndex) {
 				const text = input.substring(textStartIndex + 1, linkEndIndex);
+
 				input = input.replace(
 					input.substring(
 						linkStartIndex,

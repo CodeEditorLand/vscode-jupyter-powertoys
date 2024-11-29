@@ -56,16 +56,20 @@ class HostTreeItem extends TreeItem {
 			getConnectionTitle(data.baseUrl),
 			TreeItemCollapsibleState.Collapsed,
 		);
+
 		this.contextValue = this.data.type;
 	}
 }
 class LanguageTreeItem extends TreeItem {
 	constructor(public readonly data: ILanguageTreeNode) {
 		super(data.language, TreeItemCollapsibleState.Collapsed);
+
 		this.contextValue = `kernelspec-language:${data}`;
 
 		const ext = getLanguageExtension(data.language);
+
 		this.resourceUri = ext ? Uri.parse(`one${ext}`) : undefined;
+
 		this.iconPath = new ThemeIcon("file");
 	}
 }
@@ -81,12 +85,14 @@ class PythonEnvironmentTreeItem extends TreeItem {
 class KernelSpecifications extends TreeItem {
 	constructor(public readonly data: IKernelSpecRootTreeNode) {
 		super("Kernel Specifications", TreeItemCollapsibleState.Collapsed);
+
 		this.contextValue = this.data.type;
 	}
 }
 class ActiveKernels extends TreeItem {
 	constructor(public readonly data: IActiveKernelRootTreeNode) {
 		super("Active Jupyter Sessions", TreeItemCollapsibleState.Collapsed);
+
 		this.contextValue = this.data.type;
 	}
 }
@@ -97,6 +103,7 @@ function getOldFormatDisplayNameOrNameOfKernelConnection(
 	if (!kernelConnection) {
 		return "";
 	}
+
 	const displayName =
 		kernelConnection.kind === "connectToLiveRemoteKernel"
 			? kernelConnection.kernelModel.display_name
@@ -130,6 +137,7 @@ export function getTelemetrySafeVersion(version: string): string | undefined {
 		} else if (isNaN(patch)) {
 			return `${major}.${minor}`;
 		}
+
 		return `${major}.${minor}.${patch}`;
 	} catch (ex) {
 		console.error(`Failed to parse version ${version}`, ex);
@@ -145,10 +153,12 @@ export async function getDisplayNameOrNameOfKernelConnection(
 	if (!kernelConnection) {
 		return oldDisplayName;
 	}
+
 	switch (kernelConnection.kind) {
 		case "connectToLiveRemoteKernel": {
 			return oldDisplayName;
 		}
+
 		case "startUsingRemoteKernelSpec":
 		case "startUsingLocalKernelSpec": {
 			const envType = await getEnvironmentTypeFromUri(
@@ -194,6 +204,7 @@ export async function getDisplayNameOrNameOfKernelConnection(
 				return oldDisplayName || (await envNamePromise) || "";
 			}
 		}
+
 		case "startUsingPythonInterpreter":
 			const envType = await getEnvironmentTypeFromUri(
 				kernelConnection.interpreter?.uri,
@@ -237,6 +248,7 @@ export async function getDisplayNameOrNameOfKernelConnection(
 					: pythonDisplayName;
 			}
 	}
+
 	return oldDisplayName;
 }
 
@@ -266,6 +278,7 @@ export function removeNotebookSuffixAddedByExtension(notebookPath: string) {
 			);
 		}
 	}
+
 	return notebookPath;
 }
 function getKernelConnectionLanguage(connection: KernelConnectionMetadata) {
@@ -273,13 +286,16 @@ function getKernelConnectionLanguage(connection: KernelConnectionMetadata) {
 		case "connectToLiveRemoteKernel": {
 			return connection.kernelModel.language;
 		}
+
 		case "startUsingLocalKernelSpec":
 		case "startUsingRemoteKernelSpec": {
 			return connection.kernelSpec.language;
 		}
+
 		case "startUsingPythonInterpreter": {
 			return connection.kernelSpec.language || "python";
 		}
+
 		default:
 			return;
 	}
@@ -312,19 +328,24 @@ class KernelSpecTreeItem extends TreeItem {
 			default:
 				break;
 		}
+
 		this.contextValue = `${this.data.type}:${this.data.kernelConnectionMetadata.kind}`;
 
 		const ext = getLanguageExtension(
 			getKernelConnectionLanguage(data.kernelConnectionMetadata),
 		);
+
 		this.resourceUri = ext ? Uri.parse(`one${ext}`) : undefined;
+
 		this.tooltip = this.label
 			? typeof this.label === "string"
 				? this.label
 				: this.label.label || ""
 			: "";
+
 		this.iconPath = new ThemeIcon("file");
 	}
+
 	public async resolve() {
 		this.label = await getDisplayNameOrNameOfKernelConnection(
 			this.data.kernelConnectionMetadata,
@@ -352,18 +373,24 @@ class ActiveLocalOrRemoteKernelConnectionTreeItem extends TreeItem {
 			const nbPath =
 				data.kernelConnectionMetadata.kernelModel?.notebook?.path ||
 				data.kernelConnectionMetadata.kernelModel?.model?.path;
+
 			this.description =
 				nbPath &&
 				path.basename(removeNotebookSuffixAddedByExtension(nbPath));
 		}
+
 		const ext = getLanguageExtension(
 			getKernelConnectionLanguage(data.kernelConnectionMetadata),
 		);
+
 		this.resourceUri = ext ? Uri.parse(`one${ext}`) : undefined;
+
 		this.iconPath = new ThemeIcon("file");
 
 		const prefix = data.type === "activeLocalKernel" ? "local" : "remote";
+
 		this.contextValue = `${prefix}:activeKernel:${this.data.connection?.kernel?.status || "dead"}`;
+
 		console.log(this.contextValue);
 
 		const tooltips: string[] = [];
@@ -371,6 +398,7 @@ class ActiveLocalOrRemoteKernelConnectionTreeItem extends TreeItem {
 		if (this.data.connection?.kernel?.status) {
 			tooltips.push(`Status ${this.data.connection?.kernel?.status}`);
 		}
+
 		if (
 			data.kernelConnectionMetadata.kind === "connectToLiveRemoteKernel"
 		) {
@@ -382,6 +410,7 @@ class ActiveLocalOrRemoteKernelConnectionTreeItem extends TreeItem {
 					`Status ${data.kernelConnectionMetadata.kernelModel.execution_state}`,
 				);
 			}
+
 			const time =
 				data.kernelConnectionMetadata.kernelModel.lastActivityTime ||
 				data.kernelConnectionMetadata.kernelModel.last_activity;
@@ -398,9 +427,11 @@ class ActiveLocalOrRemoteKernelConnectionTreeItem extends TreeItem {
 			//     tooltips.push(`${connections} connection(s)`);
 			// }
 		}
+
 		if (this.data.connection?.kernel?.status) {
 			tooltips.push(`Connection ${this.data.connection?.kernel?.status}`);
 		}
+
 		this.tooltip = tooltips.length
 			? tooltips.join(", ")
 			: (this.description as string) || (this.label as string) || "";
@@ -416,12 +447,14 @@ class ActiveLocalOrRemoteKernelConnectionTreeItem extends TreeItem {
 			}
 		}
 	}
+
 	public async resolve() {
 		this.label = await getDisplayNameOrNameOfKernelConnection(
 			this.data.kernelConnectionMetadata,
 			this.pythonApi,
 		);
 	}
+
 	private updateIcon(state: "disconnected" | "connecting" | Status) {
 		switch (state) {
 			case "dead":
@@ -460,47 +493,62 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 	public readonly _onDidChangeTreeData = new EventEmitter<
 		void | Node | null | undefined
 	>();
+
 	private cachedKernels?: (KernelConnectionMetadata & {
 		displayName: string;
 	})[];
+
 	private readonly disposables: Disposable[] = [];
+
 	private readonly remoteBaseUrls = new Set<string>();
+
 	private groupBy?: "language" | "PythonVersion" | "EnvironmentType" =
 		"language";
+
 	private groupPythonKernelsBy?: "PythonVersion" | "EnvironmentType" =
 		"EnvironmentType";
+
 	public get onDidChangeTreeData() {
 		return this._onDidChangeTreeData.event;
 	}
+
 	private static instance: KernelTreeView;
+
 	public static refresh(node?: Node) {
 		KernelTreeView.instance._onDidChangeTreeData.fire(node);
 	}
+
 	constructor(
 		private readonly kernelService: IExportedKernelService,
 		private readonly pythonApi: PythonExtension,
 	) {
 		KernelTreeView.instance = this;
+
 		this.kernelService.onDidChangeKernelSpecifications(
 			() => {
 				this.cachedKernels = undefined;
+
 				this._onDidChangeTreeData.fire(undefined);
 			},
 			this,
 			this.disposables,
 		);
+
 		this.kernelService.onDidChangeKernels(
 			() => {
 				this.cachedKernels = undefined;
+
 				this._onDidChangeTreeData.fire(undefined);
 			},
 			this,
 			this.disposables,
 		);
 	}
+
 	public dispose() {
 		this.disposables.forEach((d) => d.dispose());
 	}
+
 	async getTreeItem(element: Node): Promise<TreeItem> {
 		switch (element.type) {
 			case "host":
@@ -514,6 +562,7 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 
 			case "kernelSpec":
 				const item = new KernelSpecTreeItem(element, this.pythonApi);
+
 				await item.resolve();
 
 				return item;
@@ -530,10 +579,12 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 					element,
 					this.pythonApi,
 				);
+
 				await item.resolve();
 
 				return item;
 			}
+
 			case "customNodeFromAnotherProvider": {
 				const provider =
 					ActiveKernelChildNodesProviderRegistry.instance.registeredProviders.get(
@@ -542,14 +593,18 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 
 				return provider!.getTreeItem(element);
 			}
+
 			default:
 				break;
 		}
+
 		throw new Error(`Element not supported ${element}`);
 	}
+
 	public async getChildren(element?: Node): Promise<Node[]> {
 		if (!element) {
 			const specs = await this.kernelService.getKernelSpecifications();
+
 			this.cachedKernels = (await Promise.all(
 				specs.map(async (k) => {
 					try {
@@ -571,6 +626,7 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 			)) as any;
 
 			const uniqueKernelIds = new Set<string>();
+
 			this.cachedKernels = this.cachedKernels!.filter((item) => {
 				if (uniqueKernelIds.has(item.id)) {
 					return false;
@@ -581,10 +637,13 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 
 				return true;
 			});
+
 			this.cachedKernels.sort((a, b) =>
 				a.displayName?.localeCompare(b.displayName || ""),
 			);
+
 			this.remoteBaseUrls.clear();
+
 			this.cachedKernels.forEach((item) => {
 				if (!isLocalKernelConnection(item)) {
 					this.remoteBaseUrls.add(item.baseUrl);
@@ -601,6 +660,7 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 				if (!this.cachedKernels) {
 					return [];
 				}
+
 				return [
 					<IKernelSpecRootTreeNode>{
 						type: "kernelSpecRoot",
@@ -611,11 +671,13 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 				];
 			}
 		}
+
 		switch (element.type) {
 			case "host": {
 				if (!this.cachedKernels) {
 					return [];
 				}
+
 				return [
 					<IKernelSpecRootTreeNode>{
 						type: "kernelSpecRoot",
@@ -627,10 +689,12 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 					},
 				];
 			}
+
 			case "pythonEnvCategory": {
 				if (!this.cachedKernels) {
 					return [];
 				}
+
 				return this.cachedKernels
 					.filter((item) => {
 						switch (item.kind) {
@@ -646,8 +710,10 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 										) === element.category
 									);
 								}
+
 								return false;
 							}
+
 							case "startUsingPythonInterpreter":
 								return (
 									getPythonEnvironmentCategory(
@@ -667,11 +733,13 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 						};
 					});
 			}
+
 			case "language":
 			case "kernelSpecRoot": {
 				if (!this.cachedKernels) {
 					return [];
 				}
+
 				if (
 					this.groupPythonKernelsBy === "EnvironmentType" &&
 					element.type === "language" &&
@@ -679,6 +747,7 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 					!element.baseUrl
 				) {
 					const categories = new Set<string>();
+
 					this.cachedKernels.forEach((item) => {
 						switch (item.kind) {
 							case "startUsingLocalKernelSpec": {
@@ -693,8 +762,10 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 										),
 									);
 								}
+
 								break;
 							}
+
 							case "startUsingPythonInterpreter": {
 								categories.add(
 									getPythonEnvironmentCategory(
@@ -718,11 +789,13 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 								},
 						);
 				}
+
 				if (
 					this.groupBy === "language" &&
 					element.type === "kernelSpecRoot"
 				) {
 					const languages = new Set<string>();
+
 					this.cachedKernels.forEach((item) => {
 						switch (item.kind) {
 							case "startUsingRemoteKernelSpec":
@@ -732,8 +805,10 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 								} else {
 									languages.add("<unknown>");
 								}
+
 								break;
 							}
+
 							case "startUsingPythonInterpreter": {
 								languages.add("python");
 
@@ -753,12 +828,14 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 								},
 						);
 				}
+
 				return this.cachedKernels
 					.filter((item) => item.kind !== "connectToLiveRemoteKernel")
 					.filter((item) => {
 						if (element.type !== "language") {
 							return true;
 						}
+
 						switch (item.kind) {
 							case "startUsingRemoteKernelSpec":
 							case "startUsingLocalKernelSpec":
@@ -790,10 +867,12 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 						};
 					});
 			}
+
 			case "activeKernelRoot": {
 				if (!this.cachedKernels) {
 					return [];
 				}
+
 				const activeKernels = this.kernelService.getActiveKernels();
 				// const uniqueKernelIds = new Set<string>();
 				// activeKernels = activeKernels.filter((item) => {
@@ -809,6 +888,7 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 				if (element.baseUrl) {
 					const remoteActiveKernels: {
 						metadata: KernelConnectionMetadata;
+
 						uri: Uri | undefined;
 					}[] = activeKernels.filter(
 						(item) => !isLocalKernelConnection(item.metadata),
@@ -825,6 +905,7 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 						[];
 
 					const uniqueKernelIds = new Set<string>();
+
 					await Promise.all(
 						this.cachedKernels
 							.filter(
@@ -861,6 +942,7 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 								) {
 									return;
 								}
+
 								if (item.kernelModel.id) {
 									if (
 										item.kernelModel.id &&
@@ -868,8 +950,10 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 									) {
 										return;
 									}
+
 									uniqueKernelIds.add(item.kernelModel.id);
 								}
+
 								const activeInfoIndex =
 									remoteActiveKernels.findIndex(
 										(activeKernel) =>
@@ -887,6 +971,7 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 										1,
 									);
 								}
+
 								const info = activeInfo?.uri
 									? await this.kernelService.getKernel(
 											activeInfo?.uri,
@@ -916,6 +1001,7 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 								}
 							}),
 					);
+
 					remoteActiveKernels.forEach((item) => {
 						if (
 							item.metadata.kind ===
@@ -953,6 +1039,7 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 						) {
 							return;
 						}
+
 						activeRemoteKernelNodes.push(<
 							IActiveRemoteKernelTreeNode
 						>{
@@ -1000,20 +1087,24 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 					return activeLocalKernelNodes;
 				}
 			}
+
 			case "activeLocalKernel":
 			case "activeRemoteKernel": {
 				let nodes: ICustomNodeFromAnotherProvider[] = [];
+
 				Array.from(
 					ActiveKernelChildNodesProviderRegistry.instance.registeredProviders.values(),
 				).forEach((provider) => {
 					this.addOnDidProviderNodeChange(provider);
 
 					const children = provider.getChildren(element);
+
 					nodes = nodes.concat(children);
 				});
 
 				return nodes;
 			}
+
 			case "customNodeFromAnotherProvider": {
 				const provider =
 					ActiveKernelChildNodesProviderRegistry.instance.registeredProviders.get(
@@ -1033,16 +1124,19 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 					return [];
 				}
 			}
+
 			default:
 				return [];
 		}
 	}
+
 	public static register(
 		kernelService: IExportedKernelService,
 		disposables: Disposable[],
 	) {
 		const pythonApi = PythonExtension.api().then((api) => {
 			const provider = new KernelTreeView(kernelService, api);
+
 			disposables.push(provider);
 
 			const options = {
@@ -1055,30 +1149,37 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 				"jupyterKernelsView",
 				options,
 			);
+
 			disposables.push(treeView);
 		});
 	}
+
 	private readonly providersAlreadyHandled =
 		new WeakSet<IActiveKernelChildNodesProvider>();
+
 	private addOnDidProviderNodeChange(
 		provider: IActiveKernelChildNodesProvider,
 	) {
 		if (this.providersAlreadyHandled.has(provider)) {
 			return;
 		}
+
 		this.providersAlreadyHandled.add(provider);
 
 		if (!provider.onDidChangeTreeData) {
 			return;
 		}
+
 		provider.onDidChangeTreeData(
 			(node) => this._onDidChangeTreeData.fire(node),
 			this,
 			this.disposables,
 		);
 	}
+
 	private readonly mappedActiveLocalKernelConnections: IActiveLocalKernelTreeNode[] =
 		[];
+
 	private trackKernelConnection(
 		localActiveKernel: IActiveLocalKernelTreeNode,
 	) {
@@ -1098,6 +1199,7 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 			// Already tracked.
 			return;
 		}
+
 		this.mappedActiveLocalKernelConnections.push(localActiveKernel);
 
 		const onConnectionStatusChanged = () => {
@@ -1107,10 +1209,12 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 		const onStatusChanged = () => {
 			this._onDidChangeTreeData.fire(localActiveKernel);
 		};
+
 		localActiveKernel.connection.kernel?.connectionStatusChanged.connect(
 			onConnectionStatusChanged,
 			this,
 		);
+
 		localActiveKernel.connection.kernel?.statusChanged.connect(
 			onStatusChanged,
 			this,
@@ -1122,12 +1226,14 @@ export class KernelTreeView implements TreeDataProvider<Node> {
 					onConnectionStatusChanged,
 					this,
 				);
+
 				localActiveKernel.connection.kernel?.statusChanged.disconnect(
 					onStatusChanged,
 					this,
 				);
 			}
 		});
+
 		this.disposables.push(disposable);
 	}
 }

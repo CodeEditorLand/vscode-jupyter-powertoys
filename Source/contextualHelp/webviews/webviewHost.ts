@@ -10,6 +10,7 @@ import { IWebview, Resource } from "../types";
 
 export abstract class WebviewHost<IMapping> implements vscode.Disposable {
 	protected abstract get title(): string;
+
 	protected webview?: IWebview;
 
 	protected abstract get owningResource(): Resource;
@@ -37,11 +38,14 @@ export abstract class WebviewHost<IMapping> implements vscode.Disposable {
 	public dispose() {
 		if (!this.disposed) {
 			this.disposed = true;
+
 			this.themeIsDarkPromise = undefined;
+
 			this._disposables.forEach((item) => item.dispose());
 		}
 
 		this.webviewInit = undefined;
+
 		this._onDidDisposeWebviewPanel.fire();
 	}
 
@@ -55,6 +59,7 @@ export abstract class WebviewHost<IMapping> implements vscode.Disposable {
 		if (!this.webview) {
 			throw new Error("asWebViewUri called too early");
 		}
+
 		return this.webview?.asWebviewUri(localResource);
 	}
 

@@ -31,14 +31,19 @@ export function updateContextKeys() {
 
 			if (cellGroups.includes(RunGroup.one.toString())) {
 				group1Cells.add(cell.document.uri);
+
 				group1Documents.add(cell.notebook.uri);
 			}
+
 			if (cellGroups.includes(RunGroup.two.toString())) {
 				group2Cells.add(cell.document.uri);
+
 				group2Documents.add(cell.notebook.uri);
 			}
+
 			if (cellGroups.includes(RunGroup.three.toString())) {
 				group3Cells.add(cell.document.uri);
+
 				group3Documents.add(cell.notebook.uri);
 			}
 		});
@@ -50,26 +55,31 @@ export function updateContextKeys() {
 		"notebookRunGroups.groupOneCells",
 		Array.from(group1Cells),
 	);
+
 	vscode.commands.executeCommand(
 		"setContext",
 		"notebookRunGroups.groupOneDocuments",
 		Array.from(group1Documents),
 	);
+
 	vscode.commands.executeCommand(
 		"setContext",
 		"notebookRunGroups.groupTwoCells",
 		Array.from(group2Cells),
 	);
+
 	vscode.commands.executeCommand(
 		"setContext",
 		"notebookRunGroups.groupTwoDocuments",
 		Array.from(group2Documents),
 	);
+
 	vscode.commands.executeCommand(
 		"setContext",
 		"notebookRunGroups.groupThreeCells",
 		Array.from(group3Cells),
 	);
+
 	vscode.commands.executeCommand(
 		"setContext",
 		"notebookRunGroups.groupThreeDocuments",

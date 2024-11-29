@@ -21,6 +21,7 @@ export function registerCommands(context: vscode.ExtensionContext) {
 			},
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.commands.registerCommand(
 			"vscode-notebook-groups.addGroup2",
@@ -29,6 +30,7 @@ export function registerCommands(context: vscode.ExtensionContext) {
 			},
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.commands.registerCommand(
 			"vscode-notebook-groups.addGroup3",
@@ -47,6 +49,7 @@ export function registerCommands(context: vscode.ExtensionContext) {
 			},
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.commands.registerCommand(
 			"vscode-notebook-groups.removeGroup2",
@@ -55,6 +58,7 @@ export function registerCommands(context: vscode.ExtensionContext) {
 			},
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.commands.registerCommand(
 			"vscode-notebook-groups.removeGroup3",
@@ -73,6 +77,7 @@ export function registerCommands(context: vscode.ExtensionContext) {
 			},
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.commands.registerCommand(
 			"vscode-notebook-groups.executeGroup2",
@@ -81,6 +86,7 @@ export function registerCommands(context: vscode.ExtensionContext) {
 			},
 		),
 	);
+
 	context.subscriptions.push(
 		vscode.commands.registerCommand(
 			"vscode-notebook-groups.executeGroup3",
@@ -217,6 +223,7 @@ function removeGroupFromCustomMetadata(
 
 	// Add in our group value and update the cell metadata
 	const newValue = currentValue.replace(targetRunGroup.toString(), "");
+
 	updateCellRunGroupMetadata(notebookCell, newValue);
 
 	log(
@@ -239,6 +246,7 @@ function addGroupToCustomMetadata(
 
 	// Add in our group value
 	const newValue = currentValue.concat(targetRunGroup.toString());
+
 	updateCellRunGroupMetadata(notebookCell, newValue);
 
 	log(

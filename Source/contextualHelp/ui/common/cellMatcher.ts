@@ -6,11 +6,15 @@ import { splitLines } from "./strings";
 
 export class CellMatcher {
 	public codeExecRegEx: RegExp;
+
 	public markdownExecRegEx: RegExp;
 
 	private codeMatchRegEx: RegExp;
+
 	private markdownMatchRegEx: RegExp;
+
 	private defaultCellMarker: string;
+
 	private defaultCellMarkerExec: RegExp;
 
 	constructor() {
@@ -18,15 +22,20 @@ export class CellMatcher {
 			undefined,
 			/^(#\s*%%|#\s*\<codecell\>|#\s*In\[\d*?\]|#\s*In\[ \])/,
 		);
+
 		this.markdownMatchRegEx = this.createRegExp(
 			undefined,
 			/^(#\s*%%\s*\[markdown\]|#\s*\<markdowncell\>)/,
 		);
+
 		this.codeExecRegEx = new RegExp(`${this.codeMatchRegEx.source}(.*)`);
+
 		this.markdownExecRegEx = new RegExp(
 			`${this.markdownMatchRegEx.source}(.*)`,
 		);
+
 		this.defaultCellMarker = "# %%";
+
 		this.defaultCellMarkerExec = this.createRegExp(
 			`${this.defaultCellMarker}(.*)`,
 			/# %%(.*)/,
@@ -65,6 +74,7 @@ export class CellMatcher {
 		) {
 			return lines.slice(1).join("\n");
 		}
+
 		return code;
 	}
 
@@ -73,17 +83,22 @@ export class CellMatcher {
 
 		if (this.defaultCellMarkerExec.test(code)) {
 			this.defaultCellMarkerExec.lastIndex = -1;
+
 			result = this.defaultCellMarkerExec.exec(code);
 		} else if (this.codeMatchRegEx.test(code)) {
 			this.codeExecRegEx.lastIndex = -1;
+
 			result = this.codeExecRegEx.exec(code);
 		} else if (this.markdownMatchRegEx.test(code)) {
 			this.markdownExecRegEx.lastIndex = -1;
+
 			result = this.markdownExecRegEx.exec(code);
 		}
+
 		if (result) {
 			return result.length > 1 ? result[result.length - 1].trim() : "";
 		}
+
 		return undefined;
 	}
 

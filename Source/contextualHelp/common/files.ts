@@ -25,11 +25,13 @@ async function localPathExists(
 		// Note that we are using stat() rather than lstat().  This
 		// means that any symlinks are getting resolved.
 		const uri = vscode.Uri.file(filename);
+
 		stat = await vscode.workspace.fs.stat(uri);
 	} catch (err) {
 		if (isFileNotFoundError(err as any)) {
 			return false;
 		}
+
 		logError(`stat() failed for "${filename}"`, err);
 
 		return false;
@@ -38,10 +40,12 @@ async function localPathExists(
 	if (fileType === undefined) {
 		return true;
 	}
+
 	if (fileType === vscode.FileType.Unknown) {
 		// FileType.Unknown == 0, hence do not use bitwise operations.
 		return stat.type === vscode.FileType.Unknown;
 	}
+
 	return (stat.type & fileType) === fileType;
 }
 
@@ -56,6 +60,7 @@ export async function searchLocal(
 	if (cwd) {
 		options = { ...options, cwd };
 	}
+
 	if (dot) {
 		options = { ...options, dot };
 	}

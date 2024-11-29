@@ -45,6 +45,7 @@ export function queueIncomingActionWithPayload<
 		type,
 		payload: { data, messageDirection: "incoming" } as any,
 	} as any;
+
 	originalReducerArg.queueAction(action);
 }
 
@@ -91,10 +92,12 @@ export function postActionToExtension(
 		type: CommonActionType.PostOutgoingMessage,
 		payload: { payload: newPayload, type: message },
 	};
+
 	originalReducerArg.queueAction(action);
 }
 export function unwrapPostableAction(action: Redux.AnyAction): {
 	type: keyof MessageMapping;
+
 	payload?: BaseReduxActionPayload<{}>;
 } {
 	// Unwrap the payload that was created in `createPostableAction`.

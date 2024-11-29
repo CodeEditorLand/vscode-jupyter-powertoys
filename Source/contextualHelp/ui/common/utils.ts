@@ -24,6 +24,7 @@ export function extractInputText(inputCellVM: ICellViewModel): string {
 	if (inputCell.data.source) {
 		source = splitMultilineString(cloneDeep(inputCell.data.source));
 	}
+
 	const matcher = new CellMatcher();
 
 	// Eliminate the #%% on the front if it has nothing else on the line
@@ -36,6 +37,7 @@ export function extractInputText(inputCellVM: ICellViewModel): string {
 		// Eliminate the lines to hide if we're debugging
 		if (inputCell.extraLines) {
 			inputCell.extraLines.forEach((i) => source.splice(i, 1));
+
 			inputCell.extraLines = undefined;
 		}
 	}
@@ -73,6 +75,7 @@ export function createCellVM(inputCell: ICell): ICellViewModel {
 	}
 
 	vm.inputBlockText = inputText;
+
 	vm.inputBlockCollapseNeeded = inputLinesCount > 1;
 
 	return vm;
@@ -83,6 +86,7 @@ export function createEmptyCell(
 	executionCount: number | null,
 ): ICell {
 	const emptyCodeCell = createCodeCell();
+
 	emptyCodeCell.execution_count = executionCount ?? null;
 
 	return {
@@ -99,8 +103,11 @@ export function getSelectedAndFocusedInfo(state: {
 }): SelectionAndFocusedInfo {
 	const info: {
 		selectedCellId?: string;
+
 		selectedCellIndex?: number;
+
 		focusedCellId?: string;
+
 		focusedCellIndex?: number;
 	} = {};
 
@@ -109,12 +116,16 @@ export function getSelectedAndFocusedInfo(state: {
 
 		if (cell.selected) {
 			info.selectedCellId = cell.cell.id;
+
 			info.selectedCellIndex = index;
 		}
+
 		if (cell.focused) {
 			info.focusedCellId = cell.cell.id;
+
 			info.focusedCellIndex = index;
 		}
+
 		if (info.selectedCellId && info.focusedCellId) {
 			break;
 		}

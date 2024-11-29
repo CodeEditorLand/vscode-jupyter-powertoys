@@ -34,6 +34,7 @@ import { IExportedKernelService } from "../kernelManager/vscodeJupyter";
 
 type RootNode = ICustomNodeFromAnotherProvider & {
 	__type: "rootNode";
+
 	connection: Kernel.IKernelConnection;
 };
 type Node = RootNode | MessageNode | DataNode;
@@ -41,6 +42,7 @@ type Node = RootNode | MessageNode | DataNode;
 class MessagesTreeItem extends TreeItem {
 	constructor(public readonly data: RootNode) {
 		super("Kernel Messages", TreeItemCollapsibleState.Collapsed);
+
 		this.contextValue = "kernelMessagesRoot";
 	}
 }
@@ -84,12 +86,15 @@ function getTextForClipboard(value: unknown) {
 	} else if (typeof value === "boolean") {
 		return value.toString();
 	}
+
 	return undefined;
 }
 class MessageTreeItem extends TreeItem {
 	constructor(public readonly data: MessageNode) {
 		super(data.label, TreeItemCollapsibleState.Collapsed);
+
 		this.description = data.description;
+
 		this.contextValue = `kernelMessageItem:${data.__type}:${data.clipboardText ? "canCopyToClipboard" : ""}`;
 
 		if (data.__type === "parentMessageNode" || data.direction === "send") {
@@ -99,8 +104,10 @@ class MessageTreeItem extends TreeItem {
 				const icon =
 					requestIconsByMessageType.get(data.msg.header.msg_type) ||
 					"indent";
+
 				this.iconPath = new ThemeIcon(icon);
 			}
+
 			const exec = data.msg as KernelMessage.IExecuteRequestMsg;
 
 			if (
@@ -109,8 +116,10 @@ class MessageTreeItem extends TreeItem {
 				exec.content.code
 			) {
 				this.description = getSingleLineValue(exec.content.code);
+
 				this.tooltip = exec.content.code;
 			}
+
 			const complete = data.msg as KernelMessage.IIsCompleteRequestMsg;
 
 			if (
@@ -119,8 +128,10 @@ class MessageTreeItem extends TreeItem {
 				complete.content.code
 			) {
 				this.description = getSingleLineValue(complete.content.code);
+
 				this.tooltip = complete.content.code;
 			}
+
 			const inspect = data.msg as KernelMessage.IInspectRequestMsg;
 
 			if (
@@ -129,8 +140,10 @@ class MessageTreeItem extends TreeItem {
 				inspect.content.code
 			) {
 				this.description = getSingleLineValue(inspect.content.code);
+
 				this.tooltip = inspect.content.code;
 			}
+
 			const debugRequest = data.msg as KernelMessage.IDebugRequestMsg;
 
 			if (
@@ -141,6 +154,7 @@ class MessageTreeItem extends TreeItem {
 				let descriptionParts = [
 					`${debugRequest.content.command} (seq: ${debugRequest.content.seq}`,
 				];
+
 				this.description = `${debugRequest.content.command} (seq: ${debugRequest.content.seq})`;
 
 				if (
@@ -156,6 +170,7 @@ class MessageTreeItem extends TreeItem {
 						])
 						.join("");
 				}
+
 				if (
 					debugRequest.content.command === "dumpCell" &&
 					debugRequest.content.arguments &&
@@ -163,6 +178,7 @@ class MessageTreeItem extends TreeItem {
 					typeof debugRequest.content.arguments["code"] === "string"
 				) {
 					descriptionParts = [`${debugRequest.content.command}`];
+
 					this.description = descriptionParts
 						.concat([
 							`, ${debugRequest.content.arguments.code
@@ -172,8 +188,10 @@ class MessageTreeItem extends TreeItem {
 								.join("\\n")}`,
 						])
 						.join("");
+
 					this.tooltip = debugRequest.content.arguments.code;
 				}
+
 				if (
 					debugRequest.content.command === "setBreakpoints" &&
 					debugRequest.content.arguments &&
@@ -189,13 +207,17 @@ class MessageTreeItem extends TreeItem {
 					];
 
 					const lines: string[] = [];
+
 					debugRequest.content.arguments["breakpoints"].forEach(
 						(line) => {
 							lines.push(line.line);
+
 							descriptionParts.push(`\n,line: ${line.line}`);
 						},
 					);
+
 					this.description = descriptionParts.join("");
+
 					this.tooltip = `${debugRequest.content.arguments.source.path}\nlines: ${lines.join(", ")}`;
 				}
 			}
@@ -203,6 +225,7 @@ class MessageTreeItem extends TreeItem {
 			const icon =
 				responseIconsByMessageType.get(data.msg.header.msg_type) ||
 				"call-incoming";
+
 			this.iconPath = new ThemeIcon(icon);
 
 			const statusMsg = data.msg as KernelMessage.IStatusMsg;
@@ -214,6 +237,7 @@ class MessageTreeItem extends TreeItem {
 			) {
 				this.description = statusMsg.content.execution_state;
 			}
+
 			const execInput = data.msg as KernelMessage.IExecuteInputMsg;
 
 			if (
@@ -223,6 +247,7 @@ class MessageTreeItem extends TreeItem {
 			) {
 				this.description = `execution_count = ${execInput.content.execution_count}`;
 			}
+
 			const stream = data.msg as KernelMessage.IStreamMsg;
 
 			if (
@@ -236,6 +261,7 @@ class MessageTreeItem extends TreeItem {
 					.join("\\r\\n")
 					.split("\n")
 					.join("\\n")}`;
+
 				this.tooltip = stream.content.text;
 			}
 
@@ -284,6 +310,7 @@ class MessageTreeItem extends TreeItem {
 			) {
 				this.description = `${debugEvent.content.event} (seq: ${debugEvent.content.seq})`;
 			}
+
 			const errorMsg = data.msg as KernelMessage.IErrorMsg;
 
 			if (
@@ -294,6 +321,7 @@ class MessageTreeItem extends TreeItem {
 				this.description = errorMsg.content.ename;
 			}
 		}
+
 		if (!this.tooltip) {
 			this.tooltip = (this.description || "").replace(/\\n/g, "\n");
 		}
@@ -307,8 +335,11 @@ class DataTreeItem extends TreeItem {
 				? TreeItemCollapsibleState.Collapsed
 				: TreeItemCollapsibleState.None,
 		);
+
 		this.description = data.description;
+
 		this.tooltip = data.tooltip;
+
 		this.contextValue = `kernelMessageItem:${data.__type}:${data.clipboardText ? "canCopyToClipboard" : ""}`;
 	}
 }
@@ -316,61 +347,104 @@ class DataTreeItem extends TreeItem {
 type MessageNode =
 	| (ICustomNodeFromAnotherProvider & {
 			__type: "parentMessageNode";
+
 			direction: "send";
+
 			label: string;
+
 			description: string;
+
 			msg_id: string;
+
 			parent?: MessageNode;
+
 			msg: KernelMessage.IMessage;
+
 			connection: Kernel.IKernelConnection;
+
 			isTopLevelMessage?: boolean;
+
 			clipboardText?: string;
 	  })
 	| (ICustomNodeFromAnotherProvider & {
 			__type: "messageNode";
+
 			direction: "send";
+
 			label: string;
+
 			description: string;
+
 			msg_id: string;
+
 			parent?: MessageNode;
+
 			msg: KernelMessage.IMessage;
+
 			connection: Kernel.IKernelConnection;
+
 			isTopLevelMessage?: boolean;
+
 			clipboardText?: string;
 	  })
 	| (ICustomNodeFromAnotherProvider & {
 			__type: "messageNode";
+
 			direction: "recv";
+
 			label: string;
+
 			description: string;
+
 			msg_id: string;
+
 			parent?: MessageNode;
+
 			msg: KernelMessage.IMessage;
+
 			connection: Kernel.IKernelConnection;
+
 			isTopLevelMessage?: boolean;
+
 			clipboardText?: string;
 	  });
 type DataNode =
 	| (ICustomNodeFromAnotherProvider & {
 			__type: "dataNode";
+
 			label: string;
+
 			description: string;
+
 			tooltip: string;
+
 			msg: KernelMessage.IMessage;
+
 			property: string;
+
 			paths: (string | number)[];
+
 			hasChildren: boolean;
+
 			clipboardText?: string;
 	  })
 	| (ICustomNodeFromAnotherProvider & {
 			__type: "dataNode";
+
 			label: string;
+
 			description: string;
+
 			tooltip: string;
+
 			msg: KernelMessage.IMessage;
+
 			index: number;
+
 			paths: (string | number)[];
+
 			clipboardText?: string;
+
 			hasChildren: boolean;
 	  });
 
@@ -390,42 +464,56 @@ export class ActiveKernelMessageProvider
 	implements IActiveKernelChildNodesProvider
 {
 	private activated?: boolean;
+
 	private readonly _onDidChangeTreeData = new EventEmitter<
 		void | ICustomNodeFromAnotherProvider | null | undefined
 	>();
+
 	private readonly connections = new WeakMap<
 		Kernel.IKernelConnection,
 		RootNode | undefined
 	>();
+
 	private readonly disposables: Disposable[] = [];
+
 	private readonly messagesByConnection = new WeakMap<
 		Kernel.IKernelConnection,
 		{
 			messages: MessageNode[];
+
 			requestsById: Map<
 				string,
 				{ parent: MessageNode; children: MessageNode[] }
 			>;
 		}
 	>();
+
 	public get onDidChangeTreeData() {
 		return this._onDidChangeTreeData.event;
 	}
+
 	constructor(private readonly kernelService: IExportedKernelService) {}
+
 	public readonly id = "kernelSpy";
+
 	private messageViewType: "tree" | "list" = "tree";
+
 	public activate() {
 		if (this.activated) {
 			return;
 		}
+
 		this.disposables.push(
 			...[
 				commands.registerCommand(
 					"jupyter-kernelManager.clearKernelMessages",
 					(data: RootNode) => {
 						const info = this.getConnectionInfo(data.connection);
+
 						info.requestsById.clear();
+
 						info.messages.splice(0, info.messages.length);
+
 						this._onDidChangeTreeData.fire(data);
 					},
 				),
@@ -433,6 +521,7 @@ export class ActiveKernelMessageProvider
 					"jupyter-kernelManager.viewKernelMessagesAsTree",
 					(data: RootNode) => {
 						this.messageViewType = "tree";
+
 						this._onDidChangeTreeData.fire(data);
 					},
 				),
@@ -440,6 +529,7 @@ export class ActiveKernelMessageProvider
 					"jupyter-kernelManager.viewKernelMessagesAsList",
 					(data: RootNode) => {
 						this.messageViewType = "list";
+
 						this._onDidChangeTreeData.fire(data);
 					},
 				),
@@ -451,19 +541,24 @@ export class ActiveKernelMessageProvider
 				),
 			],
 		);
+
 		this.activated = true;
+
 		this.kernelService.onDidChangeKernels(
 			() => {
 				const kernels = this.kernelService.getActiveKernels();
+
 				kernels.forEach((item) => {
 					if (!item.uri) {
 						return;
 					}
+
 					const kernel = this.kernelService.getKernel(item.uri);
 
 					if (!kernel) {
 						return;
 					}
+
 					this.addHandler(kernel.connection);
 				});
 			},
@@ -471,10 +566,13 @@ export class ActiveKernelMessageProvider
 			this.disposables,
 		);
 	}
+
 	public dispose() {
 		this._onDidChangeTreeData.dispose();
+
 		this.disposables.forEach((d) => d.dispose());
 	}
+
 	getChildren(
 		node:
 			| IActiveLocalKernelTreeNode
@@ -484,6 +582,7 @@ export class ActiveKernelMessageProvider
 		if (!this.activated) {
 			return [];
 		}
+
 		if (
 			node.type === "activeLocalKernel" ||
 			node.type === "activeRemoteKernel"
@@ -491,19 +590,23 @@ export class ActiveKernelMessageProvider
 			if (!node.connection?.kernel) {
 				return [];
 			}
+
 			const rootNode: RootNode = {
 				type: "customNodeFromAnotherProvider",
 				__type: "rootNode",
 				providerId: this.id,
 				connection: node.connection.kernel,
 			};
+
 			this.addHandler(node.connection, rootNode);
 
 			return [rootNode];
 		}
+
 		if (node.type !== "customNodeFromAnotherProvider") {
 			return [];
 		}
+
 		const ourNode = node as Node;
 
 		if (ourNode.__type === "rootNode") {
@@ -577,13 +680,16 @@ export class ActiveKernelMessageProvider
 					header.msg_type === "comm_open"
 				) {
 					const commOpen = ourNode.msg as KernelMessage.ICommOpenMsg;
+
 					description = `${commOpen.content.target_name}: ${commOpen.content.comm_id}`;
+
 					tooltip = `target_name: ${commOpen.content.target_name}\ncomm_id: ${commOpen.content.comm_id}\target_module: ${commOpen.content.target_module}`;
 				} else if (
 					prop === "content" &&
 					header.msg_type === "comm_msg"
 				) {
 					const commMsg = ourNode.msg as KernelMessage.ICommMsgMsg;
+
 					description = `comm_id: ${commMsg.content.comm_id}`;
 				} else if (
 					prop === "content" &&
@@ -593,7 +699,9 @@ export class ActiveKernelMessageProvider
 						ourNode.msg as KernelMessage.IDisplayDataMsg;
 
 					const mimes = Object.keys(commMsg.content.data);
+
 					tooltip = mimes.join(", ");
+
 					description = mimes
 						.map((mime) => {
 							if (
@@ -630,6 +738,7 @@ export class ActiveKernelMessageProvider
 			let data = ourNode.msg;
 
 			const currentPath = ourNode.paths.join(".");
+
 			ourNode.paths.forEach((path) => {
 				data = (data as any)[path];
 			});
@@ -637,6 +746,7 @@ export class ActiveKernelMessageProvider
 			if (typeof data === "undefined" || data === null) {
 				return [];
 			}
+
 			const header = ourNode.msg.header as KernelMessage.IHeader<any>;
 
 			if (Array.isArray(data)) {
@@ -739,6 +849,7 @@ export class ActiveKernelMessageProvider
 									...value,
 									buffer_paths: [],
 								});
+
 								tooltip = JSON.stringify(
 									{ ...value, buffer_paths: [] },
 									undefined,
@@ -769,8 +880,10 @@ export class ActiveKernelMessageProvider
 				return [];
 			}
 		}
+
 		return [];
 	}
+
 	getTreeItem(node: ICustomNodeFromAnotherProvider): TreeItem {
 		const ourNode = node as Node;
 
@@ -783,8 +896,10 @@ export class ActiveKernelMessageProvider
 		} else if (ourNode.__type && ourNode.__type === "dataNode") {
 			return new DataTreeItem(ourNode);
 		}
+
 		return new MessagesTreeItem(ourNode);
 	}
+
 	private getConnectionInfo(connection: Kernel.IKernelConnection) {
 		if (!this.messagesByConnection.has(connection)) {
 			this.messagesByConnection.set(connection, {
@@ -795,6 +910,7 @@ export class ActiveKernelMessageProvider
 				>(),
 			});
 		}
+
 		return this.messagesByConnection.get(connection)!;
 	}
 
@@ -806,15 +922,20 @@ export class ActiveKernelMessageProvider
 			if (parent && !this.connections.get(connection.kernel)) {
 				this.connections.set(connection.kernel, parent);
 			}
+
 			return;
 		}
+
 		if (!connection.kernel) {
 			return;
 		}
+
 		this.connections.set(connection.kernel, parent);
 
 		const anyHandler = this.onAnyMessageHandler.bind(this, parent);
+
 		connection.kernel.anyMessage.connect(anyHandler, this);
+
 		this.disposables.push(
 			new Disposable(() =>
 				connection.kernel!.anyMessage.disconnect(anyHandler),
@@ -824,6 +945,7 @@ export class ActiveKernelMessageProvider
 		const ioPubHandler = this.onIOPubMessageHandler.bind(this, parent);
 
 		connection.kernel.iopubMessage.connect(ioPubHandler, this);
+
 		this.disposables.push(
 			new Disposable(() =>
 				connection.kernel!.iopubMessage.disconnect(ioPubHandler),
@@ -836,6 +958,7 @@ export class ActiveKernelMessageProvider
 		);
 
 		connection.kernel.unhandledMessage.connect(unhandledHandler, this);
+
 		this.disposables.push(
 			new Disposable(() =>
 				connection.kernel!.unhandledMessage.disconnect(
@@ -844,6 +967,7 @@ export class ActiveKernelMessageProvider
 			),
 		);
 	}
+
 	private onAnyMessageHandler(
 		root: RootNode | undefined,
 		connection: Kernel.IKernelConnection,
@@ -855,6 +979,7 @@ export class ActiveKernelMessageProvider
 			// These messages are handled by the iopub handler.
 			return;
 		}
+
 		const { messages, requestsById } = this.getConnectionInfo(connection);
 
 		const label = `${args.msg.channel}.${args.msg.header.msg_type}`;
@@ -882,11 +1007,14 @@ export class ActiveKernelMessageProvider
 		const info =
 			requestsById.get(args.msg.header.msg_id) ||
 			requestsById.get(parentId);
+
 		messages.push(message);
 
 		if (info) {
 			message.parent = info.parent;
+
 			info.children.push(message);
+
 			this._onDidChangeTreeData.fire(info.parent);
 		} else {
 			message.isTopLevelMessage = true;
@@ -899,13 +1027,16 @@ export class ActiveKernelMessageProvider
 					parent: message,
 					children: [{ ...message }],
 				});
+
 				message.__type = "parentMessageNode";
 			}
+
 			if (root) {
 				this._onDidChangeTreeData.fire(root);
 			}
 		}
 	}
+
 	private onIOPubMessageHandler(
 		root: RootNode | undefined,
 		connection: Kernel.IKernelConnection,
@@ -937,11 +1068,14 @@ export class ActiveKernelMessageProvider
 
 		const info =
 			requestsById.get(args.header.msg_id) || requestsById.get(parentId);
+
 		messages.push(message);
 
 		if (info) {
 			message.parent = info.parent;
+
 			info.children.push(message);
+
 			this._onDidChangeTreeData.fire(info.parent);
 		} else {
 			message.isTopLevelMessage = true;
@@ -951,6 +1085,7 @@ export class ActiveKernelMessageProvider
 			}
 		}
 	}
+
 	private onUnhandledMessageHandler(
 		root: RootNode | undefined,
 		connection: Kernel.IKernelConnection,
@@ -982,11 +1117,14 @@ export class ActiveKernelMessageProvider
 
 		const info =
 			requestsById.get(args.header.msg_id) || requestsById.get(parentId);
+
 		messages.push(message);
 
 		if (info) {
 			message.parent = info.parent;
+
 			info.children.push(message);
+
 			this._onDidChangeTreeData.fire(info.parent);
 		} else {
 			message.isTopLevelMessage = true;

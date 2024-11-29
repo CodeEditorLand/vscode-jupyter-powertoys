@@ -20,8 +20,11 @@ export abstract class Webview implements IWebview {
 	public get loadFailed(): Event<void> {
 		return this.loadFailedEmitter.event;
 	}
+
 	protected webviewHost?: vscodeWebviewView | vscodeWebviewPanel;
+
 	protected loadFailedEmitter = new EventEmitter<void>();
+
 	protected loadPromise: Promise<void>;
 
 	constructor(
@@ -39,6 +42,7 @@ export abstract class Webview implements IWebview {
 
 		if (options.webviewHost) {
 			this.webviewHost = options.webviewHost;
+
 			this.webviewHost.webview.options = webViewOptions;
 		} else {
 			// Delegate to derived classes for creation
@@ -52,6 +56,7 @@ export abstract class Webview implements IWebview {
 		if (!this.webviewHost?.webview) {
 			throw new Error("WebView not initialized, too early to get a Uri");
 		}
+
 		return this.webviewHost.webview.asWebviewUri(localResource);
 	}
 
@@ -132,6 +137,7 @@ export abstract class Webview implements IWebview {
 
                         return "${uriBase}" + relativePath;
                     }
+
                     function forceTestMiddleware() {
                         return ${forceTestMiddleware};
                     }
@@ -159,6 +165,7 @@ export abstract class Webview implements IWebview {
 				} else {
 					// Indicate that we can't load the file path
 					const badPanelString = `<html><body><h1>${this.options.scripts.join(", ")} is not a valid file name</h1></body></html>`;
+
 					this.webviewHost.webview.html = badPanelString;
 				}
 			}
@@ -166,6 +173,7 @@ export abstract class Webview implements IWebview {
 			// If our web panel failes to load, report that out so whatever
 			// is hosting the panel can clean up
 			logError(`Error Loading WebviewPanel: ${error}`);
+
 			this.loadFailedEmitter.fire();
 		}
 	}

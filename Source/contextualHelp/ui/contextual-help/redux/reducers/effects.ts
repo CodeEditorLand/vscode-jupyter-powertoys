@@ -46,6 +46,7 @@ export namespace Effects {
 							},
 						},
 					});
+
 					prevState = deselectCell({
 						...arg,
 						prevState,
@@ -215,6 +216,7 @@ export namespace Effects {
 						},
 					},
 				});
+
 				prevState = deselectCell({
 					...arg,
 					prevState,
@@ -249,6 +251,7 @@ export namespace Effects {
 				cellVMs: newVMs,
 			};
 		}
+
 		return arg.prevState;
 	}
 
@@ -261,6 +264,7 @@ export namespace Effects {
 
 		if (index >= 0) {
 			const newVMs = [...arg.prevState.cellVMs];
+
 			newVMs[index] = {
 				...newVMs[index],
 				showLineNumbers: !newVMs[index].showLineNumbers,
@@ -271,6 +275,7 @@ export namespace Effects {
 				cellVMs: newVMs,
 			};
 		}
+
 		return arg.prevState;
 	}
 
@@ -283,6 +288,7 @@ export namespace Effects {
 
 		if (index >= 0) {
 			const newVMs = [...arg.prevState.cellVMs];
+
 			newVMs[index] = {
 				...newVMs[index],
 				hideOutput: !newVMs[index].hideOutput,
@@ -293,6 +299,7 @@ export namespace Effects {
 				cellVMs: newVMs,
 			};
 		}
+
 		return arg.prevState;
 	}
 

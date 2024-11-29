@@ -46,9 +46,13 @@ export type PythonVersion = {
 	 * The original version string.
 	 */
 	raw: string;
+
 	major: number;
+
 	minor: number;
+
 	patch: number;
+
 	build: string[];
 	/**
 	 * Identifies a tag in the release process (e.g. beta 1)
@@ -58,11 +62,17 @@ export type PythonVersion = {
 
 export type PythonEnvironment = {
 	displayName?: string;
+
 	uri: Uri;
+
 	version?: PythonVersion;
+
 	sysPrefix: string;
+
 	envType?: EnvironmentType;
+
 	envName?: string;
+
 	envPath?: Uri;
 };
 
@@ -75,11 +85,13 @@ export interface IJupyterKernelSpec {
 	 * Id of an existing (active) Kernel from an active session.
 	 */
 	id?: string;
+
 	name: string;
 	/**
 	 * The name of the language of the kernel
 	 */
 	language?: string;
+
 	path: string;
 	/**
 	 * A dictionary of environment variables to set for the kernel.
@@ -130,6 +142,7 @@ export interface IJupyterKernelSpec {
  */
 export type LocalKernelSpecConnectionMetadata = Readonly<{
 	kernelModel?: undefined;
+
 	kernelSpec: IJupyterKernelSpec;
 	/**
 	 * Indicates the interpreter that may be used to start the kernel.
@@ -137,7 +150,9 @@ export type LocalKernelSpecConnectionMetadata = Readonly<{
 	 * This interpreter could also be the interpreter associated with the kernel spec that we are supposed to start.
 	 */
 	interpreter?: PythonEnvironment;
+
 	kind: "startUsingLocalKernelSpec";
+
 	id: string;
 }>;
 /**
@@ -147,10 +162,15 @@ export type LocalKernelSpecConnectionMetadata = Readonly<{
  */
 export type RemoteKernelSpecConnectionMetadata = Readonly<{
 	kernelModel?: undefined;
+
 	interpreter?: undefined;
+
 	kernelSpec: IJupyterKernelSpec;
+
 	kind: "startUsingRemoteKernelSpec";
+
 	baseUrl: string;
+
 	id: string;
 }>;
 /**
@@ -161,8 +181,11 @@ export type RemoteKernelSpecConnectionMetadata = Readonly<{
  */
 export type PythonKernelConnectionMetadata = Readonly<{
 	kernelSpec: IJupyterKernelSpec;
+
 	interpreter: PythonEnvironment;
+
 	kind: "startUsingPythonInterpreter";
+
 	id: string;
 }>;
 interface IJupyterKernel {
@@ -170,12 +193,14 @@ interface IJupyterKernel {
 	 * Id of an existing (active) Kernel from an active session.
 	 */
 	id?: string;
+
 	name: string;
 }
 
 export type LiveKernelModel = IJupyterKernel &
 	Partial<IJupyterKernelSpec> & {
 		model: Session.IModel | undefined;
+
 		notebook?: { path?: string };
 	};
 
@@ -189,8 +214,11 @@ export type LiveRemoteKernelConnectionMetadata = Readonly<{
 	 * Python interpreter will be used for intellisense & the like.
 	 */
 	interpreter?: PythonEnvironment;
+
 	baseUrl: string;
+
 	kind: "connectToLiveRemoteKernel";
+
 	id: string;
 }>;
 
@@ -270,6 +298,7 @@ export interface IExportedKernelService {
 	getKernel(uri: Uri):
 		| {
 				metadata: KernelConnectionMetadata;
+
 				connection: Session.ISessionConnection;
 		  }
 		| undefined;

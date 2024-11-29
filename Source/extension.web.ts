@@ -17,6 +17,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	) {
 		activateNotebookRunGroups(context);
 	}
+
 	await activateKernelManagement(context);
 }
 

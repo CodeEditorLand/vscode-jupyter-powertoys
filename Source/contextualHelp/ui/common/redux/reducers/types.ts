@@ -173,9 +173,13 @@ export interface ICodeAction extends ICellAction {
 
 export interface IEditCellAction extends ICodeAction {
 	forward: IEditorContentChange[];
+
 	reverse: IEditorContentChange[];
+
 	id: string;
+
 	modelId: string;
+
 	version: number;
 }
 
@@ -183,6 +187,7 @@ export interface IEditCellAction extends ICodeAction {
 // They are mutually exclusive, if not `add`, then there's no `newCellId`.
 export type IExecuteAction = ICellAction & {
 	code: string;
+
 	moveOp: "select" | "none" | "add";
 };
 
@@ -208,17 +213,23 @@ export interface IOpenSettingsAction {
 
 export interface ILoadIPyWidgetClassFailureAction {
 	className: string;
+
 	moduleName: string;
+
 	moduleVersion: string;
+
 	cdnsUsed: boolean;
+
 	isOnline: boolean;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	error: any;
+
 	timedout: boolean;
 }
 
 export interface IVariableExplorerHeight {
 	containerHeight: number;
+
 	gridHeight: number;
 }
 
@@ -228,18 +239,23 @@ export interface IVariableViewHeight {
 
 export type LoadIPyWidgetClassDisabledAction = {
 	className: string;
+
 	moduleName: string;
+
 	moduleVersion: string;
 };
 
 export type LoadIPyWidgetClassLoadAction = {
 	className: string;
+
 	moduleName: string;
+
 	moduleVersion: string;
 };
 
 export type NotifyIPyWidgeWidgetVersionNotSupportedAction = {
 	moduleName: "qgrid";
+
 	moduleVersion: string;
 };
 

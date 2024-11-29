@@ -24,6 +24,7 @@ export enum WindowMessages {
 
 export interface INotebookIdentity {
 	resource: Uri;
+
 	type: "interactive" | "native";
 }
 
@@ -88,11 +89,13 @@ export enum SharedMessages {
 
 export interface IFinishCell {
 	cell: ICell;
+
 	notebookIdentity: Uri;
 }
 
 export interface ILoadAllCells {
 	cells: ICell[];
+
 	isNotebookTrusted?: boolean;
 }
 
@@ -115,22 +118,38 @@ export enum MessageType {
 // Map all messages to specific payloads
 export class MessageMapping {
 	public [WindowMessages.StartCell]: ICell;
+
 	public [WindowMessages.FinishCell]: IFinishCell;
+
 	public [WindowMessages.UpdateCellWithExecutionResults]: ICell;
+
 	public [WindowMessages.OpenSettings]: string | undefined;
+
 	public [SharedMessages.UpdateSettings]: string;
+
 	public [SharedMessages.LocInit]: string;
+
 	public [WindowMessages.ConvertUriForUseInWebViewRequest]: Uri;
+
 	public [WindowMessages.ConvertUriForUseInWebViewResponse]: {
 		request: Uri;
+
 		response: Uri;
 	};
+
 	public [WindowMessages.GetHTMLByIdRequest]: string;
+
 	public [WindowMessages.GetHTMLByIdResponse]: string;
+
 	public [WindowMessages.Started]: never | undefined;
+
 	public [WindowMessages.StartProgress]: never | undefined;
+
 	public [WindowMessages.StopProgress]: never | undefined;
+
 	public [WindowMessages.LoadAllCells]: ILoadAllCells;
+
 	public [WindowMessages.LoadAllCellsComplete]: ILoadAllCells;
+
 	public [WindowMessages.HideUI]: boolean;
 }

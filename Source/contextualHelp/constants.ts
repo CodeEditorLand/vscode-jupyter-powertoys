@@ -69,10 +69,14 @@ export namespace RegExpValues {
 
 	export interface IUrlPatternGroupType {
 		LOCAL: string | undefined;
+
 		PREFIX: string | undefined;
+
 		REST: string | undefined;
+
 		IP: string | undefined;
 	}
+
 	export const HttpPattern = /https?:\/\//;
 
 	export const ExtractPortRegex = /https?:\/\/[^\s]+:(\d+)[^\s]+/;

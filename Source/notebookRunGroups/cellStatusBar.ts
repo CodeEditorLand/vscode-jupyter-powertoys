@@ -29,9 +29,11 @@ function provideCellStatusBarItems(
 	if (cellRunGroups.includes(RunGroup.one.toString())) {
 		groupStrings.push("Group 1");
 	}
+
 	if (cellRunGroups.includes(RunGroup.two.toString())) {
 		groupStrings.push("Group 2");
 	}
+
 	if (cellRunGroups.includes(RunGroup.three.toString())) {
 		groupStrings.push("Group 3");
 	}

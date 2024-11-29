@@ -33,15 +33,19 @@ const _languageAliases = {
 export const languageAliases = new Map<string, string[]>();
 Object.getOwnPropertyNames(_languageAliases).forEach((key) => {
 	const currentLanguages = languageAliases.get(key) || [];
+
 	currentLanguages.push(key);
 
 	const newLanguages = (_languageAliases as any)[key] as Set<string>;
+
 	Array.from(newLanguages.values()).forEach((item) =>
 		currentLanguages.push(item),
 	);
 
 	const allAliases = Array.from(new Set(currentLanguages));
+
 	languageAliases.set(key, allAliases);
+
 	currentLanguages.forEach((item) => languageAliases.set(item, allAliases));
 });
 

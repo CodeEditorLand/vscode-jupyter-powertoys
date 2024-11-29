@@ -20,6 +20,7 @@ export async function execCodeInBackgroundThread<T>(
 	token: CancellationToken,
 ) {
 	const counter = executionCounters.get(kernel) || 0;
+
 	executionCounters.set(kernel, counter + 1);
 
 	const mime = `application/vnd.vscode.bg.execution.${counter}`;
@@ -57,6 +58,7 @@ del __jupyter_exec_powerToys_background__
 `.trim();
 
 	const disposables: Disposable[] = [];
+
 	disposables.push(
 		token.onCancellationRequested(() =>
 			disposables.forEach((d) => d.dispose()),
@@ -72,6 +74,7 @@ del __jupyter_exec_powerToys_background__
 						if (token.isCancellationRequested) {
 							return resolve(undefined);
 						}
+
 						const metadata = getNotebookCellOutputMetadata(output);
 
 						if (
@@ -80,6 +83,7 @@ del __jupyter_exec_powerToys_background__
 						) {
 							return;
 						}
+
 						const result = output.items.find(
 							(item) => item.mime === mimeFinalResult,
 						);
@@ -113,11 +117,13 @@ del __jupyter_exec_powerToys_background__
 		if (token.isCancellationRequested) {
 			return;
 		}
+
 		const metadata = getNotebookCellOutputMetadata(output);
 
 		if (!metadata?.transient?.display_id) {
 			continue;
 		}
+
 		const result = output.items.find(
 			(item) => item.mime === mime || item.mime === mimeFinalResult,
 		);
@@ -125,11 +131,13 @@ del __jupyter_exec_powerToys_background__
 		if (!result) {
 			continue;
 		}
+
 		if (result.mime === mime) {
 			displayId = metadata.transient.display_id;
 
 			continue;
 		}
+
 		if (
 			result.mime === mimeFinalResult &&
 			displayId === metadata.transient.display_id
@@ -137,9 +145,11 @@ del __jupyter_exec_powerToys_background__
 			return JSON.parse(new TextDecoder().decode(result.data)) as T;
 		}
 	}
+
 	if (token.isCancellationRequested) {
 		return;
 	}
+
 	if (!displayId) {
 		console.log("Failed to get display id for completions");
 
@@ -151,6 +161,7 @@ del __jupyter_exec_powerToys_background__
 
 export function getNotebookCellOutputMetadata(output: {
 	items: NotebookCellOutputItem[];
+
 	metadata?: { [key: string]: unknown };
 }): CellOutputMetadata | undefined {
 	return output.metadata as CellOutputMetadata | undefined;
@@ -182,6 +193,7 @@ interface CellOutputMetadata {
 	 * Original cell output type
 	 */
 	outputType: nbformat.OutputType | string;
+
 	executionCount?: nbformat.IExecuteResult["ExecutionCount"];
 	/**
 	 * Whether the original Mime data is JSON or not.
@@ -212,8 +224,10 @@ export function escapeStringToEmbedInPythonCode(
 	if (typeof value !== "string") {
 		return value;
 	}
+
 	for (const [toEscape, replacement] of replacements) {
 		value = value.replace(toEscape, replacement);
 	}
+
 	return value;
 }

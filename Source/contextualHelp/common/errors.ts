@@ -11,6 +11,7 @@ See:
 
 interface IError {
 	name: string;
+
 	message: string;
 
 	toString(): string;
@@ -18,7 +19,9 @@ interface IError {
 
 interface INodeJSError extends IError {
 	code: string;
+
 	stack?: string;
+
 	stackTraceLimit: number;
 
 	captureStackTrace(): void;
@@ -54,21 +57,26 @@ namespace vscErrors {
 		if (!known.includes(err.name)) {
 			return undefined;
 		}
+
 		return err.name === expectedName;
 	}
 
 	export function isFileNotFound(err: Error): boolean | undefined {
 		return errorMatches(err, FILE_NOT_FOUND);
 	}
+
 	export function isFileExists(err: Error): boolean | undefined {
 		return errorMatches(err, FILE_EXISTS);
 	}
+
 	export function isFileIsDir(err: Error): boolean | undefined {
 		return errorMatches(err, IS_DIR);
 	}
+
 	export function isNotDir(err: Error): boolean | undefined {
 		return errorMatches(err, NOT_DIR);
 	}
+
 	export function isNoPermissions(err: Error): boolean | undefined {
 		return errorMatches(err, NO_PERM);
 	}
@@ -76,20 +84,30 @@ namespace vscErrors {
 
 interface ISystemError extends INodeJSError {
 	errno: number;
+
 	syscall: string;
+
 	info?: string;
+
 	path?: string;
+
 	address?: string;
+
 	dest?: string;
+
 	port?: string;
 }
 
 // Return a new error for errno ENOTEMPTY.
 export function createDirNotEmptyError(dirname: string): ISystemError {
 	const err = new Error(`directory "${dirname}" not empty`) as ISystemError;
+
 	err.name = "SystemError";
+
 	err.code = "ENOTEMPTY";
+
 	err.path = dirname;
+
 	err.syscall = "rmdir";
 
 	return err;
@@ -101,6 +119,7 @@ function isSystemError(err: Error, expectedCode: string): boolean | undefined {
 	if (!code) {
 		return undefined;
 	}
+
 	return code === expectedCode;
 }
 
@@ -111,6 +130,7 @@ export function isFileNotFoundError(err: Error): boolean | undefined {
 	if (matched !== undefined) {
 		return matched;
 	}
+
 	return isSystemError(err, "ENOENT");
 }
 
@@ -121,6 +141,7 @@ export function isFileExistsError(err: Error): boolean | undefined {
 	if (matched !== undefined) {
 		return matched;
 	}
+
 	return isSystemError(err, "EEXIST");
 }
 
@@ -131,6 +152,7 @@ export function isFileIsDirError(err: Error): boolean | undefined {
 	if (matched !== undefined) {
 		return matched;
 	}
+
 	return isSystemError(err, "EISDIR");
 }
 
@@ -141,6 +163,7 @@ export function isNotDirError(err: Error): boolean | undefined {
 	if (matched !== undefined) {
 		return matched;
 	}
+
 	return isSystemError(err, "ENOTDIR");
 }
 
@@ -151,6 +174,7 @@ export function isNoPermissionsError(err: Error): boolean | undefined {
 	if (matched !== undefined) {
 		return matched;
 	}
+
 	return isSystemError(err, "EACCES");
 }
 

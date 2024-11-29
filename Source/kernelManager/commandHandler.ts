@@ -31,9 +31,11 @@ export class CommandHandler {
 	) {
 		this.addCommandHandlers();
 	}
+
 	public dispose() {
 		this.disposables.forEach((d) => d.dispose());
 	}
+
 	public static register(
 		kernelService: IExportedKernelService,
 		context: ExtensionContext,
@@ -43,6 +45,7 @@ export class CommandHandler {
 			new CommandHandler(kernelService, context, jupyterApi),
 		);
 	}
+
 	private addCommandHandlers() {
 		this.disposables.push(
 			commands.registerCommand(
@@ -51,6 +54,7 @@ export class CommandHandler {
 				this,
 			),
 		);
+
 		this.disposables.push(
 			commands.registerCommand(
 				"jupyter-kernelManager.interruptKernel",
@@ -58,6 +62,7 @@ export class CommandHandler {
 				this,
 			),
 		);
+
 		this.disposables.push(
 			commands.registerCommand(
 				"jupyter-kernelManager.restartKernel",
@@ -65,6 +70,7 @@ export class CommandHandler {
 				this,
 			),
 		);
+
 		this.disposables.push(
 			commands.registerCommand(
 				"jupyter-kernelManager.createnewinteractive",
@@ -72,6 +78,7 @@ export class CommandHandler {
 				this,
 			),
 		);
+
 		this.disposables.push(
 			commands.registerCommand(
 				"jupyter-kernelManager.createnewnotebook",
@@ -79,6 +86,7 @@ export class CommandHandler {
 				this,
 			),
 		);
+
 		this.disposables.push(
 			commands.registerCommand(
 				"jupyter-kernelManager.editKernelSpec",
@@ -86,6 +94,7 @@ export class CommandHandler {
 				this,
 			),
 		);
+
 		this.disposables.push(
 			commands.registerCommand(
 				"jupyter-kernelManager.refreshKernels",
@@ -93,12 +102,14 @@ export class CommandHandler {
 					await Promise.all([
 						this.kernelService.getKernelSpecifications(true),
 					]);
+
 					KernelTreeView.refresh();
 				},
 				this,
 			),
 		);
 	}
+
 	private async createInteractiveWindow(
 		node:
 			| IActiveRemoteKernelTreeNode
@@ -134,11 +145,13 @@ export class CommandHandler {
 				return;
 			}
 		}
+
 		void commands.executeCommand(
 			"jupyter.createnewinteractive",
 			node.kernelConnectionMetadata,
 		);
 	}
+
 	private async createNotebook(
 		node:
 			| IActiveRemoteKernelTreeNode
@@ -169,11 +182,13 @@ export class CommandHandler {
 				const notebook = await commands.executeCommand(
 					"ipynb.newUntitledIpynb",
 				);
+
 				console.log(notebook);
 
 				return;
 			}
 		}
+
 		await commands.executeCommand("ipynb.newUntitledIpynb");
 
 		const nb = window.activeNotebookEditor?.notebook;
@@ -181,10 +196,12 @@ export class CommandHandler {
 		if (!nb) {
 			return;
 		}
+
 		this.jupyterApi.openNotebook(nb.uri, node.kernelConnectionMetadata.id);
 
 		console.log(nb);
 	}
+
 	private async isValidConnection(
 		a: IActiveRemoteKernelTreeNode | IActiveLocalKernelTreeNode,
 	) {
@@ -204,14 +221,17 @@ export class CommandHandler {
 
 			return false;
 		}
+
 		return true;
 	}
+
 	private async shutdownKernel(
 		a: IActiveRemoteKernelTreeNode | IActiveLocalKernelTreeNode,
 	) {
 		if (!(await this.isValidConnection(a))) {
 			return;
 		}
+
 		const kernelConnection = await this.getKernelConnection(a);
 
 		if (!kernelConnection) {
@@ -225,6 +245,7 @@ export class CommandHandler {
 			)
 		) {
 			await kernelConnection.shutdown();
+
 			KernelTreeView.refresh(a.parent);
 
 			return;
@@ -246,6 +267,7 @@ export class CommandHandler {
 
 			case "Yes":
 				await kernelConnection.shutdown();
+
 				KernelTreeView.refresh(a.parent);
 
 				break;
@@ -254,22 +276,26 @@ export class CommandHandler {
 				break;
 		}
 	}
+
 	private async restartKernel(
 		a: IActiveRemoteKernelTreeNode | IActiveLocalKernelTreeNode,
 	) {
 		if (!(await this.isValidConnection(a))) {
 			return;
 		}
+
 		const kernelConnection = await this.getKernelConnection(a);
 
 		if (!kernelConnection) {
 			return;
 		}
+
 		if (a.uri) {
 			void commands.executeCommand("jupyter.restartkernel", a.uri);
 
 			return;
 		}
+
 		if (
 			this.context.globalState.get<boolean>("dontAskRestartKernel", false)
 		) {
@@ -301,12 +327,14 @@ export class CommandHandler {
 				break;
 		}
 	}
+
 	private async interruptKernel(
 		a: IActiveRemoteKernelTreeNode | IActiveLocalKernelTreeNode,
 	) {
 		if (!(await this.isValidConnection(a))) {
 			return;
 		}
+
 		const kernelConnection = await this.getKernelConnection(a);
 
 		try {
@@ -319,6 +347,7 @@ export class CommandHandler {
 			KernelTreeView.refresh(a.parent);
 		}
 	}
+
 	private async editKernelSpec(a: IKernelSpecTreeNode) {
 		if (
 			a.kernelConnectionMetadata.kind !== "startUsingLocalKernelSpec" ||
@@ -326,17 +355,21 @@ export class CommandHandler {
 		) {
 			return;
 		}
+
 		const document = await workspace.openTextDocument(
 			a.kernelConnectionMetadata.kernelSpec.specFile,
 		);
+
 		void window.showTextDocument(document);
 	}
+
 	private async getKernelConnection(
 		a: IActiveRemoteKernelTreeNode | IActiveLocalKernelTreeNode,
 	) {
 		if (!(await this.isValidConnection(a))) {
 			return;
 		}
+
 		if (!a.connection?.kernel) {
 			// Check if we already have an active connection for this.
 			// If this is a remote kernel and we have already connected to this, then we can just shutdown that kernel.
@@ -350,10 +383,12 @@ export class CommandHandler {
 				if (kernel) {
 					return kernel.connection.kernel;
 				}
+
 				KernelTreeView.refresh(a.parent);
 
 				return;
 			}
+
 			try {
 				// Connect to the remote kernel.
 				const workspaceFolder = workspace.workspaceFolders?.length
@@ -375,8 +410,10 @@ export class CommandHandler {
 			} catch (ex) {
 				console.error("Failed to shutdown kernel", ex);
 			}
+
 			KernelTreeView.refresh(a.parent);
 		}
+
 		return a.connection?.kernel;
 	}
 }

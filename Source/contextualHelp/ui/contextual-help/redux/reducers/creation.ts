@@ -41,6 +41,7 @@ export namespace Creation {
 		const newText = extractInputText(cellVM);
 
 		cellVM.inputBlockOpen = true;
+
 		cell.data.source = splitMultilineString(newText);
 
 		return cellVM;
@@ -52,6 +53,7 @@ export namespace Creation {
 		queueIncomingActionWithPayload(arg, CommonActionType.ADD_NEW_CELL, {
 			newCellId: arg.payload.data.newCellId,
 		});
+
 		queueIncomingActionWithPayload(arg, CommonActionType.FOCUS_CELL, {
 			cellId: arg.payload.data.newCellId,
 			cursorPos: CursorPos.Current,
@@ -67,6 +69,7 @@ export namespace Creation {
 			cellId: arg.payload.data.cellId,
 			newCellId: arg.payload.data.newCellId,
 		});
+
 		queueIncomingActionWithPayload(arg, CommonActionType.SELECT_CELL, {
 			cellId: arg.payload.data.newCellId,
 			cursorPos: CursorPos.Current,
@@ -82,6 +85,7 @@ export namespace Creation {
 			cellId: arg.payload.data.cellId,
 			newCellId: arg.payload.data.newCellId,
 		});
+
 		queueIncomingActionWithPayload(arg, CommonActionType.SELECT_CELL, {
 			cellId: arg.payload.data.newCellId,
 			cursorPos: CursorPos.Current,
@@ -100,6 +104,7 @@ export namespace Creation {
 				newCellId: arg.payload.data.newCellId,
 			},
 		);
+
 		queueIncomingActionWithPayload(arg, CommonActionType.FOCUS_CELL, {
 			cellId: arg.payload.data.newCellId,
 			cursorPos: CursorPos.Current,
@@ -124,6 +129,7 @@ export namespace Creation {
 			newList.splice(position, 0, newVM);
 		} else {
 			newList.splice(0, 0, newVM);
+
 			position = 0;
 		}
 
@@ -206,9 +212,11 @@ export namespace Creation {
 
 		if (position >= 0) {
 			position += 1;
+
 			newList.splice(position, 0, newVM);
 		} else {
 			newList.push(newVM);
+
 			position = newList.length;
 		}
 
@@ -317,6 +325,7 @@ export namespace Creation {
 	export function applyCellEdit(
 		arg: NativeEditorReducerArg<{
 			id: string;
+
 			changes: IEditorContentChange[];
 		}>,
 	): IMainState {
@@ -326,18 +335,23 @@ export namespace Creation {
 
 		if (index >= 0) {
 			const newVM = { ...arg.prevState.cellVMs[index] };
+
 			arg.payload.data.changes.forEach((c) => {
 				const source = newVM.inputBlockText;
 
 				const before = source.slice(0, c.rangeOffset);
 				// eslint-disable-next-line @typescript-eslint/restrict-plus-operands
 				const after = source.slice(c.rangeOffset + c.rangeLength);
+
 				newVM.inputBlockText = `${before}${c.text}${after}`;
 			});
+
 			newVM.cell.data.source = splitMultilineString(newVM.inputBlockText);
+
 			newVM.cursorPos = arg.payload.data.changes[0].position;
 
 			const newVMs = [...arg.prevState.cellVMs];
+
 			newVMs[index] = Helpers.asCellViewModel(newVM);
 			// When editing, make sure we focus the edited cell (otherwise undo looks weird because it undoes a non focused cell)
 			return Effects.focusCell({
@@ -352,6 +366,7 @@ export namespace Creation {
 				},
 			});
 		}
+
 		return arg.prevState;
 	}
 

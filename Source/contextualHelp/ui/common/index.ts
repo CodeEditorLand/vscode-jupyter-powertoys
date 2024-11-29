@@ -27,6 +27,7 @@ export function concatMultilineString(
 		// Just trim whitespace. Leave \n in place
 		return trim ? result.replace(nonLineFeedWhiteSpaceTrim, "") : result;
 	}
+
 	return trim
 		? str.toString().replace(nonLineFeedWhiteSpaceTrim, "")
 		: str.toString();
@@ -39,6 +40,7 @@ export function splitMultilineString(
 	if (Array.isArray(source)) {
 		return source as string[];
 	}
+
 	const str = source.toString();
 
 	if (str.length > 0) {
@@ -50,10 +52,12 @@ export function splitMultilineString(
 				if (i < arr.length - 1) {
 					return `${s}\n`;
 				}
+
 				return s;
 			})
 			.filter((s) => s.length > 0); // Skip last one if empty (it's the only one that could be length 0)
 	}
+
 	return [];
 }
 
@@ -91,8 +95,11 @@ function fixCarriageReturn(str: string): string {
 			if (i < str.length - 1 && str[i + 1] === "\n") {
 				// This line is legit, output it and convert to '\n' only.
 				result += str.substr(previousLinePos, i - previousLinePos);
+
 				result += "\n";
+
 				previousLinePos = i + 2;
+
 				i += 1;
 			} else {
 				// This line should replace the previous one. Skip our \r
@@ -101,9 +108,11 @@ function fixCarriageReturn(str: string): string {
 		} else if (str[i] === "\n") {
 			// This line is legit, output it. (Single linefeed)
 			result += str.substr(previousLinePos, i - previousLinePos + 1);
+
 			previousLinePos = i + 1;
 		}
 	}
+
 	result += str.substr(previousLinePos, str.length - previousLinePos);
 
 	return result;
@@ -160,12 +169,14 @@ export function parseForComments(
 			if (insideMultilineQuote === isMultilineQuote) {
 				insideMultilineQuote = undefined;
 			}
+
 			foundNonCommentLine(l, pos);
 			// Not inside quote, see if inside a comment
 		} else if (insideMultilineComment) {
 			if (insideMultilineComment === isMultilineComment) {
 				insideMultilineComment = undefined;
 			}
+
 			if (insideMultilineComment) {
 				foundCommentLine(l, pos);
 			}
@@ -175,13 +186,16 @@ export function parseForComments(
 			const beginQuote = trim.indexOf(isMultilineQuote);
 
 			const endQuote = trim.lastIndexOf(isMultilineQuote);
+
 			insideMultilineQuote =
 				endQuote !== beginQuote ? undefined : isMultilineQuote;
+
 			foundNonCommentLine(l, pos);
 			// Not starting a quote, might be starting a comment
 		} else if (isMultilineComment) {
 			// See if this line ends the comment too or not
 			const endIndex = trim.indexOf(isMultilineComment, 3);
+
 			insideMultilineComment =
 				endIndex >= 0 ? undefined : isMultilineComment;
 
@@ -200,12 +214,14 @@ export function parseForComments(
 				foundNonCommentLine(l, pos);
 			}
 		}
+
 		pos += 1;
 	}
 }
 
 function extractComments(lines: string[]): string[] {
 	const result: string[] = [];
+
 	parseForComments(
 		lines,
 		(s) => result.push(s),

@@ -14,6 +14,7 @@ export async function activate(context: ExtensionContext) {
 		if (activated) {
 			return;
 		}
+
 		activated = true;
 
 		const jupyterExt =
@@ -22,6 +23,7 @@ export async function activate(context: ExtensionContext) {
 		if (!jupyterExt) {
 			return;
 		}
+
 		await jupyterExt.activate();
 
 		const kernelService = await jupyterExt.exports.getKernelService();
@@ -29,10 +31,13 @@ export async function activate(context: ExtensionContext) {
 		if (!kernelService) {
 			return;
 		}
+
 		const provider = new ActiveKernelMessageProvider(kernelService);
+
 		ActiveKernelChildNodesProviderRegistry.instance.registerProvider(
 			provider,
 		);
+
 		context.subscriptions.push(provider);
 
 		commands.registerCommand(
@@ -42,6 +47,7 @@ export async function activate(context: ExtensionContext) {
 			},
 		);
 	}
+
 	if (
 		workspace
 			.getConfiguration("jupyter")
@@ -52,6 +58,7 @@ export async function activate(context: ExtensionContext) {
 
 		return;
 	}
+
 	workspace.onDidChangeConfiguration(
 		(e) => {
 			if (

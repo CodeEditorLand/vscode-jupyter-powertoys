@@ -36,17 +36,23 @@ export class ContextualHelp
 	implements vscode.Disposable, IStatusParticipant
 {
 	private vscodeWebView: vscode.WebviewView | undefined;
+
 	private unfinishedCells: ICell[] = [];
+
 	private potentiallyUnfinishedStatus: vscode.Disposable[] = [];
+
 	private notebookCellMap = new Map<string, ICell>();
+
 	private kernelService: IExportedKernelService | undefined;
 
 	protected get owningResource(): Resource {
 		if (vscode.window.activeNotebookEditor?.notebook) {
 			return vscode.window.activeNotebookEditor.notebook.uri;
 		}
+
 		return undefined;
 	}
+
 	constructor(
 		provider: IWebviewViewProvider,
 		private readonly statusProvider: StatusProvider,
@@ -61,6 +67,7 @@ export class ContextualHelp
 			this,
 			disposables,
 		);
+
 		vscode.window.onDidChangeTextEditorSelection(
 			this.activeSelectionChanged,
 			this,
@@ -73,17 +80,25 @@ export class ContextualHelp
 	public get title(): string {
 		return "contextualHelp";
 	}
+
 	private lastHelpRequest?: {
 		token: vscode.CancellationTokenSource;
+
 		code: string;
+
 		cursor_pos: number;
+
 		lineNumber: number;
+
 		word: string;
+
 		wordAtPos: string;
 
 		document: vscode.TextDocument;
+
 		timer?: NodeJS.Timeout;
 	};
+
 	public showHelp(editor: vscode.TextEditor) {
 		// Code should be the entire cell
 		const code = editor.document.getText();
@@ -114,16 +129,20 @@ export class ContextualHelp
 			const startChar = start > 0 ? line[start - 1] : " ";
 
 			const endChar = end < line.length ? line[end] : " ";
+
 			startFound = /[\s\(\)\[\]'"]+/.test(startChar);
+
 			endFound = /[\s\(\)\[\]'"]+/.test(endChar);
 
 			if (!startFound) {
 				start--;
 			}
+
 			if (!endFound) {
 				end++;
 			}
 		}
+
 		const word = line.slice(start, end);
 
 		if (
@@ -135,12 +154,15 @@ export class ContextualHelp
 		) {
 			return;
 		}
+
 		if (this.lastHelpRequest?.token) {
 			this.lastHelpRequest.token.cancel();
 		}
+
 		if (this.lastHelpRequest?.timer) {
 			clearTimeout(this.lastHelpRequest.timer);
 		}
+
 		const token = new vscode.CancellationTokenSource();
 		// lets wait a while before showing the help
 		// We need to wait for the user to stop typing before we show the help
@@ -172,6 +194,7 @@ export class ContextualHelp
 
 	public async load(codeWebview: vscode.WebviewView) {
 		this.vscodeWebView = codeWebview;
+
 		await super.loadWebview(process.cwd(), codeWebview).catch(logError);
 
 		// Set the title if there is an active notebook
@@ -224,6 +247,7 @@ export class ContextualHelp
 		handler: (args: M[T]) => void,
 	) {
 		const args = payload as M[T];
+
 		handler.bind(this)(args);
 	}
 
@@ -286,6 +310,7 @@ export class ContextualHelp
 			undefined,
 			this,
 		);
+
 		this.potentiallyUnfinishedStatus.push(result);
 
 		return result;
@@ -337,6 +362,7 @@ export class ContextualHelp
 					state: CellState.finished,
 					data: createCodeCell([word], [output]),
 				};
+
 				cell.data.execution_count = 1;
 
 				// Then send the combined output to the UI
@@ -350,6 +376,7 @@ export class ContextualHelp
 					state: CellState.finished,
 					data: createCodeCell(word),
 				};
+
 				cell.data.execution_count = 0;
 
 				// Then send the combined output to the UI
@@ -361,14 +388,17 @@ export class ContextualHelp
 
 		return result;
 	}
+
 	private pendingRequests = new WeakMap<
 		| Kernel
 		| {
 				metadata: KernelConnectionMetadata;
+
 				connection: ISessionConnection;
 		  },
 		Promise<unknown>
 	>();
+
 	private async doInspect(
 		code: string,
 		cursor_pos: number,
@@ -378,6 +408,7 @@ export class ContextualHelp
 		if (!code || code.length === 0) {
 			return;
 		}
+
 		const notebook = vscode.workspace.notebookDocuments.find((n) =>
 			n
 				.getCells()
@@ -390,12 +421,14 @@ export class ContextualHelp
 		if (!notebook) {
 			return;
 		}
+
 		const jupyterExt =
 			vscode.extensions.getExtension<Jupyter>("ms-toolsai.jupyter");
 
 		if (!jupyterExt?.isActive) {
 			return;
 		}
+
 		if (!jupyterExt.isActive) {
 			await jupyterExt.activate();
 		}
@@ -424,6 +457,7 @@ export class ContextualHelp
 			const codeToExecute = `return get_ipython().kernel.do_inspect("${escapeStringToEmbedInPythonCode(
 				code,
 			)}", ${cursor_pos}, ${detail_level})`;
+
 			promise = execCodeInBackgroundThread<IInspectReplyMsg["content"]>(
 				kernel,
 				[codeToExecute],
@@ -435,6 +469,7 @@ export class ContextualHelp
 			if (!oldKernel?.connection.kernel) {
 				return;
 			}
+
 			promise = oldKernel.connection.kernel
 				.requestInspect({ code, cursor_pos, detail_level })
 				.then((result) => result.content);
@@ -459,6 +494,7 @@ export class ContextualHelp
 
 		return content;
 	}
+
 	private async activeEditorChanged(
 		editor: vscode.NotebookEditor | undefined,
 	) {
@@ -473,6 +509,7 @@ export class ContextualHelp
 			this.showHelp(vscode.window.activeTextEditor);
 		}
 	}
+
 	private async activeSelectionChanged(
 		e: vscode.TextEditorSelectionChangeEvent,
 	) {
@@ -518,7 +555,9 @@ export class ContextualHelp
 
 			if (extension) {
 				await extension.activate();
+
 				this.kernelService = await extension.exports.getKernelService();
+
 				this.kernelService?.onDidChangeKernels(
 					this.activeKernelChanged,
 					this,
@@ -526,6 +565,7 @@ export class ContextualHelp
 				);
 			}
 		}
+
 		return this.kernelService
 			? this.kernelService.getKernel(notebook.uri)
 			: undefined;

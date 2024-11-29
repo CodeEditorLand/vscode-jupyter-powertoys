@@ -7,6 +7,7 @@ import { IWebviewViewMessageListener } from "../types";
 // Message listening class for the native variable viewer and scratch pad
 export class SimpleMessageListener implements IWebviewViewMessageListener {
 	private disposedCallback: () => void;
+
 	private callback: (message: string, payload: any) => void;
 
 	constructor(

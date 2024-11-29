@@ -62,9 +62,13 @@ export type PythonVersion = {
 	 * The original version string.
 	 */
 	raw: string;
+
 	major: number;
+
 	minor: number;
+
 	patch: number;
+
 	build: string[];
 	/**
 	 * Identifies a tag in the release process (e.g. beta 1)
@@ -85,11 +89,13 @@ export interface IJupyterKernelSpec {
 	 * Id of an existing (active) Kernel from an active session.
 	 */
 	id?: string;
+
 	name: string;
 	/**
 	 * The name of the language of the kernel
 	 */
 	language?: string;
+
 	path: string;
 	/**
 	 * A dictionary of environment variables to set for the kernel.
@@ -140,6 +146,7 @@ export interface IJupyterKernelSpec {
  */
 export type LocalKernelSpecConnectionMetadata = Readonly<{
 	kernelModel?: undefined;
+
 	kernelSpec: IJupyterKernelSpec;
 	/**
 	 * Indicates the interpreter that may be used to start the kernel.
@@ -147,7 +154,9 @@ export type LocalKernelSpecConnectionMetadata = Readonly<{
 	 * This interpreter could also be the interpreter associated with the kernel spec that we are supposed to start.
 	 */
 	interpreter?: PythonEnvironment;
+
 	kind: "startUsingLocalKernelSpec";
+
 	id: string;
 }>;
 /**
@@ -157,10 +166,15 @@ export type LocalKernelSpecConnectionMetadata = Readonly<{
  */
 export type RemoteKernelSpecConnectionMetadata = Readonly<{
 	kernelModel?: undefined;
+
 	interpreter?: undefined;
+
 	kernelSpec: IJupyterKernelSpec;
+
 	kind: "startUsingRemoteKernelSpec";
+
 	baseUrl: string;
+
 	id: string;
 }>;
 /**
@@ -171,8 +185,11 @@ export type RemoteKernelSpecConnectionMetadata = Readonly<{
  */
 export type PythonKernelConnectionMetadata = Readonly<{
 	kernelSpec: IJupyterKernelSpec;
+
 	interpreter: PythonEnvironment;
+
 	kind: "startUsingPythonInterpreter";
+
 	id: string;
 }>;
 interface IJupyterKernel {
@@ -180,17 +197,24 @@ interface IJupyterKernel {
 	 * Id of an existing (active) Kernel from an active session.
 	 */
 	id?: string;
+
 	name: string;
 }
 
 export type LiveKernelModel = IJupyterKernel &
 	Partial<IJupyterKernelSpec> & {
 		model: Session.IModel | undefined;
+
 		notebook?: { path?: string };
+
 		lastActivityTime?: string;
+
 		last_activity?: string;
+
 		execution_state?: string;
+
 		connections?: number;
+
 		numberOfConnections?: number;
 	};
 
@@ -204,8 +228,11 @@ export type LiveRemoteKernelConnectionMetadata = Readonly<{
 	 * Python interpreter will be used for intellisense & the like.
 	 */
 	interpreter?: PythonEnvironment;
+
 	baseUrl: string;
+
 	kind: "connectToLiveRemoteKernel";
+
 	id: string;
 }>;
 
@@ -261,8 +288,10 @@ export interface IExportedKernelService {
 	 * List of running kernels changed.
 	 */
 	onDidChangeKernels: Event<void>;
+
 	onDidStartKernel: Event<{
 		metadata: KernelConnectionMetadata;
+
 		connection: Session.ISessionConnection;
 	}>;
 	/**
@@ -285,6 +314,7 @@ export interface IExportedKernelService {
 	 */
 	getActiveKernels(): {
 		metadata: KernelConnectionMetadata;
+
 		uri: Uri | undefined;
 	}[];
 	/**
@@ -294,6 +324,7 @@ export interface IExportedKernelService {
 	getKernel(uri: Uri):
 		| {
 				metadata: KernelConnectionMetadata;
+
 				connection: Session.ISessionConnection;
 		  }
 		| undefined;
@@ -339,6 +370,7 @@ export async function getEnvironmentTypeFromUri(
 	if (!uri) {
 		return;
 	}
+
 	const env = api.environments.known.find(
 		(e) =>
 			e.executable.uri?.fsPath?.toLowerCase() ===
@@ -348,11 +380,13 @@ export async function getEnvironmentTypeFromUri(
 	if (env) {
 		return getEnvironmentType(env);
 	}
+
 	const resolved = await api.environments.resolveEnvironment(uri.fsPath);
 
 	if (!resolved) {
 		return;
 	}
+
 	return getEnvironmentType(resolved);
 }
 export function getCachedEnvironmentTypeFromUri(
@@ -362,6 +396,7 @@ export function getCachedEnvironmentTypeFromUri(
 	if (!uri) {
 		return;
 	}
+
 	const env = api.environments.known.find(
 		(e) =>
 			e.executable.uri?.fsPath?.toLowerCase() ===
@@ -379,6 +414,7 @@ export async function getEnvironmentVersionFromUri(
 	if (!uri) {
 		return;
 	}
+
 	const env = api.environments.known.find(
 		(e) =>
 			e.executable.uri?.fsPath?.toLowerCase() ===
@@ -388,6 +424,7 @@ export async function getEnvironmentVersionFromUri(
 	if (env) {
 		return env.version;
 	}
+
 	const resolved = await api.environments.resolveEnvironment(uri.fsPath);
 
 	return resolved?.version;
@@ -401,24 +438,31 @@ export function getEnvironmentType({
 		if (tool === EnvironmentType.Conda.toLowerCase()) {
 			return EnvironmentType.Conda;
 		}
+
 		if (tool === EnvironmentType.Venv.toLowerCase()) {
 			return EnvironmentType.Venv;
 		}
+
 		if (tool === EnvironmentType.VirtualEnv.toLowerCase()) {
 			return EnvironmentType.VirtualEnv;
 		}
+
 		if (tool === EnvironmentType.VirtualEnvWrapper.toLowerCase()) {
 			return EnvironmentType.VirtualEnvWrapper;
 		}
+
 		if (tool === EnvironmentType.Poetry.toLowerCase()) {
 			return EnvironmentType.Poetry;
 		}
+
 		if (tool === EnvironmentType.Pipenv.toLowerCase()) {
 			return EnvironmentType.Pipenv;
 		}
+
 		if (tool === EnvironmentType.Pyenv.toLowerCase()) {
 			return EnvironmentType.Pyenv;
 		}
+
 		if (
 			KnownEnvironmentToolsToEnvironmentTypeMapping.has(
 				tool as unknown as KnownEnvironmentTools,
@@ -429,6 +473,7 @@ export function getEnvironmentType({
 			)!;
 		}
 	}
+
 	return EnvironmentType.Unknown;
 }
 
@@ -439,6 +484,7 @@ export async function getPythonEnvironmentName(
 	if (!uri) {
 		return "";
 	}
+
 	const env = api.environments.known.find(
 		(e) =>
 			e.executable.uri?.fsPath?.toLowerCase() ===
@@ -449,18 +495,21 @@ export async function getPythonEnvironmentName(
 		if (env.environment?.name) {
 			return env.environment.name;
 		}
+
 		if (getEnvironmentType(env) === EnvironmentType.Conda) {
 			if (env.environment?.folderUri) {
 				return path.basename(env.environment.folderUri.fsPath);
 			}
 		}
 	}
+
 	const resolved = await api.environments.resolveEnvironment(uri.fsPath);
 
 	if (resolved) {
 		if (resolved.environment?.name) {
 			return resolved.environment.name;
 		}
+
 		if (getEnvironmentType(resolved) === EnvironmentType.Conda) {
 			if (resolved.environment?.folderUri) {
 				return path.basename(resolved.environment.folderUri.fsPath);

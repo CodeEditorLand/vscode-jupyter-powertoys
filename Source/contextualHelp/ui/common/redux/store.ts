@@ -60,6 +60,7 @@ function generateMainReducer<M>(
 function createTestLogger() {
 	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	const log4js = require("log4js") as typeof import("log4js");
+
 	log4js.configure({
 		appenders: {
 			reduxLogger: {
@@ -102,6 +103,7 @@ function createTestMiddleware(
 		if (action.type !== "action.postOutgoingMessage") {
 			sendMessage(`DISPATCHED_ACTION_${action.type}`, {});
 		}
+
 		return res;
 	};
 }
@@ -126,6 +128,7 @@ function createMiddleWare(
 	if (typeof forceTestMiddleware !== "undefined") {
 		forceOnTestMiddleware = forceTestMiddleware();
 	}
+
 	const testMiddleware =
 		forceOnTestMiddleware || testMode || isUITest
 			? createTestMiddleware(transformLoad)
@@ -149,9 +152,12 @@ function createMiddleWare(
 				const main = (rootState.main = {
 					...rootState.main,
 				} as any as Partial<IMainState>);
+
 				main.rootCss = reduceLogMessage;
+
 				main.rootStyle = reduceLogMessage;
 			}
+
 			rootState.monaco = reduceLogMessage;
 
 			return rootState;
@@ -161,6 +167,7 @@ function createMiddleWare(
 			if (!action) {
 				return action;
 			}
+
 			return action;
 		},
 		logger: testMode ? createTestLogger() : window.console,
@@ -169,11 +176,13 @@ function createMiddleWare(
 	const loggerMiddleware = logger;
 
 	const results: Redux.Middleware<{}, IStore>[] = [];
+
 	results.push(queueableActions);
 
 	if (testMiddleware) {
 		results.push(testMiddleware);
 	}
+
 	results.push(loggerMiddleware);
 
 	return results;
@@ -181,6 +190,7 @@ function createMiddleWare(
 
 export interface IStore {
 	main: IMainState;
+
 	post: {};
 }
 
@@ -247,17 +257,21 @@ export function createStore<M>(
 					message = payload.type;
 					// This is a message that came in as a result of an outgoing message from another view.
 					basePayload.messageDirection = "outgoing";
+
 					basePayload.messageType =
 						payload.payload.messageType ??
 						MessageType.syncAcrossSameNotebooks;
+
 					basePayload.data = payload.payload.data;
 				} else {
 					// Messages result of some user action.
 					basePayload.messageType =
 						basePayload.messageType ?? MessageType.other;
 				}
+
 				store.dispatch({ type: message, payload: basePayload });
 			}
+
 			return true;
 		},
 	});

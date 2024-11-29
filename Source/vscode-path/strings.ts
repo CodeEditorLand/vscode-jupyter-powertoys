@@ -14,6 +14,7 @@ export function isFalsyOrWhitespace(str: string | undefined): boolean {
 	if (!str || typeof str !== "string") {
 		return true;
 	}
+
 	return str.trim().length === 0;
 }
 
@@ -29,6 +30,7 @@ export function format(value: string, ...args: any[]): string {
 	if (args.length === 0) {
 		return value;
 	}
+
 	return value.replace(_formatRegexp, function (match, group) {
 		const idx = parseInt(group, 10);
 
@@ -94,6 +96,7 @@ export function count(value: string, character: string): number {
 			result++;
 		}
 	}
+
 	return result;
 }
 
@@ -141,6 +144,7 @@ export function ltrim(haystack: string, needle: string): string {
 	while (haystack.indexOf(needle, offset) === offset) {
 		offset = offset + needleLen;
 	}
+
 	return haystack.substring(offset);
 }
 
@@ -170,9 +174,11 @@ export function rtrim(haystack: string, needle: string): string {
 		if (idx === -1 || idx + needleLen !== offset) {
 			break;
 		}
+
 		if (idx === 0) {
 			return "";
 		}
+
 		offset = idx;
 	}
 
@@ -191,9 +197,13 @@ export function stripWildcards(pattern: string): string {
 
 export interface RegExpOptions {
 	matchCase?: boolean;
+
 	wholeWord?: boolean;
+
 	multiline?: boolean;
+
 	global?: boolean;
+
 	unicode?: boolean;
 }
 
@@ -205,28 +215,35 @@ export function createRegExp(
 	if (!searchString) {
 		throw new Error("Cannot create regex from empty string");
 	}
+
 	if (!isRegex) {
 		searchString = escapeRegExpCharacters(searchString);
 	}
+
 	if (options.wholeWord) {
 		if (!/\B/.test(searchString.charAt(0))) {
 			searchString = "\\b" + searchString;
 		}
+
 		if (!/\B/.test(searchString.charAt(searchString.length - 1))) {
 			searchString = searchString + "\\b";
 		}
 	}
+
 	let modifiers = "";
 
 	if (options.global) {
 		modifiers += "g";
 	}
+
 	if (!options.matchCase) {
 		modifiers += "i";
 	}
+
 	if (options.multiline) {
 		modifiers += "m";
 	}
+
 	if (options.unicode) {
 		modifiers += "u";
 	}
@@ -282,6 +299,7 @@ export function firstNonWhitespaceIndex(str: string): number {
 			return i;
 		}
 	}
+
 	return -1;
 }
 
@@ -301,6 +319,7 @@ export function getLeadingWhitespace(
 			return str.substring(start, i);
 		}
 	}
+
 	return str.substring(start, end);
 }
 
@@ -319,6 +338,7 @@ export function lastNonWhitespaceIndex(
 			return i;
 		}
 	}
+
 	return -1;
 }
 
@@ -351,6 +371,7 @@ export function compareSubstring(
 			return 1;
 		}
 	}
+
 	const aLen = aEnd - aStart;
 
 	const bLen = bEnd - bStart;
@@ -360,6 +381,7 @@ export function compareSubstring(
 	} else if (aLen > bLen) {
 		return 1;
 	}
+
 	return 0;
 }
 
@@ -402,6 +424,7 @@ export function compareSubstringIgnoreCase(
 		if (isLowerAsciiLetter(codeA)) {
 			codeA -= 32;
 		}
+
 		if (isLowerAsciiLetter(codeB)) {
 			codeB -= 32;
 		}
@@ -528,6 +551,7 @@ export function getNextCodePoint(
 			return computeCodePoint(charCode, nextCharCode);
 		}
 	}
+
 	return charCode;
 }
 
@@ -544,12 +568,15 @@ function getPrevCodePoint(str: string, offset: number): number {
 			return computeCodePoint(prevCharCode, charCode);
 		}
 	}
+
 	return charCode;
 }
 
 export class CodePointIterator {
 	private readonly _str: string;
+
 	private readonly _len: number;
+
 	private _offset: number;
 
 	public get offset(): number {
@@ -558,7 +585,9 @@ export class CodePointIterator {
 
 	constructor(str: string, offset: number = 0) {
 		this._str = str;
+
 		this._len = str.length;
+
 		this._offset = offset;
 	}
 
@@ -568,6 +597,7 @@ export class CodePointIterator {
 
 	public prevCodePoint(): number {
 		const codePoint = getPrevCodePoint(this._str, this._offset);
+
 		this._offset -=
 			codePoint >= Constants.UNICODE_SUPPLEMENTARY_PLANE_BEGIN ? 2 : 1;
 
@@ -576,6 +606,7 @@ export class CodePointIterator {
 
 	public nextCodePoint(): number {
 		const codePoint = getNextCodePoint(this._str, this._len, this._offset);
+
 		this._offset +=
 			codePoint >= Constants.UNICODE_SUPPLEMENTARY_PLANE_BEGIN ? 2 : 1;
 
@@ -628,8 +659,10 @@ export class GraphemeIterator {
 
 				break;
 			}
+
 			graphemeBreakType = nextGraphemeBreakType;
 		}
+
 		return iterator.offset - initialOffset;
 	}
 
@@ -663,8 +696,10 @@ export class GraphemeIterator {
 
 				break;
 			}
+
 			graphemeBreakType = prevGraphemeBreakType;
 		}
+
 		return initialOffset - iterator.offset;
 	}
 
@@ -692,6 +727,7 @@ export function getCharContainingOffset(
 	if (offset > 0 && isLowSurrogate(str.charCodeAt(offset))) {
 		offset--;
 	}
+
 	const endOffset = offset + nextCharLength(str, offset);
 
 	const startOffset = endOffset - prevCharLength(str, endOffset);
@@ -815,6 +851,7 @@ export function lcut(text: string, n: number) {
 		}
 
 		i = re.lastIndex;
+
 		re.lastIndex += 1;
 	}
 
@@ -830,7 +867,9 @@ const COLOR_END = /\x1b\[0?m/g; // Color
 export function removeAnsiEscapeCodes(str: string): string {
 	if (str) {
 		str = str.replace(EL, "");
+
 		str = str.replace(COLOR_START, "");
+
 		str = str.replace(COLOR_END, "");
 	}
 
@@ -913,6 +952,7 @@ export function getNLines(str: string, n = 1): string {
 
 	do {
 		idx = str.indexOf("\n", idx + 1);
+
 		n--;
 	} while (n > 0 && idx >= 0);
 
@@ -974,6 +1014,7 @@ function breakBetweenGraphemeBreakType(
 			return false; // GB3
 		}
 	}
+
 	if (
 		breakTypeA === GraphemeBreakType.Control ||
 		breakTypeA === GraphemeBreakType.CR ||
@@ -981,6 +1022,7 @@ function breakBetweenGraphemeBreakType(
 	) {
 		return true; // GB4
 	}
+
 	if (
 		breakTypeB === GraphemeBreakType.Control ||
 		breakTypeB === GraphemeBreakType.CR ||
@@ -1003,6 +1045,7 @@ function breakBetweenGraphemeBreakType(
 			return false; // GB6
 		}
 	}
+
 	if (
 		breakTypeA === GraphemeBreakType.LV ||
 		breakTypeA === GraphemeBreakType.V
@@ -1014,6 +1057,7 @@ function breakBetweenGraphemeBreakType(
 			return false; // GB7
 		}
 	}
+
 	if (
 		breakTypeA === GraphemeBreakType.LVT ||
 		breakTypeA === GraphemeBreakType.T
@@ -1039,12 +1083,14 @@ function breakBetweenGraphemeBreakType(
 	if (breakTypeB === GraphemeBreakType.SpacingMark) {
 		return false; // GB9a
 	}
+
 	if (breakTypeA === GraphemeBreakType.Prepend) {
 		return false; // GB9b
 	}
 
 	// Do not break within emoji modifier sequences or emoji zwj sequences.
 	// GB11    \p{Extended_Pictographic} Extend* ZWJ × \p{Extended_Pictographic}
+
 	if (
 		breakTypeA === GraphemeBreakType.ZWJ &&
 		breakTypeB === GraphemeBreakType.Extended_Pictographic
@@ -1087,10 +1133,12 @@ export const enum GraphemeBreakType {
 
 class GraphemeBreakTree {
 	private static _INSTANCE: GraphemeBreakTree | null = null;
+
 	public static getInstance(): GraphemeBreakTree {
 		if (!GraphemeBreakTree._INSTANCE) {
 			GraphemeBreakTree._INSTANCE = new GraphemeBreakTree();
 		}
+
 		return GraphemeBreakTree._INSTANCE;
 	}
 
@@ -1106,9 +1154,11 @@ class GraphemeBreakTree {
 			if (codePoint === CharCode.LineFeed) {
 				return GraphemeBreakType.LF;
 			}
+
 			if (codePoint === CharCode.CarriageReturn) {
 				return GraphemeBreakType.CR;
 			}
+
 			return GraphemeBreakType.Control;
 		}
 		// !!! Let's make 7bit ASCII a bit faster: 32..126
@@ -1166,6 +1216,7 @@ export function getLeftDeleteOffset(offset: number, str: string): number {
 
 	// Otherwise, just skip a single code point.
 	const iterator = new CodePointIterator(str, offset);
+
 	iterator.prevCodePoint();
 
 	return iterator.offset;
@@ -1191,6 +1242,7 @@ function getOffsetBeforeLastEmojiComponent(
 			// Cannot skip modifier, no preceding emoji base.
 			return undefined;
 		}
+
 		codePoint = iterator.prevCodePoint();
 	}
 
@@ -1260,6 +1312,7 @@ export class AmbiguousCharacters {
 			for (let i = 0; i < arr.length; i += 2) {
 				result.set(arr[i], arr[i + 1]);
 			}
+
 			return result;
 		}
 
@@ -1272,6 +1325,7 @@ export class AmbiguousCharacters {
 			for (const [key, value] of map2) {
 				result.set(key, value);
 			}
+
 			return result;
 		}
 
@@ -1282,6 +1336,7 @@ export class AmbiguousCharacters {
 			if (!map1) {
 				return map2;
 			}
+
 			const result = new Map<number, number>();
 
 			for (const [key, value] of map1) {
@@ -1289,6 +1344,7 @@ export class AmbiguousCharacters {
 					result.set(key, value);
 				}
 			}
+
 			return result;
 		}
 
@@ -1306,6 +1362,7 @@ export class AmbiguousCharacters {
 
 		for (const locale of filteredLocales) {
 			const map = arrayToMap(data[locale]);
+
 			languageSpecificMap = intersectMaps(languageSpecificMap, map);
 		}
 
@@ -1325,6 +1382,7 @@ export class AmbiguousCharacters {
 			AmbiguousCharacters.ambiguousCharacterData.getValue(),
 		).filter((k) => !k.startsWith("_")),
 	);
+
 	public static getLocales(): string[] {
 		return AmbiguousCharacters._locales.getValue();
 	}
@@ -1364,6 +1422,7 @@ export class InvisibleCharacters {
 		if (!this._data) {
 			this._data = new Set(InvisibleCharacters.getRawData());
 		}
+
 		return this._data;
 	}
 

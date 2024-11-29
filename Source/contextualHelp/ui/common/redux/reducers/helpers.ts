@@ -47,6 +47,7 @@ export namespace Helpers {
 		if (index > 0) {
 			return codeCells[index - 1].cell.id;
 		}
+
 		return undefined;
 	}
 
@@ -106,6 +107,7 @@ export namespace Helpers {
 					},
 				},
 			};
+
 			newVMs[index] = newVM;
 
 			return {
