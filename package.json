@@ -496,7 +496,7 @@
 		"@nteract/transforms": "5.0.4-alpha.0",
 		"ansi-regex": "6.1.0",
 		"ansi-to-html": "0.7.2",
-		"fs-extra": "11.2.0",
+		"fs-extra": "11.3.0",
 		"jsonc-parser": "3.3.1",
 		"less": "4.2.1",
 		"lodash": "4.17.21",
