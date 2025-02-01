@@ -489,9 +489,9 @@
 		"onNotebook:interactive"
 	],
 	"dependencies": {
-		"@jupyterlab/coreutils": "6.3.4",
-		"@jupyterlab/nbformat": "4.3.4",
-		"@jupyterlab/services": "7.3.4",
+		"@jupyterlab/coreutils": "6.3.5",
+		"@jupyterlab/nbformat": "4.3.5",
+		"@jupyterlab/services": "7.3.5",
 		"@loadable/component": "5.16.4",
 		"@nteract/transforms": "5.0.4-alpha.0",
 		"ansi-regex": "6.1.0",
@@ -509,7 +509,7 @@
 		"@types/fs-extra": "11.0.4",
 		"@types/glob": "8.1.0",
 		"@types/loadable__component": "5.13.9",
-		"@types/lodash": "4.17.14",
+		"@types/lodash": "4.17.15",
 		"@types/node": "16.11.07",
 		"cross-env": "7.0.3",
 		"css-loader": "7.1.2",
